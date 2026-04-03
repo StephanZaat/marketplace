@@ -29,6 +29,26 @@ def _render(template_str: str, **ctx) -> str:
     return _jinja.from_string(template_str).render(**ctx)
 
 
+def _cta_button(url: str, label: str, margin: str = "margin-bottom:24px") -> str:
+    return (
+        f'<table width="100%" cellpadding="0" cellspacing="0" style="{margin}">'
+        f'<tr><td align="center">'
+        f'<a href="{url}" style="display:inline-block;background:#2d7ac8;color:#ffffff;'
+        f'font-size:14px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px">'
+        f'{label}</a></td></tr></table>'
+    )
+
+
+def _listing_card(bg: str, border: str) -> str:
+    return (
+        f'<table width="100%" cellpadding="0" cellspacing="0" style="background:{bg};border-radius:8px;'
+        f'border:1px solid {border};margin-bottom:24px"><tr><td style="padding:16px 20px">'
+        f'<p style="margin:0;font-size:14px;font-weight:600;color:#1e293b">{{{{ title }}}}</p>'
+        f'<p style="margin:4px 0 0;font-size:13px;color:#64748b">AWG {{{{ price }}}}</p>'
+        f'</td></tr></table>'
+    )
+
+
 def _send_via_tem_api(to: str, subject: str, html: str, text: str | None = None) -> bool:
     """Send email via Scaleway TEM HTTP API (no SMTP port needed)."""
     api_key = settings.smtp_password
@@ -158,14 +178,7 @@ _WELCOME_HTML = _WRAP_START + _HEADER + """
       Welcome to <strong style="color:#2d7ac8">Marketplace.aw</strong>! You're all set to start buying and selling
       second-hand items across Aruba.
     </p>
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
-      <tr><td align="center">
-        <a href="{{ site_url }}"
-           style="display:inline-block;background:#2d7ac8;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px">
-          Browse Listings →
-        </a>
-      </td></tr>
-    </table>
+    """ + _cta_button("{{ site_url }}", "Browse Listings &rarr;") + """
     <p style="margin:0;font-size:14px;color:#64748b;line-height:1.6">Happy selling!<br>
       <strong style="color:#2d7ac8">The Marketplace.aw Team</strong>
     </p>
@@ -214,14 +227,7 @@ _NEW_LISTING_HTML = _WRAP_START + _HEADER + """
       </td></tr>
     </table>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
-      <tr><td align="center">
-        <a href="{{ listing_url }}"
-           style="display:inline-block;background:#2d7ac8;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px">
-          View Your Listing →
-        </a>
-      </td></tr>
-    </table>
+    """ + _cta_button("{{ listing_url }}", "View Your Listing &rarr;") + """
 
     <p style="margin:0;font-size:14px;color:#64748b;line-height:1.6">
       Good luck with your sale!<br>
@@ -261,14 +267,7 @@ _NEW_MESSAGE_HTML = _WRAP_START + _HEADER + """
       <p style="margin:0;font-size:14px;line-height:1.7;color:#334155;white-space:pre-wrap">{{ message_body }}</p>
     </div>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
-      <tr><td align="center">
-        <a href="{{ conversation_url }}"
-           style="display:inline-block;background:#2d7ac8;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px">
-          Reply →
-        </a>
-      </td></tr>
-    </table>
+    """ + _cta_button("{{ conversation_url }}", "Reply &rarr;") + """
 
     <p style="margin:0;font-size:13px;color:#94a3b8;line-height:1.6">
       You're receiving this because you have an account on Marketplace.aw.
@@ -300,12 +299,7 @@ _LISTING_REMINDER_HTML = _WRAP_START + _HEADER + """
       Your listing has been active for 30 days. Did you sell it? Please update its status so other buyers know.
     </p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f9ff;border-radius:8px;border:1px solid #bae6fd;margin-bottom:24px">
-      <tr><td style="padding:16px 20px">
-        <p style="margin:0;font-size:14px;font-weight:600;color:#1e293b">{{ title }}</p>
-        <p style="margin:4px 0 0;font-size:13px;color:#64748b">AWG {{ price }}</p>
-      </td></tr>
-    </table>
+    """ + _listing_card("#f0f9ff", "#bae6fd") + """
 
     <p style="margin:0 0 20px;font-size:14px;line-height:1.7;color:#475569">
       <strong>If you already sold it</strong>, mark it as sold on your listing page.<br>
@@ -317,14 +311,7 @@ _LISTING_REMINDER_HTML = _WRAP_START + _HEADER + """
       ⚠️ If no action is taken within 7 days, the listing will be automatically marked as sold.
     </p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0">
-      <tr><td align="center">
-        <a href="{{ listing_url }}"
-           style="display:inline-block;background:#2d7ac8;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px">
-          View Listing →
-        </a>
-      </td></tr>
-    </table>
+    """ + _cta_button("{{ listing_url }}", "View Listing &rarr;", "margin:20px 0") + """
 
     <p style="margin:0;font-size:14px;color:#64748b">
       <strong style="color:#2d7ac8">The Marketplace.aw Team</strong>
@@ -359,12 +346,7 @@ _LISTING_EXPIRY_WARNING_HTML = _WRAP_START + _HEADER + """
       Renew it now to keep it visible to buyers.
     </p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#fff7ed;border-radius:8px;border:1px solid #fed7aa;margin-bottom:24px">
-      <tr><td style="padding:16px 20px">
-        <p style="margin:0;font-size:14px;font-weight:600;color:#1e293b">{{ title }}</p>
-        <p style="margin:4px 0 0;font-size:13px;color:#64748b">AWG {{ price }}</p>
-      </td></tr>
-    </table>
+    """ + _listing_card("#fff7ed", "#fed7aa") + """
 
     <p style="margin:0 0 20px;font-size:14px;line-height:1.7;color:#475569">
       <strong>Still selling?</strong> Click below to renew your listing and reset the 30-day timer.<br>
@@ -372,14 +354,7 @@ _LISTING_EXPIRY_WARNING_HTML = _WRAP_START + _HEADER + """
       <strong>Want to remove it?</strong> You can delete it from your profile.
     </p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0">
-      <tr><td align="center">
-        <a href="{{ listing_url }}"
-           style="display:inline-block;background:#2d7ac8;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px">
-          Renew Listing →
-        </a>
-      </td></tr>
-    </table>
+    """ + _cta_button("{{ listing_url }}", "Renew Listing &rarr;", "margin:20px 0") + """
 
     <p style="margin:0;font-size:14px;color:#64748b">
       <strong style="color:#2d7ac8">The Marketplace.aw Team</strong>
@@ -412,26 +387,14 @@ _LISTING_EXPIRED_HTML = _WRAP_START + _HEADER + """
       and is no longer visible to buyers.
     </p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#fef2f2;border-radius:8px;border:1px solid #fecaca;margin-bottom:24px">
-      <tr><td style="padding:16px 20px">
-        <p style="margin:0;font-size:14px;font-weight:600;color:#1e293b">{{ title }}</p>
-        <p style="margin:4px 0 0;font-size:13px;color:#64748b">AWG {{ price }}</p>
-      </td></tr>
-    </table>
+    """ + _listing_card("#fef2f2", "#fecaca") + """
 
     <p style="margin:0 0 20px;font-size:14px;line-height:1.7;color:#475569">
       <strong>Still want to sell it?</strong> You can renew your listing to make it active again.<br>
       Expired listings are permanently deleted after 30 days.
     </p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0">
-      <tr><td align="center">
-        <a href="{{ listing_url }}"
-           style="display:inline-block;background:#2d7ac8;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px">
-          Renew Listing →
-        </a>
-      </td></tr>
-    </table>
+    """ + _cta_button("{{ listing_url }}", "Renew Listing &rarr;", "margin:20px 0") + """
 
     <p style="margin:0;font-size:14px;color:#64748b">
       <strong style="color:#2d7ac8">The Marketplace.aw Team</strong>
@@ -632,14 +595,7 @@ _CATEGORY_DIGEST_HTML = _WRAP_START + _HEADER + """
     </table>
     {% endfor %}
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px">
-      <tr><td align="center">
-        <a href="{{ site_url }}/listings"
-           style="display:inline-block;background:#2d7ac8;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px">
-          Browse All Listings →
-        </a>
-      </td></tr>
-    </table>
+    """ + _cta_button("{{ site_url }}/listings", "Browse All Listings &rarr;", "margin-top:8px") + """
 
     <p style="margin:20px 0 0;font-size:12px;color:#94a3b8;text-align:center">
       You're receiving this because you subscribed to category alerts.<br>
