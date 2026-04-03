@@ -5,8 +5,9 @@ A full-stack marketplace for buying and selling locally. Built for Aruba, deploy
 ## Tech Stack
 
 - **Backend**: FastAPI + PostgreSQL + SQLAlchemy 2 + Pydantic 2
-- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS
-- **Auth**: JWT with optional social login (Google, Facebook)
+- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS 4
+- **Auth**: OTP email login (passwordless) + JWT
+- **Bot protection**: Friendly Captcha (proof-of-work, no tracking)
 - **Storage**: Local files (dev) or S3-compatible object store (prod)
 - **Email**: Any SMTP provider (Scaleway TEM, Proton, etc.)
 - **Infra**: Docker Compose, nginx, Let's Encrypt
@@ -32,9 +33,8 @@ The first admin account is created from `ADMIN_USERNAME` / `ADMIN_PASSWORD` in `
 - **Favorites** — save listings, get notified
 - **Category alerts** — email notifications for new listings in categories you follow
 - **Admin panel** — manage listings, users, reports, conversations, stats
-- **Social login** — Google and Facebook (optional)
 - **SEO** — Open Graph and Twitter Card meta tags
-- **i18n** — category names in English and Spanish
+- **i18n** — English and Spanish
 
 ## Project Structure
 
@@ -45,15 +45,16 @@ marketplace/
 │   │   ├── models/           SQLAlchemy ORM
 │   │   ├── schemas/          Pydantic request/response schemas
 │   │   ├── routers/          API endpoints
-│   │   ├── resolve.py        Public ID resolution
+│   │   ├── captcha.py        Friendly Captcha verification
 │   │   ├── email.py          Transactional email templates
 │   │   ├── scheduler.py      Background jobs (expiry, digests)
 │   │   └── main.py           App entrypoint + migrations
-│   └── tests/                Pytest suite (149 tests)
+│   └── tests/                Pytest suite (145 tests)
 ├── frontend/                 React + Vite app
 │   └── src/
 │       ├── pages/            Route pages
 │       ├── components/       Reusable UI (SEO, FavoriteButton, etc.)
+│       ├── hooks/            useFriendlyCaptcha, useFavorites
 │       └── contexts/         Auth, favorites state
 ├── nginx/                    Reverse proxy configs
 │   ├── prod.conf             Standalone prod (rate limiting, gzip, TLS)
@@ -69,7 +70,7 @@ marketplace/
 docker compose run --rm test pytest -v
 ```
 
-149 tests covering auth, listings, messages, ratings, favorites, categories, users, admin, and reports.
+145 tests covering auth, listings, messages, ratings, favorites, categories, users, admin, and reports.
 
 ## Production Deployment
 
@@ -85,7 +86,7 @@ For the test server (shared nginx via `shared_web` network):
 docker compose -f docker-compose.prod.yml -f docker-compose.test.yml up -d
 ```
 
-GitHub Actions workflow handles deployment automatically: push to `main` deploys to test, `workflow_dispatch` deploys to prod.
+GitHub Actions workflow handles deployment automatically: push to `main` deploys to test, prod requires manual approval via GitHub environment protection.
 
 ### Required Secrets
 
@@ -96,13 +97,13 @@ See `.env.example` for all configuration options. At minimum you need:
 - SMTP credentials for transactional email
 - Domain name
 
-Optional: S3 object storage, Google/Facebook OAuth, backup bucket.
+Optional: S3 object storage, Friendly Captcha keys, backup bucket.
 
 ## API Overview
 
 | Area | Endpoints |
 |------|-----------|
-| Auth | Register, login, password reset, social login |
+| Auth | OTP send, OTP verify, current user |
 | Listings | CRUD, search/filter, image upload, renew |
 | Messages | Start conversation, send/receive, unread count |
 | Ratings | Submit, pending, user stats |
@@ -112,6 +113,7 @@ Optional: S3 object storage, Google/Facebook OAuth, backup bucket.
 | Users | Public profile, update own profile, avatar |
 | Admin | Manage listings/users/reports, stats, conversations |
 | Reports | Submit and moderate reported listings |
+| Contact | Contact form (captcha-protected) |
 
 ## License
 
