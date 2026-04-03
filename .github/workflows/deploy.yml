@@ -151,6 +151,7 @@ jobs:
     needs: deploy-test
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Fetch secrets from Scaleway Secret Manager
         uses: scaleway/action-scw-secret@v0.0.8
