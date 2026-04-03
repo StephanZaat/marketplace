@@ -1,0 +1,24 @@
+# Override for test server: use shared_web network (central nginx handles TLS).
+# Usage: docker compose -f docker-compose.prod.yml -f docker-compose.test.yml up -d
+services:
+  backend:
+    networks:
+      - default
+      - shared_web
+
+  frontend:
+    networks:
+      - default
+      - shared_web
+
+  # Disable nginx + certbot on test (central nginx handles this)
+  nginx:
+    profiles: ["prod-only"]
+
+  certbot:
+    profiles: ["prod-only"]
+
+networks:
+  shared_web:
+    external: true
+    name: shared_web

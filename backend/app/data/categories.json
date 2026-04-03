@@ -1,0 +1,5230 @@
+[
+  {
+    "name": "Antiques & Art",
+    "slug": "antiques-art",
+    "icon": "Palette",
+    "sort_order": 1,
+    "parent_slug": null,
+    "name_es": "Antigüedades y Arte"
+  },
+  {
+    "name": "Antique Tableware",
+    "slug": "antique-tableware",
+    "icon": "UtensilsCrossed",
+    "sort_order": 1,
+    "parent_slug": "antiques-art",
+    "name_es": "Vajilla Antigua"
+  },
+  {
+    "name": "Antique Objects",
+    "slug": "antique-objects",
+    "icon": "Box",
+    "sort_order": 2,
+    "parent_slug": "antiques-art",
+    "name_es": "Objetos Antiguos"
+  },
+  {
+    "name": "Antique Furniture",
+    "slug": "antique-furniture",
+    "icon": "Armchair",
+    "sort_order": 3,
+    "parent_slug": "antiques-art",
+    "name_es": "Muebles Antiguos"
+  },
+  {
+    "name": "Curiosa & Brocante",
+    "slug": "curiosa-brocante",
+    "icon": "Star",
+    "sort_order": 4,
+    "parent_slug": "antiques-art",
+    "name_es": "Curiosidades y Brocante"
+  },
+  {
+    "name": "Art",
+    "slug": "art",
+    "icon": "Brush",
+    "sort_order": 5,
+    "parent_slug": "antiques-art",
+    "name_es": "Arte"
+  },
+  {
+    "name": "Paintings",
+    "slug": "paintings",
+    "icon": "Image",
+    "sort_order": 6,
+    "parent_slug": "antiques-art",
+    "name_es": "Pinturas"
+  },
+  {
+    "name": "Audio, TV & Photo",
+    "slug": "audio-tv-photo",
+    "icon": "Tv",
+    "sort_order": 2,
+    "parent_slug": null,
+    "name_es": "Audio, TV y Foto"
+  },
+  {
+    "name": "Televisions",
+    "slug": "televisions",
+    "icon": "Tv",
+    "sort_order": 1,
+    "parent_slug": "audio-tv-photo",
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "select",
+        "options": [
+          "Samsung",
+          "LG",
+          "Sony",
+          "Philips",
+          "Hisense",
+          "TCL",
+          "Panasonic",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Samsung",
+          "LG",
+          "Sony",
+          "Philips",
+          "Hisense",
+          "TCL",
+          "Panasonic",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "size",
+        "label": "Size",
+        "type": "select",
+        "options": [
+          "24\"",
+          "32\"",
+          "40\"",
+          "43\"",
+          "50\"",
+          "55\"",
+          "65\"",
+          "75\"",
+          "85\"",
+          "Other"
+        ],
+        "label_es": "Tamaño",
+        "options_es": [
+          "24\"",
+          "32\"",
+          "40\"",
+          "43\"",
+          "50\"",
+          "55\"",
+          "65\"",
+          "75\"",
+          "85\"",
+          "Otro"
+        ]
+      },
+      {
+        "key": "smart_tv",
+        "label": "Smart TV",
+        "type": "select",
+        "options": [
+          "Yes",
+          "No"
+        ],
+        "label_es": "Smart TV",
+        "options_es": [
+          "Sí",
+          "No"
+        ]
+      }
+    ],
+    "name_es": "Televisores"
+  },
+  {
+    "name": "Audio & HiFi",
+    "slug": "audio-hifi",
+    "icon": "Volume2",
+    "sort_order": 2,
+    "parent_slug": "audio-tv-photo",
+    "name_es": "Audio y HiFi"
+  },
+  {
+    "name": "Portable Audio",
+    "slug": "portable-audio",
+    "icon": "Headphones",
+    "sort_order": 3,
+    "parent_slug": "audio-tv-photo",
+    "name_es": "Audio Portátil"
+  },
+  {
+    "name": "Home Cinema",
+    "slug": "home-cinema",
+    "icon": "Film",
+    "sort_order": 4,
+    "parent_slug": "audio-tv-photo",
+    "name_es": "Cine en Casa"
+  },
+  {
+    "name": "Cameras & Photo",
+    "slug": "cameras",
+    "icon": "Camera",
+    "sort_order": 5,
+    "parent_slug": "audio-tv-photo",
+    "name_es": "Cámaras y Foto"
+  },
+  {
+    "name": "Drones",
+    "slug": "drones",
+    "icon": "Plane",
+    "sort_order": 6,
+    "parent_slug": "audio-tv-photo",
+    "name_es": "Drones"
+  },
+  {
+    "name": "AV Accessories",
+    "slug": "av-accessories",
+    "icon": "Cable",
+    "sort_order": 7,
+    "parent_slug": "audio-tv-photo",
+    "name_es": "Accesorios AV"
+  },
+  {
+    "name": "Other",
+    "slug": "audio-tv-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 8,
+    "parent_slug": "audio-tv-photo",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Car Accessories",
+    "slug": "car-accessories",
+    "icon": "Wrench",
+    "sort_order": 3,
+    "parent_slug": null,
+    "name_es": "Accesorios de Coche"
+  },
+  {
+    "name": "Car Exterior",
+    "slug": "car-exterior",
+    "icon": "Car",
+    "sort_order": 1,
+    "parent_slug": "car-accessories",
+    "name_es": "Exterior de Coche"
+  },
+  {
+    "name": "Car Interior",
+    "slug": "car-interior",
+    "icon": "Armchair",
+    "sort_order": 2,
+    "parent_slug": "car-accessories",
+    "name_es": "Interior de Coche"
+  },
+  {
+    "name": "Car Electronics",
+    "slug": "car-electronics",
+    "icon": "Radio",
+    "sort_order": 3,
+    "parent_slug": "car-accessories",
+    "name_es": "Electrónica de Coche"
+  },
+  {
+    "name": "Car Maintenance",
+    "slug": "car-maintenance",
+    "icon": "Wrench",
+    "sort_order": 4,
+    "parent_slug": "car-accessories",
+    "name_es": "Mantenimiento de Coche"
+  },
+  {
+    "name": "Trailers",
+    "slug": "trailers",
+    "icon": "Truck",
+    "sort_order": 5,
+    "parent_slug": "car-accessories",
+    "name_es": "Remolques"
+  },
+  {
+    "name": "Cars",
+    "slug": "cars",
+    "icon": "Car",
+    "sort_order": 4,
+    "parent_slug": null,
+    "name_es": "Coches"
+  },
+  {
+    "name": "Gasoline Cars",
+    "slug": "unleaded-cars",
+    "icon": "Car",
+    "sort_order": 1,
+    "parent_slug": "cars",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Toyota",
+          "Honda",
+          "Ford",
+          "Hyundai",
+          "Kia",
+          "Nissan",
+          "Mitsubishi",
+          "Mazda",
+          "Suzuki",
+          "Chevrolet",
+          "Volkswagen",
+          "BMW",
+          "Mercedes-Benz",
+          "Audi",
+          "Jeep",
+          "Dodge",
+          "RAM",
+          "GMC",
+          "Subaru",
+          "Isuzu",
+          "Daihatsu",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Toyota",
+          "Honda",
+          "Ford",
+          "Hyundai",
+          "Kia",
+          "Nissan",
+          "Mitsubishi",
+          "Mazda",
+          "Suzuki",
+          "Chevrolet",
+          "Volkswagen",
+          "BMW",
+          "Mercedes-Benz",
+          "Audi",
+          "Jeep",
+          "Dodge",
+          "RAM",
+          "GMC",
+          "Subaru",
+          "Isuzu",
+          "Daihatsu",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "mileage",
+        "label": "Mileage",
+        "type": "select",
+        "options": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Unknown"
+        ],
+        "label_es": "Kilometraje",
+        "options_es": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "color",
+        "label": "Color",
+        "type": "select",
+        "options": [
+          "Black",
+          "White",
+          "Silver",
+          "Grey",
+          "Blue",
+          "Red",
+          "Green",
+          "Brown",
+          "Beige",
+          "Orange",
+          "Yellow",
+          "Purple",
+          "Gold",
+          "Other"
+        ],
+        "label_es": "Color",
+        "options_es": [
+          "Negro",
+          "Blanco",
+          "Plateado",
+          "Gris",
+          "Azul",
+          "Rojo",
+          "Verde",
+          "Marrón",
+          "Beige",
+          "Naranja",
+          "Amarillo",
+          "Morado",
+          "Dorado",
+          "Otro"
+        ]
+      },
+      {
+        "key": "transmission",
+        "label": "Transmission",
+        "type": "select",
+        "options": [
+          "Automatic",
+          "Manual"
+        ],
+        "label_es": "Transmisión",
+        "options_es": [
+          "Automático",
+          "Manual"
+        ]
+      }
+    ],
+    "name_es": "Coches de Gasolina"
+  },
+  {
+    "name": "Diesel Cars",
+    "slug": "diesel-cars",
+    "icon": "Car",
+    "sort_order": 2,
+    "parent_slug": "cars",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Toyota",
+          "Honda",
+          "Ford",
+          "Hyundai",
+          "Kia",
+          "Nissan",
+          "Mitsubishi",
+          "Mazda",
+          "Suzuki",
+          "Chevrolet",
+          "Volkswagen",
+          "BMW",
+          "Mercedes-Benz",
+          "Audi",
+          "Jeep",
+          "Dodge",
+          "RAM",
+          "GMC",
+          "Subaru",
+          "Isuzu",
+          "Daihatsu",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Toyota",
+          "Honda",
+          "Ford",
+          "Hyundai",
+          "Kia",
+          "Nissan",
+          "Mitsubishi",
+          "Mazda",
+          "Suzuki",
+          "Chevrolet",
+          "Volkswagen",
+          "BMW",
+          "Mercedes-Benz",
+          "Audi",
+          "Jeep",
+          "Dodge",
+          "RAM",
+          "GMC",
+          "Subaru",
+          "Isuzu",
+          "Daihatsu",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "mileage",
+        "label": "Mileage",
+        "type": "select",
+        "options": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Unknown"
+        ],
+        "label_es": "Kilometraje",
+        "options_es": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "color",
+        "label": "Color",
+        "type": "select",
+        "options": [
+          "Black",
+          "White",
+          "Silver",
+          "Grey",
+          "Blue",
+          "Red",
+          "Green",
+          "Brown",
+          "Beige",
+          "Orange",
+          "Yellow",
+          "Purple",
+          "Gold",
+          "Other"
+        ],
+        "label_es": "Color",
+        "options_es": [
+          "Negro",
+          "Blanco",
+          "Plateado",
+          "Gris",
+          "Azul",
+          "Rojo",
+          "Verde",
+          "Marrón",
+          "Beige",
+          "Naranja",
+          "Amarillo",
+          "Morado",
+          "Dorado",
+          "Otro"
+        ]
+      },
+      {
+        "key": "transmission",
+        "label": "Transmission",
+        "type": "select",
+        "options": [
+          "Automatic",
+          "Manual"
+        ],
+        "label_es": "Transmisión",
+        "options_es": [
+          "Automático",
+          "Manual"
+        ]
+      }
+    ],
+    "name_es": "Coches Diésel"
+  },
+  {
+    "name": "Electric Cars",
+    "slug": "electric-cars",
+    "icon": "Zap",
+    "sort_order": 3,
+    "parent_slug": "cars",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Tesla",
+          "Nissan",
+          "BMW",
+          "BYD",
+          "Leapmotor",
+          "Volkswagen",
+          "Hyundai",
+          "Kia",
+          "Audi",
+          "Mercedes-Benz",
+          "Volvo",
+          "Renault",
+          "Peugeot",
+          "Citroën",
+          "MINI",
+          "Opel",
+          "MG",
+          "Polestar",
+          "Smart",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Tesla",
+          "Nissan",
+          "BMW",
+          "BYD",
+          "Leapmotor",
+          "Volkswagen",
+          "Hyundai",
+          "Kia",
+          "Audi",
+          "Mercedes-Benz",
+          "Volvo",
+          "Renault",
+          "Peugeot",
+          "Citroën",
+          "MINI",
+          "Opel",
+          "MG",
+          "Polestar",
+          "Smart",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "range_km",
+        "label": "Range (km)",
+        "type": "select",
+        "options": [
+          "Under 200 km",
+          "200 – 300 km",
+          "300 – 400 km",
+          "400 – 500 km",
+          "500+ km",
+          "Unknown"
+        ],
+        "label_es": "Autonomía (km)",
+        "options_es": [
+          "Under 200 km",
+          "200 – 300 km",
+          "300 – 400 km",
+          "400 – 500 km",
+          "500+ km",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "color",
+        "label": "Color",
+        "type": "select",
+        "options": [
+          "Black",
+          "White",
+          "Silver",
+          "Grey",
+          "Blue",
+          "Red",
+          "Green",
+          "Brown",
+          "Beige",
+          "Orange",
+          "Yellow",
+          "Other"
+        ],
+        "label_es": "Color",
+        "options_es": [
+          "Negro",
+          "Blanco",
+          "Plateado",
+          "Gris",
+          "Azul",
+          "Rojo",
+          "Verde",
+          "Marrón",
+          "Beige",
+          "Naranja",
+          "Amarillo",
+          "Otro"
+        ]
+      }
+    ],
+    "name_es": "Coches Eléctricos"
+  },
+  {
+    "name": "Hybrid Cars",
+    "slug": "hybrid-cars",
+    "icon": "Leaf",
+    "sort_order": 4,
+    "parent_slug": "cars",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Toyota",
+          "Honda",
+          "Ford",
+          "Hyundai",
+          "Kia",
+          "Nissan",
+          "Mitsubishi",
+          "Mazda",
+          "Suzuki",
+          "Chevrolet",
+          "Volkswagen",
+          "BMW",
+          "Mercedes-Benz",
+          "Audi",
+          "Jeep",
+          "Dodge",
+          "RAM",
+          "GMC",
+          "Subaru",
+          "Isuzu",
+          "Daihatsu",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Toyota",
+          "Honda",
+          "Ford",
+          "Hyundai",
+          "Kia",
+          "Nissan",
+          "Mitsubishi",
+          "Mazda",
+          "Suzuki",
+          "Chevrolet",
+          "Volkswagen",
+          "BMW",
+          "Mercedes-Benz",
+          "Audi",
+          "Jeep",
+          "Dodge",
+          "RAM",
+          "GMC",
+          "Subaru",
+          "Isuzu",
+          "Daihatsu",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "mileage",
+        "label": "Mileage",
+        "type": "select",
+        "options": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Unknown"
+        ],
+        "label_es": "Kilometraje",
+        "options_es": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "color",
+        "label": "Color",
+        "type": "select",
+        "options": [
+          "Black",
+          "White",
+          "Silver",
+          "Grey",
+          "Blue",
+          "Red",
+          "Green",
+          "Brown",
+          "Beige",
+          "Orange",
+          "Yellow",
+          "Purple",
+          "Gold",
+          "Other"
+        ],
+        "label_es": "Color",
+        "options_es": [
+          "Negro",
+          "Blanco",
+          "Plateado",
+          "Gris",
+          "Azul",
+          "Rojo",
+          "Verde",
+          "Marrón",
+          "Beige",
+          "Naranja",
+          "Amarillo",
+          "Morado",
+          "Dorado",
+          "Otro"
+        ]
+      },
+      {
+        "key": "transmission",
+        "label": "Transmission",
+        "type": "select",
+        "options": [
+          "Automatic",
+          "Manual"
+        ],
+        "label_es": "Transmisión",
+        "options_es": [
+          "Automático",
+          "Manual"
+        ]
+      }
+    ],
+    "name_es": "Coches Híbridos"
+  },
+  {
+    "name": "Classic Cars",
+    "slug": "classic-cars",
+    "icon": "Car",
+    "sort_order": 5,
+    "parent_slug": "cars",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Toyota",
+          "Honda",
+          "Ford",
+          "Hyundai",
+          "Kia",
+          "Nissan",
+          "Mitsubishi",
+          "Mazda",
+          "Suzuki",
+          "Chevrolet",
+          "Volkswagen",
+          "BMW",
+          "Mercedes-Benz",
+          "Audi",
+          "Jeep",
+          "Dodge",
+          "RAM",
+          "GMC",
+          "Subaru",
+          "Isuzu",
+          "Daihatsu",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Toyota",
+          "Honda",
+          "Ford",
+          "Hyundai",
+          "Kia",
+          "Nissan",
+          "Mitsubishi",
+          "Mazda",
+          "Suzuki",
+          "Chevrolet",
+          "Volkswagen",
+          "BMW",
+          "Mercedes-Benz",
+          "Audi",
+          "Jeep",
+          "Dodge",
+          "RAM",
+          "GMC",
+          "Subaru",
+          "Isuzu",
+          "Daihatsu",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "color",
+        "label": "Color",
+        "type": "select",
+        "options": [
+          "Black",
+          "White",
+          "Silver",
+          "Grey",
+          "Blue",
+          "Red",
+          "Green",
+          "Brown",
+          "Beige",
+          "Orange",
+          "Yellow",
+          "Purple",
+          "Gold",
+          "Other"
+        ],
+        "label_es": "Color",
+        "options_es": [
+          "Negro",
+          "Blanco",
+          "Plateado",
+          "Gris",
+          "Azul",
+          "Rojo",
+          "Verde",
+          "Marrón",
+          "Beige",
+          "Naranja",
+          "Amarillo",
+          "Morado",
+          "Dorado",
+          "Otro"
+        ]
+      },
+      {
+        "key": "transmission",
+        "label": "Transmission",
+        "type": "select",
+        "options": [
+          "Automatic",
+          "Manual"
+        ],
+        "label_es": "Transmisión",
+        "options_es": [
+          "Automático",
+          "Manual"
+        ]
+      }
+    ],
+    "name_es": "Coches Clásicos"
+  },
+  {
+    "name": "Car Parts",
+    "slug": "car-parts",
+    "icon": "Settings",
+    "sort_order": 5,
+    "parent_slug": null,
+    "name_es": "Piezas de Coche"
+  },
+  {
+    "name": "Body Parts",
+    "slug": "body-parts",
+    "icon": "Car",
+    "sort_order": 1,
+    "parent_slug": "car-parts",
+    "name_es": "Carrocería"
+  },
+  {
+    "name": "Engine Parts",
+    "slug": "engine-parts",
+    "icon": "Settings",
+    "sort_order": 2,
+    "parent_slug": "car-parts",
+    "name_es": "Piezas de Motor"
+  },
+  {
+    "name": "Tyres & Wheels",
+    "slug": "tyres-wheels",
+    "icon": "Circle",
+    "sort_order": 3,
+    "parent_slug": "car-parts",
+    "name_es": "Neumáticos y Ruedas"
+  },
+  {
+    "name": "Brakes & Suspension",
+    "slug": "brakes-suspension",
+    "icon": "Gauge",
+    "sort_order": 4,
+    "parent_slug": "car-parts",
+    "name_es": "Frenos y Suspensión"
+  },
+  {
+    "name": "Interior Parts",
+    "slug": "interior-parts",
+    "icon": "Armchair",
+    "sort_order": 5,
+    "parent_slug": "car-parts",
+    "name_es": "Piezas Interiores"
+  },
+  {
+    "name": "Car Electrics",
+    "slug": "car-electrics",
+    "icon": "Zap",
+    "sort_order": 6,
+    "parent_slug": "car-parts",
+    "name_es": "Electricidad del Coche"
+  },
+  {
+    "name": "Car Lights",
+    "slug": "car-lights",
+    "icon": "Lightbulb",
+    "sort_order": 7,
+    "parent_slug": "car-parts",
+    "name_es": "Luces de Coche"
+  },
+  {
+    "name": "Other",
+    "slug": "car-parts-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 8,
+    "parent_slug": "car-parts",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Books",
+    "slug": "books",
+    "icon": "BookOpen",
+    "sort_order": 6,
+    "parent_slug": null,
+    "name_es": "Libros"
+  },
+  {
+    "name": "Fiction",
+    "slug": "fiction",
+    "icon": "BookOpen",
+    "sort_order": 1,
+    "parent_slug": "books",
+    "name_es": "Ficción"
+  },
+  {
+    "name": "Non-Fiction",
+    "slug": "non-fiction",
+    "icon": "BookOpen",
+    "sort_order": 2,
+    "parent_slug": "books",
+    "name_es": "No Ficción"
+  },
+  {
+    "name": "Children's Books",
+    "slug": "childrens-books",
+    "icon": "BookOpen",
+    "sort_order": 3,
+    "parent_slug": "books",
+    "name_es": "Libros Infantiles"
+  },
+  {
+    "name": "School Books",
+    "slug": "school-books",
+    "icon": "GraduationCap",
+    "sort_order": 4,
+    "parent_slug": "books",
+    "name_es": "Libros Escolares"
+  },
+  {
+    "name": "Comics",
+    "slug": "comics",
+    "icon": "BookOpen",
+    "sort_order": 5,
+    "parent_slug": "books",
+    "name_es": "Cómics"
+  },
+  {
+    "name": "Travel Guides",
+    "slug": "travel-guides",
+    "icon": "Map",
+    "sort_order": 6,
+    "parent_slug": "books",
+    "name_es": "Guías de Viaje"
+  },
+  {
+    "name": "Magazines",
+    "slug": "magazines",
+    "icon": "FileText",
+    "sort_order": 7,
+    "parent_slug": "books",
+    "name_es": "Revistas"
+  },
+  {
+    "name": "Other",
+    "slug": "books-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 8,
+    "parent_slug": "books",
+    "name_es": "Otro"
+  },
+  {
+    "name": "DVDs & Blu-ray",
+    "slug": "dvds-bluray",
+    "icon": "Disc",
+    "sort_order": 12,
+    "parent_slug": "hobbies",
+    "name_es": "DVDs y Blu-ray"
+  },
+  {
+    "name": "VHS",
+    "slug": "vhs",
+    "icon": "Video",
+    "sort_order": 13,
+    "parent_slug": "hobbies",
+    "name_es": "VHS"
+  },
+  {
+    "name": "Computers & Software",
+    "slug": "computers",
+    "icon": "Monitor",
+    "sort_order": 9,
+    "parent_slug": null,
+    "name_es": "Computadoras y Software"
+  },
+  {
+    "name": "Desktops",
+    "slug": "desktops",
+    "icon": "Monitor",
+    "sort_order": 1,
+    "parent_slug": "computers",
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "text",
+        "label_es": "Marca"
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "ram",
+        "label": "RAM",
+        "type": "select",
+        "options": [
+          "4GB",
+          "8GB",
+          "16GB",
+          "32GB",
+          "64GB"
+        ],
+        "label_es": "RAM"
+      },
+      {
+        "key": "storage",
+        "label": "Storage",
+        "type": "text",
+        "label_es": "Almacenamiento"
+      }
+    ],
+    "name_es": "Computadoras de Escritorio"
+  },
+  {
+    "name": "Laptops",
+    "slug": "laptops",
+    "icon": "Laptop",
+    "sort_order": 2,
+    "parent_slug": "computers",
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "text",
+        "label_es": "Marca"
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "ram",
+        "label": "RAM",
+        "type": "select",
+        "options": [
+          "4GB",
+          "8GB",
+          "16GB",
+          "32GB",
+          "64GB"
+        ],
+        "label_es": "RAM"
+      },
+      {
+        "key": "storage",
+        "label": "Storage",
+        "type": "text",
+        "label_es": "Almacenamiento"
+      }
+    ],
+    "name_es": "Laptops"
+  },
+  {
+    "name": "Computer Parts",
+    "slug": "computer-parts",
+    "icon": "Cpu",
+    "sort_order": 3,
+    "parent_slug": "computers",
+    "name_es": "Piezas de Computadora"
+  },
+  {
+    "name": "Printers",
+    "slug": "printers",
+    "icon": "Printer",
+    "sort_order": 4,
+    "parent_slug": "computers",
+    "name_es": "Impresoras"
+  },
+  {
+    "name": "Networking",
+    "slug": "networking",
+    "icon": "Wifi",
+    "sort_order": 5,
+    "parent_slug": "computers",
+    "name_es": "Redes"
+  },
+  {
+    "name": "Software",
+    "slug": "software",
+    "icon": "Package",
+    "sort_order": 6,
+    "parent_slug": "computers",
+    "name_es": "Software"
+  },
+  {
+    "name": "Storage Media",
+    "slug": "storage-media",
+    "icon": "HardDrive",
+    "sort_order": 7,
+    "parent_slug": "computers",
+    "name_es": "Almacenamiento"
+  },
+  {
+    "name": "Other",
+    "slug": "computers-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 8,
+    "parent_slug": "computers",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Animals & Pets",
+    "slug": "animals",
+    "icon": "PawPrint",
+    "sort_order": 10,
+    "parent_slug": null,
+    "name_es": "Animales y Mascotas"
+  },
+  {
+    "name": "Dogs",
+    "slug": "dogs",
+    "icon": "PawPrint",
+    "sort_order": 1,
+    "parent_slug": "animals",
+    "name_es": "Perros"
+  },
+  {
+    "name": "Cats",
+    "slug": "cats",
+    "icon": "PawPrint",
+    "sort_order": 2,
+    "parent_slug": "animals",
+    "name_es": "Gatos"
+  },
+  {
+    "name": "Birds",
+    "slug": "birds",
+    "icon": "Bird",
+    "sort_order": 3,
+    "parent_slug": "animals",
+    "name_es": "Pájaros"
+  },
+  {
+    "name": "Fish & Aquariums",
+    "slug": "fish-aquariums",
+    "icon": "Fish",
+    "sort_order": 4,
+    "parent_slug": "animals",
+    "name_es": "Peces y Acuarios"
+  },
+  {
+    "name": "Horses",
+    "slug": "horses",
+    "icon": "PawPrint",
+    "sort_order": 5,
+    "parent_slug": "animals",
+    "name_es": "Caballos"
+  },
+  {
+    "name": "Reptiles",
+    "slug": "reptiles",
+    "icon": "PawPrint",
+    "sort_order": 6,
+    "parent_slug": "animals",
+    "name_es": "Reptiles"
+  },
+  {
+    "name": "Pet Supplies",
+    "slug": "pet-supplies",
+    "icon": "ShoppingBag",
+    "sort_order": 7,
+    "parent_slug": "animals",
+    "name_es": "Accesorios para Mascotas"
+  },
+  {
+    "name": "Other",
+    "slug": "animals-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 8,
+    "parent_slug": "animals",
+    "name_es": "Otro"
+  },
+  {
+    "name": "DIY & Tools",
+    "slug": "diy",
+    "icon": "Hammer",
+    "sort_order": 11,
+    "parent_slug": null,
+    "name_es": "Bricolaje y Herramientas"
+  },
+  {
+    "name": "Power Tools",
+    "slug": "power-tools",
+    "icon": "Zap",
+    "sort_order": 1,
+    "parent_slug": "diy",
+    "attributes": [
+      {
+        "key": "type",
+        "label": "Type",
+        "type": "select",
+        "options": [
+          "Drill",
+          "Circular Saw",
+          "Jigsaw",
+          "Sander",
+          "Grinder",
+          "Impact Driver",
+          "Nail Gun",
+          "Router",
+          "Other"
+        ],
+        "label_es": "Tipo",
+        "options_es": [
+          "Taladro",
+          "Sierra circular",
+          "Sierra de calar",
+          "Lijadora",
+          "Amoladora",
+          "Atornillador de impacto",
+          "Pistola de clavos",
+          "Fresadora",
+          "Otro"
+        ]
+      },
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "select",
+        "options": [
+          "Bosch",
+          "DeWalt",
+          "Makita",
+          "Milwaukee",
+          "Stanley",
+          "Black+Decker",
+          "Ryobi",
+          "Hitachi",
+          "Festool",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Bosch",
+          "DeWalt",
+          "Makita",
+          "Milwaukee",
+          "Stanley",
+          "Black+Decker",
+          "Ryobi",
+          "Hitachi",
+          "Festool",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      }
+    ],
+    "name_es": "Herramientas Eléctricas"
+  },
+  {
+    "name": "Hand Tools",
+    "slug": "hand-tools",
+    "icon": "Hammer",
+    "sort_order": 2,
+    "parent_slug": "diy",
+    "name_es": "Herramientas Manuales"
+  },
+  {
+    "name": "Building Materials",
+    "slug": "building-materials",
+    "icon": "Layers",
+    "sort_order": 3,
+    "parent_slug": "diy",
+    "name_es": "Materiales de Construcción"
+  },
+  {
+    "name": "Doors & Windows",
+    "slug": "doors-windows",
+    "icon": "DoorOpen",
+    "sort_order": 4,
+    "parent_slug": "diy",
+    "name_es": "Puertas y Ventanas"
+  },
+  {
+    "name": "Plumbing",
+    "slug": "plumbing",
+    "icon": "Droplets",
+    "sort_order": 5,
+    "parent_slug": "diy",
+    "name_es": "Fontanería"
+  },
+  {
+    "name": "Paint",
+    "slug": "paint",
+    "icon": "Paintbrush",
+    "sort_order": 6,
+    "parent_slug": "diy",
+    "name_es": "Pintura"
+  },
+  {
+    "name": "Electrical",
+    "slug": "electrical",
+    "icon": "Zap",
+    "sort_order": 7,
+    "parent_slug": "diy",
+    "name_es": "Electricidad"
+  },
+  {
+    "name": "Safety & Workwear",
+    "slug": "safety-workwear",
+    "icon": "Shield",
+    "sort_order": 8,
+    "parent_slug": "diy",
+    "name_es": "Seguridad y Ropa de Trabajo"
+  },
+  {
+    "name": "Other",
+    "slug": "diy-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 9,
+    "parent_slug": "diy",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Home Appliances",
+    "slug": "appliances",
+    "icon": "WashingMachine",
+    "sort_order": 12,
+    "parent_slug": null,
+    "name_es": "Electrodomésticos"
+  },
+  {
+    "name": "Washing & Drying",
+    "slug": "washing-drying",
+    "icon": "WashingMachine",
+    "sort_order": 1,
+    "parent_slug": "appliances",
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "select",
+        "options": [
+          "Samsung",
+          "LG",
+          "Whirlpool",
+          "Bosch",
+          "Siemens",
+          "Miele",
+          "Electrolux",
+          "Panasonic",
+          "AEG",
+          "Haier",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Samsung",
+          "LG",
+          "Whirlpool",
+          "Bosch",
+          "Siemens",
+          "Miele",
+          "Electrolux",
+          "Panasonic",
+          "AEG",
+          "Haier",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      }
+    ],
+    "name_es": "Lavado y Secado"
+  },
+  {
+    "name": "Fridge & Freezer",
+    "slug": "fridge-freezer",
+    "icon": "Refrigerator",
+    "sort_order": 2,
+    "parent_slug": "appliances",
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "select",
+        "options": [
+          "Samsung",
+          "LG",
+          "Whirlpool",
+          "Bosch",
+          "Siemens",
+          "Miele",
+          "Electrolux",
+          "Panasonic",
+          "AEG",
+          "Haier",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Samsung",
+          "LG",
+          "Whirlpool",
+          "Bosch",
+          "Siemens",
+          "Miele",
+          "Electrolux",
+          "Panasonic",
+          "AEG",
+          "Haier",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      }
+    ],
+    "name_es": "Nevera y Congelador"
+  },
+  {
+    "name": "Cooking",
+    "slug": "cooking",
+    "icon": "ChefHat",
+    "sort_order": 3,
+    "parent_slug": "appliances",
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "select",
+        "options": [
+          "Samsung",
+          "LG",
+          "Whirlpool",
+          "Bosch",
+          "Siemens",
+          "Miele",
+          "Electrolux",
+          "Panasonic",
+          "AEG",
+          "Haier",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Samsung",
+          "LG",
+          "Whirlpool",
+          "Bosch",
+          "Siemens",
+          "Miele",
+          "Electrolux",
+          "Panasonic",
+          "AEG",
+          "Haier",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      }
+    ],
+    "name_es": "Cocina"
+  },
+  {
+    "name": "Coffee",
+    "slug": "coffee",
+    "icon": "Coffee",
+    "sort_order": 4,
+    "parent_slug": "appliances",
+    "name_es": "Café"
+  },
+  {
+    "name": "Dishwashers",
+    "slug": "dishwashers",
+    "icon": "UtensilsCrossed",
+    "sort_order": 5,
+    "parent_slug": "appliances",
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "select",
+        "options": [
+          "Samsung",
+          "LG",
+          "Whirlpool",
+          "Bosch",
+          "Siemens",
+          "Miele",
+          "Electrolux",
+          "Panasonic",
+          "AEG",
+          "Haier",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Samsung",
+          "LG",
+          "Whirlpool",
+          "Bosch",
+          "Siemens",
+          "Miele",
+          "Electrolux",
+          "Panasonic",
+          "AEG",
+          "Haier",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      }
+    ],
+    "name_es": "Lavavajillas"
+  },
+  {
+    "name": "Vacuums",
+    "slug": "vacuums",
+    "icon": "Wind",
+    "sort_order": 6,
+    "parent_slug": "appliances",
+    "name_es": "Aspiradoras"
+  },
+  {
+    "name": "Air Treatment",
+    "slug": "air-treatment",
+    "icon": "Wind",
+    "sort_order": 7,
+    "parent_slug": "appliances",
+    "name_es": "Climatización"
+  },
+  {
+    "name": "Personal Care",
+    "slug": "personal-care",
+    "icon": "Sparkles",
+    "sort_order": 8,
+    "parent_slug": "appliances",
+    "name_es": "Cuidado Personal"
+  },
+  {
+    "name": "Kitchen Appliances",
+    "slug": "kitchen-appliances",
+    "icon": "UtensilsCrossed",
+    "sort_order": 9,
+    "parent_slug": "appliances",
+    "name_es": "Electrodomésticos de Cocina"
+  },
+  {
+    "name": "Other",
+    "slug": "appliances-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 10,
+    "parent_slug": "appliances",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Bikes & Scooters",
+    "slug": "bikes-mopeds",
+    "icon": "Bike",
+    "sort_order": 13,
+    "parent_slug": null,
+    "name_es": "Bicicletas y Scooters"
+  },
+  {
+    "name": "City Bikes",
+    "slug": "city-bikes",
+    "icon": "Bike",
+    "sort_order": 1,
+    "parent_slug": "bikes-mopeds",
+    "name_es": "Bicicletas de Ciudad"
+  },
+  {
+    "name": "Mountain Bikes",
+    "slug": "mountain-bikes",
+    "icon": "Bike",
+    "sort_order": 2,
+    "parent_slug": "bikes-mopeds",
+    "attributes": [
+      {
+        "key": "type",
+        "label": "Type",
+        "type": "select",
+        "options": [
+          "Regular",
+          "Electric",
+          "Other"
+        ],
+        "label_es": "Tipo",
+        "options_es": [
+          "Regular",
+          "Eléctrico",
+          "Otro"
+        ]
+      },
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "select",
+        "options": [
+          "Trek",
+          "Giant",
+          "Specialized",
+          "Scott",
+          "Cannondale",
+          "Cube",
+          "Merida",
+          "Ghost",
+          "Focus",
+          "Bianchi",
+          "KTM",
+          "Radon",
+          "Bulls",
+          "Haibike",
+          "Orbea",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Trek",
+          "Giant",
+          "Specialized",
+          "Scott",
+          "Cannondale",
+          "Cube",
+          "Merida",
+          "Ghost",
+          "Focus",
+          "Bianchi",
+          "KTM",
+          "Radon",
+          "Bulls",
+          "Haibike",
+          "Orbea",
+          "Otro"
+        ]
+      },
+      {
+        "key": "frame_size",
+        "label": "Frame Size",
+        "type": "select",
+        "options": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "XXL",
+          "Other"
+        ],
+        "label_es": "Tamaño de cuadro",
+        "options_es": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "XXL",
+          "Otro"
+        ]
+      }
+    ],
+    "name_es": "Bicicletas de Montaña"
+  },
+  {
+    "name": "Electric Bikes",
+    "slug": "electric-bikes",
+    "icon": "Zap",
+    "sort_order": 3,
+    "parent_slug": "bikes-mopeds",
+    "name_es": "Bicicletas Eléctricas"
+  },
+  {
+    "name": "Road Bikes",
+    "slug": "road-bikes",
+    "icon": "Bike",
+    "sort_order": 4,
+    "parent_slug": "bikes-mopeds",
+    "name_es": "Bicicletas de Carretera"
+  },
+  {
+    "name": "Kids' Bikes",
+    "slug": "kids-bikes",
+    "icon": "Bike",
+    "sort_order": 5,
+    "parent_slug": "bikes-mopeds",
+    "name_es": "Bicicletas para Niños"
+  },
+  {
+    "name": "Scooters",
+    "slug": "scooters",
+    "icon": "Bike",
+    "sort_order": 7,
+    "parent_slug": "bikes-mopeds",
+    "attributes": [
+      {
+        "key": "type",
+        "label": "Type",
+        "type": "select",
+        "options": [
+          "Petrol",
+          "Electric",
+          "Other"
+        ],
+        "label_es": "Tipo",
+        "options_es": [
+          "Gasolina",
+          "Eléctrico",
+          "Otro"
+        ]
+      },
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "select",
+        "options": [
+          "Honda",
+          "Yamaha",
+          "Vespa",
+          "Piaggio",
+          "Kymco",
+          "SYM",
+          "Aprilia",
+          "Peugeot",
+          "NIU",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Honda",
+          "Yamaha",
+          "Vespa",
+          "Piaggio",
+          "Kymco",
+          "SYM",
+          "Aprilia",
+          "Peugeot",
+          "NIU",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      }
+    ],
+    "name_es": "Scooters"
+  },
+  {
+    "name": "Fatbikes",
+    "slug": "fatbikes",
+    "icon": "Bike",
+    "sort_order": 8,
+    "parent_slug": "bikes-mopeds",
+    "name_es": "Fatbikes"
+  },
+  {
+    "name": "Bike Accessories",
+    "slug": "bike-accessories",
+    "icon": "Settings",
+    "sort_order": 8,
+    "parent_slug": "bikes-mopeds",
+    "name_es": "Accesorios de Bicicleta"
+  },
+  {
+    "name": "Other",
+    "slug": "bikes-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 9,
+    "parent_slug": "bikes-mopeds",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Games & Consoles",
+    "slug": "gaming",
+    "icon": "Gamepad2",
+    "sort_order": 14,
+    "parent_slug": null,
+    "name_es": "Juegos y Consolas"
+  },
+  {
+    "name": "PlayStation",
+    "slug": "playstation",
+    "icon": "Gamepad2",
+    "sort_order": 1,
+    "parent_slug": "gaming",
+    "name_es": "PlayStation"
+  },
+  {
+    "name": "Xbox",
+    "slug": "xbox",
+    "icon": "Gamepad2",
+    "sort_order": 2,
+    "parent_slug": "gaming",
+    "name_es": "Xbox"
+  },
+  {
+    "name": "Nintendo",
+    "slug": "nintendo",
+    "icon": "Gamepad2",
+    "sort_order": 3,
+    "parent_slug": "gaming",
+    "name_es": "Nintendo"
+  },
+  {
+    "name": "PC Games",
+    "slug": "pc-games",
+    "icon": "Monitor",
+    "sort_order": 4,
+    "parent_slug": "gaming",
+    "name_es": "Juegos de PC"
+  },
+  {
+    "name": "Gaming Accessories",
+    "slug": "gaming-accessories",
+    "icon": "Gamepad2",
+    "sort_order": 5,
+    "parent_slug": "gaming",
+    "name_es": "Accesorios de Gaming"
+  },
+  {
+    "name": "Bags & Accessories",
+    "slug": "bags-accessories",
+    "icon": "ShoppingBag",
+    "sort_order": 15,
+    "parent_slug": null,
+    "name_es": "Bolsos y Accesorios"
+  },
+  {
+    "name": "Handbags",
+    "slug": "handbags",
+    "icon": "ShoppingBag",
+    "sort_order": 1,
+    "parent_slug": "bags-accessories",
+    "name_es": "Carteras"
+  },
+  {
+    "name": "Luggage",
+    "slug": "luggage",
+    "icon": "Luggage",
+    "sort_order": 2,
+    "parent_slug": "bags-accessories",
+    "name_es": "Equipaje"
+  },
+  {
+    "name": "Backpacks",
+    "slug": "backpacks",
+    "icon": "Backpack",
+    "sort_order": 3,
+    "parent_slug": "bags-accessories",
+    "name_es": "Mochilas"
+  },
+  {
+    "name": "Jewellery",
+    "slug": "jewellery",
+    "icon": "Gem",
+    "sort_order": 4,
+    "parent_slug": "bags-accessories",
+    "name_es": "Joyería"
+  },
+  {
+    "name": "Watches",
+    "slug": "watches",
+    "icon": "Watch",
+    "sort_order": 5,
+    "parent_slug": "bags-accessories",
+    "name_es": "Relojes"
+  },
+  {
+    "name": "Eyewear",
+    "slug": "eyewear",
+    "icon": "Glasses",
+    "sort_order": 6,
+    "parent_slug": "bags-accessories",
+    "name_es": "Gafas"
+  },
+  {
+    "name": "Cosmetics",
+    "slug": "cosmetics",
+    "icon": "Sparkles",
+    "sort_order": 7,
+    "parent_slug": "bags-accessories",
+    "name_es": "Cosméticos"
+  },
+  {
+    "name": "Perfume",
+    "slug": "perfume",
+    "icon": "Droplets",
+    "sort_order": 8,
+    "parent_slug": "bags-accessories",
+    "name_es": "Perfume"
+  },
+  {
+    "name": "Wallets",
+    "slug": "wallets",
+    "icon": "Wallet",
+    "sort_order": 9,
+    "parent_slug": "bags-accessories",
+    "name_es": "Billeteras"
+  },
+  {
+    "name": "Hobbies & Leisure",
+    "slug": "hobbies",
+    "icon": "Puzzle",
+    "sort_order": 16,
+    "parent_slug": null,
+    "name_es": "Aficiones y Ocio"
+  },
+  {
+    "name": "Model Building",
+    "slug": "model-building",
+    "icon": "Blocks",
+    "sort_order": 1,
+    "parent_slug": "hobbies",
+    "name_es": "Modelismo"
+  },
+  {
+    "name": "Model Trains",
+    "slug": "model-trains",
+    "icon": "Train",
+    "sort_order": 2,
+    "parent_slug": "hobbies",
+    "name_es": "Trenes en Miniatura"
+  },
+  {
+    "name": "Model Cars",
+    "slug": "model-cars",
+    "icon": "Car",
+    "sort_order": 3,
+    "parent_slug": "hobbies",
+    "name_es": "Coches en Miniatura"
+  },
+  {
+    "name": "Board Games",
+    "slug": "board-games",
+    "icon": "Dice5",
+    "sort_order": 4,
+    "parent_slug": "hobbies",
+    "name_es": "Juegos de Mesa"
+  },
+  {
+    "name": "Trading Cards",
+    "slug": "trading-cards",
+    "icon": "CreditCard",
+    "sort_order": 5,
+    "parent_slug": "hobbies",
+    "name_es": "Cartas Coleccionables"
+  },
+  {
+    "name": "Crafts",
+    "slug": "crafts",
+    "icon": "Scissors",
+    "sort_order": 6,
+    "parent_slug": "hobbies",
+    "name_es": "Manualidades"
+  },
+  {
+    "name": "Fabric & Knitting",
+    "slug": "fabric-knitting",
+    "icon": "Scissors",
+    "sort_order": 7,
+    "parent_slug": "hobbies",
+    "name_es": "Telas y Punto"
+  },
+  {
+    "name": "Electronics Hobby",
+    "slug": "electronics-hobby",
+    "icon": "Cpu",
+    "sort_order": 8,
+    "parent_slug": "hobbies",
+    "name_es": "Electrónica Hobby"
+  },
+  {
+    "name": "Party",
+    "slug": "party",
+    "icon": "PartyPopper",
+    "sort_order": 9,
+    "parent_slug": "hobbies",
+    "name_es": "Fiestas"
+  },
+  {
+    "name": "Collectibles",
+    "slug": "collectibles",
+    "icon": "Star",
+    "sort_order": 10,
+    "parent_slug": "hobbies",
+    "attributes": [
+      {
+        "key": "type",
+        "label": "Type",
+        "type": "select",
+        "options": [
+          "Comic Book",
+          "Action Figure",
+          "Trading Card",
+          "Poster",
+          "Memorabilia",
+          "Vintage Item",
+          "Other"
+        ],
+        "label_es": "Tipo",
+        "options_es": [
+          "Cómic",
+          "Figura de acción",
+          "Carta coleccionable",
+          "Póster",
+          "Objetos conmemorativos",
+          "Artículo vintage",
+          "Otro"
+        ]
+      }
+    ],
+    "name_es": "Coleccionables"
+  },
+  {
+    "name": "Other",
+    "slug": "hobbies-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 11,
+    "parent_slug": "hobbies",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Home & Furniture",
+    "slug": "furniture",
+    "icon": "Sofa",
+    "sort_order": 17,
+    "parent_slug": null,
+    "name_es": "Hogar y Muebles"
+  },
+  {
+    "name": "Sofas",
+    "slug": "sofas",
+    "icon": "Sofa",
+    "sort_order": 1,
+    "parent_slug": "furniture",
+    "name_es": "Sofás"
+  },
+  {
+    "name": "Tables",
+    "slug": "tables",
+    "icon": "LayoutGrid",
+    "sort_order": 2,
+    "parent_slug": "furniture",
+    "name_es": "Mesas"
+  },
+  {
+    "name": "Beds",
+    "slug": "beds",
+    "icon": "Bed",
+    "sort_order": 3,
+    "parent_slug": "furniture",
+    "name_es": "Camas"
+  },
+  {
+    "name": "Storage",
+    "slug": "storage",
+    "icon": "Archive",
+    "sort_order": 4,
+    "parent_slug": "furniture",
+    "name_es": "Almacenamiento"
+  },
+  {
+    "name": "Lamps",
+    "slug": "lamps",
+    "icon": "Lamp",
+    "sort_order": 5,
+    "parent_slug": "furniture",
+    "name_es": "Lámparas"
+  },
+  {
+    "name": "Kitchen",
+    "slug": "kitchen",
+    "icon": "UtensilsCrossed",
+    "sort_order": 6,
+    "parent_slug": "furniture",
+    "name_es": "Cocina"
+  },
+  {
+    "name": "Flooring & Textiles",
+    "slug": "flooring-textiles",
+    "icon": "LayoutGrid",
+    "sort_order": 7,
+    "parent_slug": "furniture",
+    "name_es": "Suelos y Textiles"
+  },
+  {
+    "name": "Home Decor",
+    "slug": "home-decor",
+    "icon": "Paintbrush",
+    "sort_order": 8,
+    "parent_slug": "furniture",
+    "name_es": "Decoración del Hogar"
+  },
+  {
+    "name": "Other",
+    "slug": "furniture-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 9,
+    "parent_slug": "furniture",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Real Estate",
+    "slug": "real-estate",
+    "icon": "Home",
+    "sort_order": 18,
+    "parent_slug": null,
+    "name_es": "Inmuebles"
+  },
+  {
+    "name": "Houses for Sale",
+    "slug": "houses-sale",
+    "icon": "Home",
+    "sort_order": 1,
+    "parent_slug": "real-estate",
+    "name_es": "Casas en Venta"
+  },
+  {
+    "name": "Houses for Rent",
+    "slug": "houses-rent",
+    "icon": "Home",
+    "sort_order": 2,
+    "parent_slug": "real-estate",
+    "name_es": "Casas en Alquiler"
+  },
+  {
+    "name": "Apartments for Rent",
+    "slug": "apartments-rent",
+    "icon": "Building2",
+    "sort_order": 3,
+    "parent_slug": "real-estate",
+    "name_es": "Apartamentos en Alquiler"
+  },
+  {
+    "name": "Apartments for Sale",
+    "slug": "apartments-sale",
+    "icon": "Building2",
+    "sort_order": 4,
+    "parent_slug": "real-estate",
+    "name_es": "Apartamentos en Venta"
+  },
+  {
+    "name": "Land",
+    "slug": "land",
+    "icon": "MapPin",
+    "sort_order": 5,
+    "parent_slug": "real-estate",
+    "name_es": "Terrenos"
+  },
+  {
+    "name": "Garages",
+    "slug": "garages",
+    "icon": "Warehouse",
+    "sort_order": 6,
+    "parent_slug": "real-estate",
+    "name_es": "Garajes"
+  },
+  {
+    "name": "Kids & Babies",
+    "slug": "kids-babies",
+    "icon": "Baby",
+    "sort_order": 19,
+    "parent_slug": null,
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "text",
+        "label_es": "Marca"
+      },
+      {
+        "key": "size",
+        "label": "Size",
+        "type": "text",
+        "label_es": "Tamaño"
+      },
+      {
+        "key": "age_range",
+        "label": "Age range",
+        "type": "text",
+        "label_es": "Rango de edad"
+      }
+    ],
+    "name_es": "Niños y Bebés"
+  },
+  {
+    "name": "Baby Gear",
+    "slug": "baby-gear",
+    "icon": "Baby",
+    "sort_order": 1,
+    "parent_slug": "kids-babies",
+    "name_es": "Equipo de Bebé"
+  },
+  {
+    "name": "Baby Clothing",
+    "slug": "baby-clothing",
+    "icon": "Baby",
+    "sort_order": 2,
+    "parent_slug": "kids-babies",
+    "name_es": "Ropa de Bebé"
+  },
+  {
+    "name": "Kids' Clothing",
+    "slug": "kids-clothing",
+    "icon": "Shirt",
+    "sort_order": 3,
+    "parent_slug": "kids-babies",
+    "name_es": "Ropa de Niños"
+  },
+  {
+    "name": "Toys",
+    "slug": "toys",
+    "icon": "Puzzle",
+    "sort_order": 4,
+    "parent_slug": "kids-babies",
+    "name_es": "Juguetes"
+  },
+  {
+    "name": "Outdoor Play",
+    "slug": "outdoor-play",
+    "icon": "Trees",
+    "sort_order": 5,
+    "parent_slug": "kids-babies",
+    "name_es": "Juegos al Aire Libre"
+  },
+  {
+    "name": "Kids' Furniture",
+    "slug": "kids-furniture",
+    "icon": "Armchair",
+    "sort_order": 6,
+    "parent_slug": "kids-babies",
+    "name_es": "Muebles Infantiles"
+  },
+  {
+    "name": "Prams",
+    "slug": "prams",
+    "icon": "Baby",
+    "sort_order": 7,
+    "parent_slug": "kids-babies",
+    "name_es": "Coches de Bebé"
+  },
+  {
+    "name": "Car Seats",
+    "slug": "car-seats",
+    "icon": "Car",
+    "sort_order": 8,
+    "parent_slug": "kids-babies",
+    "name_es": "Sillas de Coche"
+  },
+  {
+    "name": "Other",
+    "slug": "kids-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 9,
+    "parent_slug": "kids-babies",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Women's Clothing",
+    "slug": "womens-clothing",
+    "icon": "ShoppingBag",
+    "sort_order": 20,
+    "parent_slug": null,
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "text",
+        "label_es": "Marca"
+      },
+      {
+        "key": "size",
+        "label": "Size",
+        "type": "text",
+        "label_es": "Tamaño"
+      },
+      {
+        "key": "color",
+        "label": "Color",
+        "type": "text",
+        "label_es": "Color"
+      }
+    ],
+    "name_es": "Ropa de Mujer"
+  },
+  {
+    "name": "Tops",
+    "slug": "womens-tops",
+    "icon": "Shirt",
+    "sort_order": 1,
+    "parent_slug": "womens-clothing",
+    "name_es": "Tops"
+  },
+  {
+    "name": "Dresses & Skirts",
+    "slug": "dresses-skirts",
+    "icon": "Shirt",
+    "sort_order": 2,
+    "parent_slug": "womens-clothing",
+    "name_es": "Vestidos y Faldas"
+  },
+  {
+    "name": "Jeans",
+    "slug": "womens-jeans",
+    "icon": "Shirt",
+    "sort_order": 3,
+    "parent_slug": "womens-clothing",
+    "name_es": "Jeans"
+  },
+  {
+    "name": "Jackets",
+    "slug": "womens-jackets",
+    "icon": "Shirt",
+    "sort_order": 4,
+    "parent_slug": "womens-clothing",
+    "name_es": "Chaquetas"
+  },
+  {
+    "name": "Knitwear",
+    "slug": "womens-knitwear",
+    "icon": "Shirt",
+    "sort_order": 5,
+    "parent_slug": "womens-clothing",
+    "name_es": "Punto"
+  },
+  {
+    "name": "Sportswear",
+    "slug": "womens-sportswear",
+    "icon": "Activity",
+    "sort_order": 6,
+    "parent_slug": "womens-clothing",
+    "name_es": "Ropa Deportiva"
+  },
+  {
+    "name": "Swimwear",
+    "slug": "womens-swimwear",
+    "icon": "Waves",
+    "sort_order": 7,
+    "parent_slug": "womens-clothing",
+    "name_es": "Trajes de Baño"
+  },
+  {
+    "name": "Shoes",
+    "slug": "womens-shoes",
+    "icon": "Footprints",
+    "sort_order": 8,
+    "parent_slug": "womens-clothing",
+    "name_es": "Zapatos"
+  },
+  {
+    "name": "Accessories",
+    "slug": "womens-accessories",
+    "icon": "Gem",
+    "sort_order": 9,
+    "parent_slug": "womens-clothing",
+    "name_es": "Accesorios"
+  },
+  {
+    "name": "Other",
+    "slug": "womens-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 10,
+    "parent_slug": "womens-clothing",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Men's Clothing",
+    "slug": "mens-clothing",
+    "icon": "Shirt",
+    "sort_order": 21,
+    "parent_slug": null,
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "text",
+        "label_es": "Marca"
+      },
+      {
+        "key": "size",
+        "label": "Size",
+        "type": "text",
+        "label_es": "Tamaño"
+      },
+      {
+        "key": "color",
+        "label": "Color",
+        "type": "text",
+        "label_es": "Color"
+      }
+    ],
+    "name_es": "Ropa de Hombre"
+  },
+  {
+    "name": "T-Shirts",
+    "slug": "mens-tshirts",
+    "icon": "Shirt",
+    "sort_order": 1,
+    "parent_slug": "mens-clothing",
+    "name_es": "Camisetas"
+  },
+  {
+    "name": "Shirts",
+    "slug": "mens-shirts",
+    "icon": "Shirt",
+    "sort_order": 2,
+    "parent_slug": "mens-clothing",
+    "name_es": "Camisas"
+  },
+  {
+    "name": "Jeans",
+    "slug": "mens-jeans",
+    "icon": "Shirt",
+    "sort_order": 3,
+    "parent_slug": "mens-clothing",
+    "name_es": "Jeans"
+  },
+  {
+    "name": "Jackets",
+    "slug": "mens-jackets",
+    "icon": "Shirt",
+    "sort_order": 4,
+    "parent_slug": "mens-clothing",
+    "name_es": "Chaquetas"
+  },
+  {
+    "name": "Knitwear",
+    "slug": "mens-knitwear",
+    "icon": "Shirt",
+    "sort_order": 5,
+    "parent_slug": "mens-clothing",
+    "name_es": "Punto"
+  },
+  {
+    "name": "Suits",
+    "slug": "mens-suits",
+    "icon": "Briefcase",
+    "sort_order": 6,
+    "parent_slug": "mens-clothing",
+    "name_es": "Trajes"
+  },
+  {
+    "name": "Sportswear",
+    "slug": "mens-sportswear",
+    "icon": "Activity",
+    "sort_order": 7,
+    "parent_slug": "mens-clothing",
+    "name_es": "Ropa Deportiva"
+  },
+  {
+    "name": "Swimwear",
+    "slug": "mens-swimwear",
+    "icon": "Waves",
+    "sort_order": 8,
+    "parent_slug": "mens-clothing",
+    "name_es": "Bañadores"
+  },
+  {
+    "name": "Shoes",
+    "slug": "mens-shoes",
+    "icon": "Footprints",
+    "sort_order": 9,
+    "parent_slug": "mens-clothing",
+    "name_es": "Zapatos"
+  },
+  {
+    "name": "Accessories",
+    "slug": "mens-accessories",
+    "icon": "Watch",
+    "sort_order": 10,
+    "parent_slug": "mens-clothing",
+    "name_es": "Accesorios"
+  },
+  {
+    "name": "Other",
+    "slug": "mens-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 11,
+    "parent_slug": "mens-clothing",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Motorcycles",
+    "slug": "motorcycles",
+    "icon": "Bike",
+    "sort_order": 22,
+    "parent_slug": null,
+    "name_es": "Motocicletas"
+  },
+  {
+    "name": "Naked Bikes",
+    "slug": "naked-bikes",
+    "icon": "Bike",
+    "sort_order": 1,
+    "parent_slug": "motorcycles",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "mileage",
+        "label": "Mileage",
+        "type": "select",
+        "options": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Unknown"
+        ],
+        "label_es": "Kilometraje",
+        "options_es": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "engine_cc",
+        "label": "Engine (cc)",
+        "type": "select",
+        "options": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Unknown"
+        ],
+        "label_es": "Motor (cc)",
+        "options_es": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Desconocido"
+        ]
+      }
+    ],
+    "name_es": "Naked"
+  },
+  {
+    "name": "Sportbikes",
+    "slug": "sportbikes",
+    "icon": "Bike",
+    "sort_order": 2,
+    "parent_slug": "motorcycles",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "mileage",
+        "label": "Mileage",
+        "type": "select",
+        "options": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Unknown"
+        ],
+        "label_es": "Kilometraje",
+        "options_es": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "engine_cc",
+        "label": "Engine (cc)",
+        "type": "select",
+        "options": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Unknown"
+        ],
+        "label_es": "Motor (cc)",
+        "options_es": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Desconocido"
+        ]
+      }
+    ],
+    "name_es": "Deportivas"
+  },
+  {
+    "name": "Cruisers",
+    "slug": "cruisers",
+    "icon": "Bike",
+    "sort_order": 3,
+    "parent_slug": "motorcycles",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "mileage",
+        "label": "Mileage",
+        "type": "select",
+        "options": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Unknown"
+        ],
+        "label_es": "Kilometraje",
+        "options_es": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "engine_cc",
+        "label": "Engine (cc)",
+        "type": "select",
+        "options": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Unknown"
+        ],
+        "label_es": "Motor (cc)",
+        "options_es": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Desconocido"
+        ]
+      }
+    ],
+    "name_es": "Cruisers"
+  },
+  {
+    "name": "Adventure & Touring",
+    "slug": "adventure-touring",
+    "icon": "Bike",
+    "sort_order": 4,
+    "parent_slug": "motorcycles",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "mileage",
+        "label": "Mileage",
+        "type": "select",
+        "options": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Unknown"
+        ],
+        "label_es": "Kilometraje",
+        "options_es": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "engine_cc",
+        "label": "Engine (cc)",
+        "type": "select",
+        "options": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Unknown"
+        ],
+        "label_es": "Motor (cc)",
+        "options_es": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Desconocido"
+        ]
+      }
+    ],
+    "name_es": "Adventure y Touring"
+  },
+  {
+    "name": "Enduro & Motocross",
+    "slug": "enduro-motocross",
+    "icon": "Bike",
+    "sort_order": 5,
+    "parent_slug": "motorcycles",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "engine_cc",
+        "label": "Engine (cc)",
+        "type": "select",
+        "options": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Unknown"
+        ],
+        "label_es": "Motor (cc)",
+        "options_es": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Desconocido"
+        ]
+      }
+    ],
+    "name_es": "Enduro y Motocross"
+  },
+  {
+    "name": "Classic Motorcycles",
+    "slug": "classic-motorcycles",
+    "icon": "Bike",
+    "sort_order": 6,
+    "parent_slug": "motorcycles",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "engine_cc",
+        "label": "Engine (cc)",
+        "type": "select",
+        "options": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Unknown"
+        ],
+        "label_es": "Motor (cc)",
+        "options_es": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Desconocido"
+        ]
+      }
+    ],
+    "name_es": "Motos Clásicas"
+  },
+  {
+    "name": "Trikes",
+    "slug": "trikes",
+    "icon": "Bike",
+    "sort_order": 7,
+    "parent_slug": "motorcycles",
+    "attributes": [
+      {
+        "key": "make",
+        "label": "Make",
+        "type": "select",
+        "options": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Harley-Davidson",
+          "Honda",
+          "Yamaha",
+          "Kawasaki",
+          "Suzuki",
+          "BMW",
+          "Ducati",
+          "Triumph",
+          "KTM",
+          "Royal Enfield",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "year",
+        "label": "Year",
+        "type": "select",
+        "options": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Older"
+        ],
+        "label_es": "Año",
+        "options_es": [
+          "2026",
+          "2025",
+          "2024",
+          "2023",
+          "2022",
+          "2021",
+          "2020",
+          "2019",
+          "2018",
+          "2017",
+          "2016",
+          "2015",
+          "2014",
+          "2013",
+          "2012",
+          "2011",
+          "2010",
+          "2009",
+          "2008",
+          "2007",
+          "2006",
+          "2005",
+          "2004",
+          "2003",
+          "2002",
+          "2001",
+          "2000",
+          "1999",
+          "1998",
+          "1997",
+          "Más antiguo"
+        ]
+      },
+      {
+        "key": "mileage",
+        "label": "Mileage",
+        "type": "select",
+        "options": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Unknown"
+        ],
+        "label_es": "Kilometraje",
+        "options_es": [
+          "0 – 10,000 km",
+          "10,000 – 50,000 km",
+          "50,000 – 100,000 km",
+          "100,000 – 200,000 km",
+          "200,000 – 300,000 km",
+          "300,000+ km",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "engine_cc",
+        "label": "Engine (cc)",
+        "type": "select",
+        "options": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Unknown"
+        ],
+        "label_es": "Motor (cc)",
+        "options_es": [
+          "0 – 250cc",
+          "250 – 500cc",
+          "500 – 750cc",
+          "750 – 1,000cc",
+          "1,000cc+",
+          "Desconocido"
+        ]
+      }
+    ],
+    "name_es": "Trikes"
+  },
+  {
+    "name": "Motorcycle Parts",
+    "slug": "motorcycle-parts",
+    "icon": "Settings",
+    "sort_order": 8,
+    "parent_slug": "motorcycles",
+    "name_es": "Piezas de Moto"
+  },
+  {
+    "name": "Moto Clothing",
+    "slug": "moto-clothing",
+    "icon": "Shirt",
+    "sort_order": 9,
+    "parent_slug": "motorcycles",
+    "name_es": "Ropa de Moto"
+  },
+  {
+    "name": "Other",
+    "slug": "motorcycles-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 10,
+    "parent_slug": "motorcycles",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Music & Instruments",
+    "slug": "music",
+    "icon": "Music",
+    "sort_order": 23,
+    "parent_slug": null,
+    "name_es": "Música e Instrumentos"
+  },
+  {
+    "name": "Guitars",
+    "slug": "guitars",
+    "icon": "Music",
+    "sort_order": 1,
+    "parent_slug": "music",
+    "name_es": "Guitarras"
+  },
+  {
+    "name": "Keyboards & Pianos",
+    "slug": "keyboards-pianos",
+    "icon": "Music",
+    "sort_order": 2,
+    "parent_slug": "music",
+    "name_es": "Teclados y Pianos"
+  },
+  {
+    "name": "Drums",
+    "slug": "drums",
+    "icon": "Music",
+    "sort_order": 3,
+    "parent_slug": "music",
+    "name_es": "Batería"
+  },
+  {
+    "name": "Wind Instruments",
+    "slug": "wind-instruments",
+    "icon": "Music",
+    "sort_order": 4,
+    "parent_slug": "music",
+    "name_es": "Instrumentos de Viento"
+  },
+  {
+    "name": "String Instruments",
+    "slug": "string-instruments",
+    "icon": "Music",
+    "sort_order": 5,
+    "parent_slug": "music",
+    "name_es": "Instrumentos de Cuerda"
+  },
+  {
+    "name": "DJ & Studio",
+    "slug": "dj-studio",
+    "icon": "Disc",
+    "sort_order": 6,
+    "parent_slug": "music",
+    "name_es": "DJ y Estudio"
+  },
+  {
+    "name": "Amps & Effects",
+    "slug": "amps-effects",
+    "icon": "Volume2",
+    "sort_order": 7,
+    "parent_slug": "music",
+    "name_es": "Amplificadores y Efectos"
+  },
+  {
+    "name": "PA & Lighting",
+    "slug": "pa-lighting",
+    "icon": "Lightbulb",
+    "sort_order": 8,
+    "parent_slug": "music",
+    "name_es": "PA e Iluminación"
+  },
+  {
+    "name": "Sheet Music",
+    "slug": "sheet-music",
+    "icon": "FileText",
+    "sort_order": 9,
+    "parent_slug": "music",
+    "name_es": "Partituras"
+  },
+  {
+    "name": "Vinyl & CDs",
+    "slug": "vinyl-cds",
+    "icon": "Disc",
+    "sort_order": 10,
+    "parent_slug": "music",
+    "name_es": "Vinilos y CDs"
+  },
+  {
+    "name": "Other",
+    "slug": "music-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 11,
+    "parent_slug": "music",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Sport & Fitness",
+    "slug": "sport",
+    "icon": "Dumbbell",
+    "sort_order": 24,
+    "parent_slug": null,
+    "name_es": "Deporte y Fitness"
+  },
+  {
+    "name": "Ball Sports",
+    "slug": "ball-sports",
+    "icon": "Trophy",
+    "sort_order": 1,
+    "parent_slug": "sport",
+    "name_es": "Deportes de Pelota"
+  },
+  {
+    "name": "Fitness",
+    "slug": "fitness",
+    "icon": "Dumbbell",
+    "sort_order": 2,
+    "parent_slug": "sport",
+    "name_es": "Fitness"
+  },
+  {
+    "name": "Racket Sports",
+    "slug": "racket-sports",
+    "icon": "Trophy",
+    "sort_order": 3,
+    "parent_slug": "sport",
+    "name_es": "Deportes de Raqueta"
+  },
+  {
+    "name": "Golf",
+    "slug": "golf",
+    "icon": "Trophy",
+    "sort_order": 4,
+    "parent_slug": "sport",
+    "name_es": "Golf"
+  },
+  {
+    "name": "Martial Arts",
+    "slug": "martial-arts",
+    "icon": "Shield",
+    "sort_order": 5,
+    "parent_slug": "sport",
+    "name_es": "Artes Marciales"
+  },
+  {
+    "name": "Camping & Hiking",
+    "slug": "camping-hiking",
+    "icon": "Tent",
+    "sort_order": 6,
+    "parent_slug": "sport",
+    "name_es": "Camping y Senderismo"
+  },
+  {
+    "name": "Running",
+    "slug": "running",
+    "icon": "Activity",
+    "sort_order": 7,
+    "parent_slug": "sport",
+    "name_es": "Running"
+  },
+  {
+    "name": "Wellness",
+    "slug": "wellness",
+    "icon": "Heart",
+    "sort_order": 8,
+    "parent_slug": "sport",
+    "name_es": "Bienestar"
+  },
+  {
+    "name": "Other",
+    "slug": "sport-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 9,
+    "parent_slug": "sport",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Phones & Tablets",
+    "slug": "phones",
+    "icon": "Smartphone",
+    "sort_order": 25,
+    "parent_slug": null,
+    "name_es": "Teléfonos y Tablets"
+  },
+  {
+    "name": "Mobile Phones",
+    "slug": "mobile-phones",
+    "icon": "Smartphone",
+    "sort_order": 1,
+    "parent_slug": "phones",
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "select",
+        "options": [
+          "Apple",
+          "Samsung",
+          "Huawei",
+          "Xiaomi",
+          "OnePlus",
+          "Google",
+          "Motorola",
+          "Nokia",
+          "Sony",
+          "LG",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Apple",
+          "Samsung",
+          "Huawei",
+          "Xiaomi",
+          "OnePlus",
+          "Google",
+          "Motorola",
+          "Nokia",
+          "Sony",
+          "LG",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "storage",
+        "label": "Storage",
+        "type": "select",
+        "options": [
+          "16GB",
+          "32GB",
+          "64GB",
+          "128GB",
+          "256GB",
+          "512GB",
+          "1TB",
+          "Unknown"
+        ],
+        "label_es": "Almacenamiento",
+        "options_es": [
+          "16GB",
+          "32GB",
+          "64GB",
+          "128GB",
+          "256GB",
+          "512GB",
+          "1TB",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "color",
+        "label": "Color",
+        "type": "text",
+        "label_es": "Color"
+      }
+    ],
+    "name_es": "Teléfonos Móviles"
+  },
+  {
+    "name": "Tablets",
+    "slug": "tablets",
+    "icon": "Tablet",
+    "sort_order": 2,
+    "parent_slug": "phones",
+    "attributes": [
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "select",
+        "options": [
+          "Apple",
+          "Samsung",
+          "Lenovo",
+          "Huawei",
+          "Microsoft",
+          "Amazon",
+          "Other"
+        ],
+        "label_es": "Marca",
+        "options_es": [
+          "Apple",
+          "Samsung",
+          "Lenovo",
+          "Huawei",
+          "Microsoft",
+          "Amazon",
+          "Otro"
+        ]
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "label_es": "Modelo"
+      },
+      {
+        "key": "storage",
+        "label": "Storage",
+        "type": "select",
+        "options": [
+          "16GB",
+          "32GB",
+          "64GB",
+          "128GB",
+          "256GB",
+          "512GB",
+          "1TB",
+          "Unknown"
+        ],
+        "label_es": "Almacenamiento",
+        "options_es": [
+          "16GB",
+          "32GB",
+          "64GB",
+          "128GB",
+          "256GB",
+          "512GB",
+          "1TB",
+          "Desconocido"
+        ]
+      },
+      {
+        "key": "color",
+        "label": "Color",
+        "type": "text",
+        "label_es": "Color"
+      }
+    ],
+    "name_es": "Tablets"
+  },
+  {
+    "name": "Phone Cases",
+    "slug": "phone-cases",
+    "icon": "Smartphone",
+    "sort_order": 3,
+    "parent_slug": "phones",
+    "name_es": "Fundas de Teléfono"
+  },
+  {
+    "name": "Wearables",
+    "slug": "wearables",
+    "icon": "Watch",
+    "sort_order": 4,
+    "parent_slug": "phones",
+    "name_es": "Wearables"
+  },
+  {
+    "name": "Other",
+    "slug": "telecom-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 5,
+    "parent_slug": "phones",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Tickets & Events",
+    "slug": "tickets",
+    "icon": "Ticket",
+    "sort_order": 26,
+    "parent_slug": null,
+    "name_es": "Entradas y Eventos"
+  },
+  {
+    "name": "Concerts",
+    "slug": "concerts",
+    "icon": "Music",
+    "sort_order": 1,
+    "parent_slug": "tickets",
+    "name_es": "Conciertos"
+  },
+  {
+    "name": "Sports Events",
+    "slug": "sports-events",
+    "icon": "Trophy",
+    "sort_order": 2,
+    "parent_slug": "tickets",
+    "name_es": "Eventos Deportivos"
+  },
+  {
+    "name": "Music",
+    "slug": "music-tickets",
+    "icon": "Headphones",
+    "sort_order": 3,
+    "parent_slug": "tickets",
+    "name_es": "Música"
+  },
+  {
+    "name": "Gift Cards & Vouchers",
+    "slug": "gift-cards",
+    "icon": "Gift",
+    "sort_order": 4,
+    "parent_slug": "tickets",
+    "name_es": "Tarjetas de Regalo y Vales"
+  },
+  {
+    "name": "Other",
+    "slug": "tickets-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 5,
+    "parent_slug": "tickets",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Garden & Outdoor",
+    "slug": "garden",
+    "icon": "Trees",
+    "sort_order": 27,
+    "parent_slug": null,
+    "name_es": "Jardín y Exterior"
+  },
+  {
+    "name": "Plants & Trees",
+    "slug": "plants-trees",
+    "icon": "TreePine",
+    "sort_order": 1,
+    "parent_slug": "garden",
+    "attributes": [
+      {
+        "key": "type",
+        "label": "Type",
+        "type": "select",
+        "options": [
+          "Tree",
+          "Shrub",
+          "Flower",
+          "Cactus",
+          "Palm",
+          "Herb",
+          "Other"
+        ],
+        "label_es": "Tipo",
+        "options_es": [
+          "Árbol",
+          "Arbusto",
+          "Flor",
+          "Cactus",
+          "Palmera",
+          "Hierba",
+          "Otro"
+        ]
+      },
+      {
+        "key": "size",
+        "label": "Size",
+        "type": "select",
+        "options": [
+          "Small",
+          "Medium",
+          "Large"
+        ],
+        "label_es": "Tamaño",
+        "options_es": [
+          "Pequeño",
+          "Mediano",
+          "Grande"
+        ]
+      }
+    ],
+    "name_es": "Plantas y Árboles"
+  },
+  {
+    "name": "Garden Furniture",
+    "slug": "garden-furniture",
+    "icon": "Armchair",
+    "sort_order": 2,
+    "parent_slug": "garden",
+    "attributes": [
+      {
+        "key": "type",
+        "label": "Type",
+        "type": "select",
+        "options": [
+          "Table",
+          "Chair",
+          "Lounge Set",
+          "Bench",
+          "Hammock",
+          "Sunbed",
+          "Other"
+        ],
+        "label_es": "Tipo",
+        "options_es": [
+          "Mesa",
+          "Silla",
+          "Conjunto de jardín",
+          "Banco",
+          "Hamaca",
+          "Tumbona",
+          "Otro"
+        ]
+      },
+      {
+        "key": "material",
+        "label": "Material",
+        "type": "select",
+        "options": [
+          "Wood",
+          "Metal",
+          "Plastic",
+          "Wicker",
+          "Teak",
+          "Other"
+        ],
+        "label_es": "Material",
+        "options_es": [
+          "Madera",
+          "Metal",
+          "Plástico",
+          "Mimbre",
+          "Teca",
+          "Otro"
+        ]
+      }
+    ],
+    "name_es": "Muebles de Jardín"
+  },
+  {
+    "name": "Garden Tools",
+    "slug": "garden-tools",
+    "icon": "Shovel",
+    "sort_order": 3,
+    "parent_slug": "garden",
+    "name_es": "Herramientas de Jardín"
+  },
+  {
+    "name": "Plant Pots",
+    "slug": "plant-pots",
+    "icon": "FlowerIcon",
+    "sort_order": 4,
+    "parent_slug": "garden",
+    "name_es": "Macetas"
+  },
+  {
+    "name": "BBQ",
+    "slug": "bbq",
+    "icon": "Flame",
+    "sort_order": 5,
+    "parent_slug": "garden",
+    "name_es": "Barbacoa"
+  },
+  {
+    "name": "Garden Sheds",
+    "slug": "garden-sheds",
+    "icon": "Home",
+    "sort_order": 6,
+    "parent_slug": "garden",
+    "name_es": "Cobertizos"
+  },
+  {
+    "name": "Landscaping",
+    "slug": "landscaping",
+    "icon": "Trees",
+    "sort_order": 7,
+    "parent_slug": "garden",
+    "name_es": "Paisajismo"
+  },
+  {
+    "name": "Irrigation",
+    "slug": "irrigation",
+    "icon": "Droplets",
+    "sort_order": 8,
+    "parent_slug": "garden",
+    "name_es": "Riego"
+  },
+  {
+    "name": "Garden Decoration",
+    "slug": "garden-deco",
+    "icon": "Sparkles",
+    "sort_order": 9,
+    "parent_slug": "garden",
+    "name_es": "Decoración de Jardín"
+  },
+  {
+    "name": "Fencing",
+    "slug": "fencing",
+    "icon": "Layers",
+    "sort_order": 10,
+    "parent_slug": "garden",
+    "name_es": "Vallas"
+  },
+  {
+    "name": "Parasols",
+    "slug": "parasols",
+    "icon": "Umbrella",
+    "sort_order": 11,
+    "parent_slug": "garden",
+    "name_es": "Sombrillas"
+  },
+  {
+    "name": "Pools",
+    "slug": "pools",
+    "icon": "Waves",
+    "sort_order": 12,
+    "parent_slug": "garden",
+    "name_es": "Piscinas"
+  },
+  {
+    "name": "Shipping Container",
+    "slug": "shipping-container",
+    "icon": "Container",
+    "sort_order": 13,
+    "parent_slug": "garden",
+    "attributes": [
+      {
+        "key": "size",
+        "label": "Size",
+        "type": "select",
+        "options": [
+          "20ft",
+          "40ft"
+        ],
+        "label_es": "Tamaño"
+      }
+    ],
+    "name_es": "Contenedor Marítimo"
+  },
+  {
+    "name": "Other",
+    "slug": "garden-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 14,
+    "parent_slug": "garden",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Jobs",
+    "slug": "jobs",
+    "icon": "Briefcase",
+    "sort_order": 28,
+    "parent_slug": null,
+    "name_es": "Empleo"
+  },
+  {
+    "name": "Construction",
+    "slug": "jobs-construction",
+    "icon": "HardHat",
+    "sort_order": 1,
+    "parent_slug": "jobs",
+    "name_es": "Construcción"
+  },
+  {
+    "name": "IT",
+    "slug": "jobs-it",
+    "icon": "Monitor",
+    "sort_order": 2,
+    "parent_slug": "jobs",
+    "name_es": "Tecnología"
+  },
+  {
+    "name": "Healthcare",
+    "slug": "jobs-healthcare",
+    "icon": "Heart",
+    "sort_order": 3,
+    "parent_slug": "jobs",
+    "name_es": "Salud"
+  },
+  {
+    "name": "Hospitality",
+    "slug": "jobs-hospitality",
+    "icon": "UtensilsCrossed",
+    "sort_order": 4,
+    "parent_slug": "jobs",
+    "name_es": "Hostelería"
+  },
+  {
+    "name": "Sales",
+    "slug": "jobs-sales",
+    "icon": "TrendingUp",
+    "sort_order": 5,
+    "parent_slug": "jobs",
+    "name_es": "Ventas"
+  },
+  {
+    "name": "Admin",
+    "slug": "jobs-admin",
+    "icon": "ClipboardList",
+    "sort_order": 6,
+    "parent_slug": "jobs",
+    "name_es": "Administración"
+  },
+  {
+    "name": "Management",
+    "slug": "jobs-management",
+    "icon": "Users",
+    "sort_order": 7,
+    "parent_slug": "jobs",
+    "name_es": "Gestión"
+  },
+  {
+    "name": "Student",
+    "slug": "jobs-student",
+    "icon": "GraduationCap",
+    "sort_order": 8,
+    "parent_slug": "jobs",
+    "name_es": "Estudiante"
+  },
+  {
+    "name": "Volunteer",
+    "slug": "jobs-volunteer",
+    "icon": "Heart",
+    "sort_order": 9,
+    "parent_slug": "jobs",
+    "name_es": "Voluntariado"
+  },
+  {
+    "name": "Government",
+    "slug": "jobs-government",
+    "icon": "Landmark",
+    "sort_order": 10,
+    "parent_slug": "jobs",
+    "name_es": "Gobierno"
+  },
+  {
+    "name": "Other",
+    "slug": "jobs-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 11,
+    "parent_slug": "jobs",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Holidays & Travel",
+    "slug": "holidays",
+    "icon": "Plane",
+    "sort_order": 29,
+    "parent_slug": null,
+    "name_es": "Viajes y Vacaciones"
+  },
+  {
+    "name": "Flights & Tickets",
+    "slug": "flights-tickets",
+    "icon": "Plane",
+    "sort_order": 1,
+    "parent_slug": "holidays",
+    "name_es": "Vuelos y Billetes"
+  },
+  {
+    "name": "Vacation Rentals",
+    "slug": "vacation-rentals",
+    "icon": "Home",
+    "sort_order": 2,
+    "parent_slug": "holidays",
+    "name_es": "Alquileres Vacacionales"
+  },
+  {
+    "name": "Tours & Activities",
+    "slug": "tours-activities",
+    "icon": "Map",
+    "sort_order": 3,
+    "parent_slug": "holidays",
+    "name_es": "Tours y Actividades"
+  },
+  {
+    "name": "Holiday Homes Netherlands",
+    "slug": "holiday-homes-nl",
+    "icon": "Home",
+    "sort_order": 4,
+    "parent_slug": "holidays",
+    "name_es": "Casas de Vacaciones Holanda"
+  },
+  {
+    "name": "Holiday Homes Europe",
+    "slug": "holiday-homes-eu",
+    "icon": "Home",
+    "sort_order": 5,
+    "parent_slug": "holidays",
+    "name_es": "Casas de Vacaciones Europa"
+  },
+  {
+    "name": "Holiday Homes Colombia",
+    "slug": "holiday-homes-co",
+    "icon": "Home",
+    "sort_order": 6,
+    "parent_slug": "holidays",
+    "name_es": "Casas de Vacaciones Colombia"
+  },
+  {
+    "name": "Holiday Homes South America",
+    "slug": "holiday-homes-sa",
+    "icon": "Home",
+    "sort_order": 7,
+    "parent_slug": "holidays",
+    "name_es": "Casas de Vacaciones Sudamérica"
+  },
+  {
+    "name": "Holiday Homes USA & Canada",
+    "slug": "holiday-homes-us",
+    "icon": "Home",
+    "sort_order": 8,
+    "parent_slug": "holidays",
+    "name_es": "Casas de Vacaciones EE.UU. y Canadá"
+  },
+  {
+    "name": "Holiday Homes Caribbean",
+    "slug": "holiday-homes-carib",
+    "icon": "Home",
+    "sort_order": 9,
+    "parent_slug": "holidays",
+    "name_es": "Casas de Vacaciones Caribe"
+  },
+  {
+    "name": "Watersports & Boats",
+    "slug": "watersports-boats",
+    "icon": "Waves",
+    "sort_order": 30,
+    "parent_slug": null,
+    "name_es": "Deportes Acuáticos y Botes"
+  },
+  {
+    "name": "Motorboats",
+    "slug": "motorboats",
+    "icon": "Anchor",
+    "sort_order": 1,
+    "parent_slug": "watersports-boats",
+    "name_es": "Botes de Motor"
+  },
+  {
+    "name": "Sailing Boats",
+    "slug": "sailing-boats",
+    "icon": "Anchor",
+    "sort_order": 2,
+    "parent_slug": "watersports-boats",
+    "name_es": "Veleros"
+  },
+  {
+    "name": "Kayaking",
+    "slug": "kayaking",
+    "icon": "Waves",
+    "sort_order": 3,
+    "parent_slug": "watersports-boats",
+    "name_es": "Kayak"
+  },
+  {
+    "name": "Jet Skis",
+    "slug": "jet-skis",
+    "icon": "Waves",
+    "sort_order": 4,
+    "parent_slug": "watersports-boats",
+    "name_es": "Motos de Agua"
+  },
+  {
+    "name": "Surfboards",
+    "slug": "surfboards",
+    "icon": "Waves",
+    "sort_order": 5,
+    "parent_slug": "watersports-boats",
+    "name_es": "Tablas de Surf"
+  },
+  {
+    "name": "Kitesurfing",
+    "slug": "kitesurfing",
+    "icon": "Wind",
+    "sort_order": 6,
+    "parent_slug": "watersports-boats",
+    "name_es": "Kitesurf"
+  },
+  {
+    "name": "Windsurfing",
+    "slug": "windsurfing",
+    "icon": "Wind",
+    "sort_order": 7,
+    "parent_slug": "watersports-boats",
+    "name_es": "Windsurf"
+  },
+  {
+    "name": "SUP",
+    "slug": "sup",
+    "icon": "Waves",
+    "sort_order": 8,
+    "parent_slug": "watersports-boats",
+    "name_es": "SUP"
+  },
+  {
+    "name": "Wingfoiling",
+    "slug": "wingfoiling",
+    "icon": "Wind",
+    "sort_order": 9,
+    "parent_slug": "watersports-boats",
+    "name_es": "Wingfoil"
+  },
+  {
+    "name": "Snorkeling & Diving",
+    "slug": "snorkeling-diving",
+    "icon": "Waves",
+    "sort_order": 10,
+    "parent_slug": "watersports-boats",
+    "name_es": "Snorkel y Buceo"
+  },
+  {
+    "name": "Fishing",
+    "slug": "fishing",
+    "icon": "Fish",
+    "sort_order": 11,
+    "parent_slug": "watersports-boats",
+    "name_es": "Pesca"
+  },
+  {
+    "name": "Boat Accessories",
+    "slug": "boat-accessories",
+    "icon": "Anchor",
+    "sort_order": 12,
+    "parent_slug": "watersports-boats",
+    "name_es": "Accesorios de Bote"
+  },
+  {
+    "name": "Moorings",
+    "slug": "moorings",
+    "icon": "Anchor",
+    "sort_order": 13,
+    "parent_slug": "watersports-boats",
+    "name_es": "Amarres"
+  },
+  {
+    "name": "Other",
+    "slug": "watersports-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 14,
+    "parent_slug": "watersports-boats",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Business Goods",
+    "slug": "business",
+    "icon": "Briefcase",
+    "sort_order": 31,
+    "parent_slug": null,
+    "name_es": "Material de Empresa"
+  },
+  {
+    "name": "Office",
+    "slug": "office",
+    "icon": "Briefcase",
+    "sort_order": 1,
+    "parent_slug": "business",
+    "name_es": "Oficina"
+  },
+  {
+    "name": "Catering",
+    "slug": "catering",
+    "icon": "UtensilsCrossed",
+    "sort_order": 2,
+    "parent_slug": "business",
+    "name_es": "Hostelería"
+  },
+  {
+    "name": "Industrial Machines",
+    "slug": "industrial-machines",
+    "icon": "Settings",
+    "sort_order": 3,
+    "parent_slug": "business",
+    "name_es": "Maquinaria Industrial"
+  },
+  {
+    "name": "Agriculture",
+    "slug": "agriculture",
+    "icon": "Wheat",
+    "sort_order": 4,
+    "parent_slug": "business",
+    "name_es": "Agricultura"
+  },
+  {
+    "name": "Retail Equipment",
+    "slug": "retail-equipment",
+    "icon": "ShoppingCart",
+    "sort_order": 5,
+    "parent_slug": "business",
+    "name_es": "Equipamiento Comercial"
+  },
+  {
+    "name": "Stock & Wholesale",
+    "slug": "stock-wholesale",
+    "icon": "Package",
+    "sort_order": 6,
+    "parent_slug": "business",
+    "name_es": "Stock y Mayorista"
+  },
+  {
+    "name": "Other",
+    "slug": "business-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 7,
+    "parent_slug": "business",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Services & Maintenance",
+    "slug": "services",
+    "icon": "Wrench",
+    "sort_order": 32,
+    "parent_slug": null,
+    "name_es": "Servicios y Mantenimiento"
+  },
+  {
+    "name": "IT Services",
+    "slug": "it-services",
+    "icon": "Monitor",
+    "sort_order": 2,
+    "parent_slug": "services",
+    "name_es": "Servicios IT"
+  },
+  {
+    "name": "Tutoring",
+    "slug": "tutoring",
+    "icon": "GraduationCap",
+    "sort_order": 3,
+    "parent_slug": "services",
+    "name_es": "Clases Particulares"
+  },
+  {
+    "name": "Beauty Services",
+    "slug": "beauty-services",
+    "icon": "Sparkles",
+    "sort_order": 4,
+    "parent_slug": "services",
+    "name_es": "Servicios de Belleza"
+  },
+  {
+    "name": "Moving",
+    "slug": "moving",
+    "icon": "Truck",
+    "sort_order": 5,
+    "parent_slug": "services",
+    "name_es": "Mudanzas"
+  },
+  {
+    "name": "Vehicle Services",
+    "slug": "vehicle-services",
+    "icon": "Car",
+    "sort_order": 6,
+    "parent_slug": "services",
+    "name_es": "Servicios de Vehículos"
+  },
+  {
+    "name": "House Cleaning",
+    "slug": "house-cleaning",
+    "icon": "Sparkles",
+    "sort_order": 7,
+    "parent_slug": "services",
+    "name_es": "Limpieza del Hogar"
+  },
+  {
+    "name": "House Maintenance",
+    "slug": "house-maintenance",
+    "icon": "Wrench",
+    "sort_order": 8,
+    "parent_slug": "services",
+    "name_es": "Mantenimiento del Hogar"
+  },
+  {
+    "name": "House Rental",
+    "slug": "house-rental",
+    "icon": "Home",
+    "sort_order": 9,
+    "parent_slug": "services",
+    "name_es": "Alquiler de Vivienda"
+  },
+  {
+    "name": "Pool Maintenance",
+    "slug": "pool-maintenance",
+    "icon": "Waves",
+    "sort_order": 10,
+    "parent_slug": "services",
+    "name_es": "Mantenimiento de Piscinas"
+  },
+  {
+    "name": "Gardening Services",
+    "slug": "gardening-services",
+    "icon": "Trees",
+    "sort_order": 11,
+    "parent_slug": "services",
+    "name_es": "Servicios de Jardinería"
+  },
+  {
+    "name": "Pest Control",
+    "slug": "pest-control",
+    "icon": "Shield",
+    "sort_order": 12,
+    "parent_slug": "services",
+    "name_es": "Control de Plagas"
+  },
+  {
+    "name": "Septic Tank Cleaning",
+    "slug": "septic-tank",
+    "icon": "Droplets",
+    "sort_order": 13,
+    "parent_slug": "services",
+    "name_es": "Limpieza de Fosas Sépticas"
+  },
+  {
+    "name": "Event Planning",
+    "slug": "event-planning",
+    "icon": "Calendar",
+    "sort_order": 14,
+    "parent_slug": "services",
+    "name_es": "Organización de Eventos"
+  },
+  {
+    "name": "Construction Services",
+    "slug": "construction-services",
+    "icon": "HardHat",
+    "sort_order": 15,
+    "parent_slug": "services",
+    "name_es": "Servicios de Construcción"
+  },
+  {
+    "name": "Other",
+    "slug": "services-other",
+    "icon": "MoreHorizontal",
+    "sort_order": 16,
+    "parent_slug": "services",
+    "name_es": "Otro"
+  },
+  {
+    "name": "Other",
+    "slug": "other",
+    "icon": "MoreHorizontal",
+    "sort_order": 33,
+    "parent_slug": null,
+    "name_es": "Otro"
+  }
+]

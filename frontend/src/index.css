@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --color-ocean-50:  #eef5fc;
+  --color-ocean-100: #d5e8f8;
+  --color-ocean-200: #aad1f1;
+  --color-ocean-300: #7ab8e8;
+  --color-ocean-400: #5aa1e3;
+  --color-ocean-500: #418FDE;
+  --color-ocean-600: #2d7ac8;
+  --color-ocean-700: #2363a3;
+  --color-ocean-800: #1b4d7e;
+  --color-ocean-900: #133a5e;
+
+  --color-sand-50:  #fffde6;
+  --color-sand-100: #fff8c0;
+  --color-sand-200: #fff085;
+  --color-sand-300: #FFD200;
+  --color-sand-400: #FFD200;
+  --color-sand-500: #FFD200;
+  --color-sand-600: #ccaa00;
+  --color-sand-700: #997f00;
+  --color-sand-800: #665500;
+  --color-sand-900: #332a00;
+
+  --color-aruba-red: #C8102E;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 bg-ocean-600 text-white font-semibold rounded-lg hover:bg-ocean-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors;
+  }
+  .input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:border-transparent bg-white transition-colors;
+  }
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100;
+  }
+  .section-label {
+    @apply text-ocean-600 font-semibold text-sm uppercase tracking-widest mb-1;
+  }
+  .section-title {
+    @apply text-3xl font-extrabold text-gray-900;
+  }
+}
