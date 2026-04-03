@@ -1,0 +1,309 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy-test:
+    name: Deploy to Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch secrets from Scaleway Secret Manager
+        uses: scaleway/action-scw-secret@v0.0.8
+        with:
+          secret-names: |
+            POSTGRES_DB,/test/marketplace/postgres-db
+            POSTGRES_USER,/test/marketplace/postgres-user
+            POSTGRES_PASSWORD,/test/marketplace/postgres-password
+            SECRET_KEY,/test/marketplace/secret-key
+            JWT_SECRET_KEY,/test/marketplace/jwt-secret-key
+            DOMAIN,/test/marketplace/domain
+            LETSENCRYPT_EMAIL,/test/marketplace/letsencrypt-email
+            SMTP_HOST,/test/marketplace/smtp-host
+            SMTP_PORT,/test/marketplace/smtp-port
+            SMTP_USER,/test/marketplace/smtp-user
+            SMTP_PASSWORD,/test/marketplace/smtp-password
+            EMAIL_FROM,/test/marketplace/email-from
+            GOOGLE_CLIENT_ID,/test/marketplace/google-client-id
+            GOOGLE_CLIENT_SECRET,/test/marketplace/google-client-secret
+            FACEBOOK_APP_ID,/test/marketplace/facebook-app-id
+            FACEBOOK_APP_SECRET,/test/marketplace/facebook-app-secret
+            OBJECTSTORE_ACCESS_KEY,/test/marketplace/objectstore-access-key
+            OBJECTSTORE_SECRET_KEY,/test/marketplace/objectstore-secret-key
+            OBJECTSTORE_BUCKET,/test/marketplace/objectstore-bucket
+            BACKUP_ACCESS_KEY,/test/marketplace/backup-access-key
+            BACKUP_SECRET_KEY,/test/marketplace/backup-secret-key
+            BACKUP_BUCKET,/test/marketplace/backup-bucket
+          access-key: ${{ secrets.SCW_ACCESS_KEY }}
+          secret-key: ${{ secrets.SCW_SECRET_KEY }}
+          default-project-id: ${{ secrets.SCW_PROJECT_ID }}
+          default-organization-id: ${{ secrets.SCW_PROJECT_ID }}
+          default-region: nl-ams
+          default-zone: nl-ams-1
+
+      - name: Decode secrets
+        run: |
+          echo "POSTGRES_DB=$(echo "$POSTGRES_DB" | base64 -d)"                       >> $GITHUB_ENV
+          echo "POSTGRES_USER=$(echo "$POSTGRES_USER" | base64 -d)"                   >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD=$(echo "$POSTGRES_PASSWORD" | base64 -d)"           >> $GITHUB_ENV
+          echo "SECRET_KEY=$(echo "$SECRET_KEY" | base64 -d)"                         >> $GITHUB_ENV
+          echo "JWT_SECRET_KEY=$(echo "$JWT_SECRET_KEY" | base64 -d)"                 >> $GITHUB_ENV
+          echo "DOMAIN=$(echo "$DOMAIN" | base64 -d)"                                 >> $GITHUB_ENV
+          echo "LETSENCRYPT_EMAIL=$(echo "$LETSENCRYPT_EMAIL" | base64 -d)"           >> $GITHUB_ENV
+          echo "SMTP_HOST=$(echo "$SMTP_HOST" | base64 -d)"                           >> $GITHUB_ENV
+          echo "SMTP_PORT=$(echo "$SMTP_PORT" | base64 -d)"                           >> $GITHUB_ENV
+          echo "SMTP_USER=$(echo "$SMTP_USER" | base64 -d)"                           >> $GITHUB_ENV
+          echo "SMTP_PASSWORD=$(echo "$SMTP_PASSWORD" | base64 -d)"                   >> $GITHUB_ENV
+          echo "EMAIL_FROM=$(echo "$EMAIL_FROM" | base64 -d)"                         >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_ID=$(echo "$GOOGLE_CLIENT_ID" | base64 -d)"             >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_SECRET=$(echo "$GOOGLE_CLIENT_SECRET" | base64 -d)"     >> $GITHUB_ENV
+          echo "FACEBOOK_APP_ID=$(echo "$FACEBOOK_APP_ID" | base64 -d)"               >> $GITHUB_ENV
+          echo "FACEBOOK_APP_SECRET=$(echo "$FACEBOOK_APP_SECRET" | base64 -d)"       >> $GITHUB_ENV
+          echo "OBJECTSTORE_ACCESS_KEY=$(echo "$OBJECTSTORE_ACCESS_KEY" | base64 -d)" >> $GITHUB_ENV
+          echo "OBJECTSTORE_SECRET_KEY=$(echo "$OBJECTSTORE_SECRET_KEY" | base64 -d)" >> $GITHUB_ENV
+          echo "OBJECTSTORE_BUCKET=$(echo "$OBJECTSTORE_BUCKET" | base64 -d)"         >> $GITHUB_ENV
+          echo "BACKUP_ACCESS_KEY=$(echo "$BACKUP_ACCESS_KEY" | base64 -d)"           >> $GITHUB_ENV
+          echo "BACKUP_SECRET_KEY=$(echo "$BACKUP_SECRET_KEY" | base64 -d)"           >> $GITHUB_ENV
+          echo "BACKUP_BUCKET=$(echo "$BACKUP_BUCKET" | base64 -d)"                   >> $GITHUB_ENV
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          GH_DEPLOY_TOKEN: ${{ secrets.GH_DEPLOY_TOKEN }}
+          GH_REPOSITORY: ${{ github.repository }}
+        with:
+          host: ${{ secrets.VM_IP }}
+          username: deploy
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,SECRET_KEY,JWT_SECRET_KEY,DOMAIN,LETSENCRYPT_EMAIL,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,EMAIL_FROM,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,FACEBOOK_APP_ID,FACEBOOK_APP_SECRET,OBJECTSTORE_ACCESS_KEY,OBJECTSTORE_SECRET_KEY,OBJECTSTORE_BUCKET,BACKUP_ACCESS_KEY,BACKUP_SECRET_KEY,BACKUP_BUCKET,GH_DEPLOY_TOKEN,GH_REPOSITORY
+          script: |
+            set -euo pipefail
+
+            echo "--- First-time setup (if needed)"
+            if [[ ! -d /home/deploy/marketplace/.git ]]; then
+              git clone "https://x-token:${GH_DEPLOY_TOKEN}@github.com/${GH_REPOSITORY}.git" /home/deploy/marketplace
+            fi
+
+            cd /home/deploy/marketplace
+            git remote set-url origin "https://x-token:${GH_DEPLOY_TOKEN}@github.com/${GH_REPOSITORY}.git"
+
+            echo "--- Pulling latest code"
+            git checkout -- .env 2>/dev/null || true
+            git pull --ff-only
+
+            echo "--- Writing .env"
+            printf '%s\n' \
+              "POSTGRES_DB=${POSTGRES_DB}" \
+              "POSTGRES_USER=${POSTGRES_USER}" \
+              "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
+              "DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}" \
+              "SECRET_KEY=${SECRET_KEY}" \
+              "ALLOWED_ORIGINS=https://${DOMAIN}" \
+              "JWT_SECRET_KEY=${JWT_SECRET_KEY}" \
+              "DOMAIN=${DOMAIN}" \
+              "SITE_URL=https://${DOMAIN}" \
+              "LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}" \
+              "SMTP_HOST=${SMTP_HOST}" \
+              "SMTP_PORT=${SMTP_PORT}" \
+              "SMTP_USER=${SMTP_USER}" \
+              "SMTP_PASSWORD=${SMTP_PASSWORD}" \
+              "EMAIL_FROM=${EMAIL_FROM}" \
+              "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" \
+              "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" \
+              "FACEBOOK_APP_ID=${FACEBOOK_APP_ID}" \
+              "FACEBOOK_APP_SECRET=${FACEBOOK_APP_SECRET}" \
+              "OBJECTSTORE_ENDPOINT=https://s3.nl-ams.scw.cloud" \
+              "OBJECTSTORE_REGION=nl-ams" \
+              "OBJECTSTORE_ACCESS_KEY=${OBJECTSTORE_ACCESS_KEY}" \
+              "OBJECTSTORE_SECRET_KEY=${OBJECTSTORE_SECRET_KEY}" \
+              "OBJECTSTORE_BUCKET=${OBJECTSTORE_BUCKET}" \
+              "BACKUP_ACCESS_KEY=${BACKUP_ACCESS_KEY}" \
+              "BACKUP_SECRET_KEY=${BACKUP_SECRET_KEY}" \
+              "BACKUP_BUCKET=${BACKUP_BUCKET}" \
+              "BACKUP_ENDPOINT=https://s3.nl-ams.scw.cloud" \
+              "BACKUP_REGION=nl-ams" \
+              > .env
+            chmod 600 .env
+
+            echo "--- Ensuring shared_web network exists"
+            docker network create shared_web 2>/dev/null || true
+
+            echo "--- Rebuilding images"
+            docker compose -f docker-compose.prod.yml -f docker-compose.test.yml build --pull
+
+            echo "--- Restarting services"
+            docker compose -f docker-compose.prod.yml -f docker-compose.test.yml up -d --remove-orphans
+
+            echo "--- Installing backup cron (daily at 03:10 UTC)"
+            if ! command -v crontab >/dev/null 2>&1; then
+              sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq cron
+              sudo systemctl enable --now cron
+            fi
+            echo "10 3 * * * deploy /home/deploy/marketplace/scripts/backup-db.sh >> /home/deploy/marketplace-backup.log 2>&1" \
+              | sudo tee /etc/cron.d/marketplace-backup > /dev/null
+            sudo chmod 644 /etc/cron.d/marketplace-backup
+
+            echo "--- Removing dangling images"
+            docker image prune -f
+
+            echo "--- Status"
+            docker compose -f docker-compose.prod.yml -f docker-compose.test.yml ps
+
+  deploy-prod:
+    name: Deploy to Production
+    needs: deploy-test
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch secrets from Scaleway Secret Manager
+        uses: scaleway/action-scw-secret@v0.0.8
+        with:
+          secret-names: |
+            POSTGRES_DB,/prod/marketplace/postgres-db
+            POSTGRES_USER,/prod/marketplace/postgres-user
+            POSTGRES_PASSWORD,/prod/marketplace/postgres-password
+            SECRET_KEY,/prod/marketplace/secret-key
+            JWT_SECRET_KEY,/prod/marketplace/jwt-secret-key
+            DOMAIN,/prod/marketplace/domain
+            LETSENCRYPT_EMAIL,/prod/marketplace/letsencrypt-email
+            SMTP_HOST,/prod/marketplace/smtp-host
+            SMTP_PORT,/prod/marketplace/smtp-port
+            SMTP_USER,/prod/marketplace/smtp-user
+            SMTP_PASSWORD,/prod/marketplace/smtp-password
+            EMAIL_FROM,/prod/marketplace/email-from
+            GOOGLE_CLIENT_ID,/prod/marketplace/google-client-id
+            GOOGLE_CLIENT_SECRET,/prod/marketplace/google-client-secret
+            FACEBOOK_APP_ID,/prod/marketplace/facebook-app-id
+            FACEBOOK_APP_SECRET,/prod/marketplace/facebook-app-secret
+            OBJECTSTORE_ACCESS_KEY,/prod/marketplace/objectstore-access-key
+            OBJECTSTORE_SECRET_KEY,/prod/marketplace/objectstore-secret-key
+            OBJECTSTORE_BUCKET,/prod/marketplace/objectstore-bucket
+            BACKUP_ACCESS_KEY,/prod/marketplace/backup-access-key
+            BACKUP_SECRET_KEY,/prod/marketplace/backup-secret-key
+            BACKUP_BUCKET,/prod/marketplace/backup-bucket
+          access-key: ${{ secrets.SCW_ACCESS_KEY_PROD }}
+          secret-key: ${{ secrets.SCW_SECRET_KEY_PROD }}
+          default-project-id: ${{ secrets.SCW_PROJECT_ID_PROD }}
+          default-organization-id: ${{ secrets.SCW_ORG_ID }}
+          default-region: nl-ams
+          default-zone: nl-ams-1
+
+      - name: Decode secrets
+        run: |
+          echo "POSTGRES_DB=$(echo "$POSTGRES_DB" | base64 -d)"                       >> $GITHUB_ENV
+          echo "POSTGRES_USER=$(echo "$POSTGRES_USER" | base64 -d)"                   >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD=$(echo "$POSTGRES_PASSWORD" | base64 -d)"           >> $GITHUB_ENV
+          echo "SECRET_KEY=$(echo "$SECRET_KEY" | base64 -d)"                         >> $GITHUB_ENV
+          echo "JWT_SECRET_KEY=$(echo "$JWT_SECRET_KEY" | base64 -d)"                 >> $GITHUB_ENV
+          echo "DOMAIN=$(echo "$DOMAIN" | base64 -d)"                                 >> $GITHUB_ENV
+          echo "LETSENCRYPT_EMAIL=$(echo "$LETSENCRYPT_EMAIL" | base64 -d)"           >> $GITHUB_ENV
+          echo "SMTP_HOST=$(echo "$SMTP_HOST" | base64 -d)"                           >> $GITHUB_ENV
+          echo "SMTP_PORT=$(echo "$SMTP_PORT" | base64 -d)"                           >> $GITHUB_ENV
+          echo "SMTP_USER=$(echo "$SMTP_USER" | base64 -d)"                           >> $GITHUB_ENV
+          echo "SMTP_PASSWORD=$(echo "$SMTP_PASSWORD" | base64 -d)"                   >> $GITHUB_ENV
+          echo "EMAIL_FROM=$(echo "$EMAIL_FROM" | base64 -d)"                         >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_ID=$(echo "$GOOGLE_CLIENT_ID" | base64 -d)"             >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_SECRET=$(echo "$GOOGLE_CLIENT_SECRET" | base64 -d)"     >> $GITHUB_ENV
+          echo "FACEBOOK_APP_ID=$(echo "$FACEBOOK_APP_ID" | base64 -d)"               >> $GITHUB_ENV
+          echo "FACEBOOK_APP_SECRET=$(echo "$FACEBOOK_APP_SECRET" | base64 -d)"       >> $GITHUB_ENV
+          echo "OBJECTSTORE_ACCESS_KEY=$(echo "$OBJECTSTORE_ACCESS_KEY" | base64 -d)" >> $GITHUB_ENV
+          echo "OBJECTSTORE_SECRET_KEY=$(echo "$OBJECTSTORE_SECRET_KEY" | base64 -d)" >> $GITHUB_ENV
+          echo "OBJECTSTORE_BUCKET=$(echo "$OBJECTSTORE_BUCKET" | base64 -d)"         >> $GITHUB_ENV
+          echo "BACKUP_ACCESS_KEY=$(echo "$BACKUP_ACCESS_KEY" | base64 -d)"           >> $GITHUB_ENV
+          echo "BACKUP_SECRET_KEY=$(echo "$BACKUP_SECRET_KEY" | base64 -d)"           >> $GITHUB_ENV
+          echo "BACKUP_BUCKET=$(echo "$BACKUP_BUCKET" | base64 -d)"                   >> $GITHUB_ENV
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          GH_DEPLOY_TOKEN: ${{ secrets.GH_DEPLOY_TOKEN }}
+          GH_REPOSITORY: ${{ github.repository }}
+        with:
+          host: ${{ secrets.VM_IP_PROD }}
+          username: deploy
+          key: ${{ secrets.SSH_PRIVATE_KEY_PROD }}
+          script_stop: true
+          envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,SECRET_KEY,JWT_SECRET_KEY,DOMAIN,LETSENCRYPT_EMAIL,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,EMAIL_FROM,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,FACEBOOK_APP_ID,FACEBOOK_APP_SECRET,OBJECTSTORE_ACCESS_KEY,OBJECTSTORE_SECRET_KEY,OBJECTSTORE_BUCKET,BACKUP_ACCESS_KEY,BACKUP_SECRET_KEY,BACKUP_BUCKET,GH_DEPLOY_TOKEN,GH_REPOSITORY
+          script: |
+            set -euo pipefail
+
+            echo "--- First-time setup (if needed)"
+            if [[ ! -d /home/deploy/marketplace/.git ]]; then
+              git clone "https://x-token:${GH_DEPLOY_TOKEN}@github.com/${GH_REPOSITORY}.git" /home/deploy/marketplace
+            fi
+
+            cd /home/deploy/marketplace
+            git remote set-url origin "https://x-token:${GH_DEPLOY_TOKEN}@github.com/${GH_REPOSITORY}.git"
+
+            echo "--- Pulling latest code"
+            git checkout -- .env 2>/dev/null || true
+            git pull --ff-only
+
+            echo "--- Writing .env"
+            printf '%s\n' \
+              "POSTGRES_DB=${POSTGRES_DB}" \
+              "POSTGRES_USER=${POSTGRES_USER}" \
+              "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
+              "DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}" \
+              "SECRET_KEY=${SECRET_KEY}" \
+              "ALLOWED_ORIGINS=https://${DOMAIN}" \
+              "JWT_SECRET_KEY=${JWT_SECRET_KEY}" \
+              "DOMAIN=${DOMAIN}" \
+              "SITE_URL=https://${DOMAIN}" \
+              "LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}" \
+              "SMTP_HOST=${SMTP_HOST}" \
+              "SMTP_PORT=${SMTP_PORT}" \
+              "SMTP_USER=${SMTP_USER}" \
+              "SMTP_PASSWORD=${SMTP_PASSWORD}" \
+              "EMAIL_FROM=${EMAIL_FROM}" \
+              "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" \
+              "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" \
+              "FACEBOOK_APP_ID=${FACEBOOK_APP_ID}" \
+              "FACEBOOK_APP_SECRET=${FACEBOOK_APP_SECRET}" \
+              "OBJECTSTORE_ENDPOINT=https://s3.nl-ams.scw.cloud" \
+              "OBJECTSTORE_REGION=nl-ams" \
+              "OBJECTSTORE_ACCESS_KEY=${OBJECTSTORE_ACCESS_KEY}" \
+              "OBJECTSTORE_SECRET_KEY=${OBJECTSTORE_SECRET_KEY}" \
+              "OBJECTSTORE_BUCKET=${OBJECTSTORE_BUCKET}" \
+              "OBJECTSTORE_PUBLIC_URL=https://${OBJECTSTORE_BUCKET}.s3.nl-ams.scw.cloud" \
+              "BACKUP_ACCESS_KEY=${BACKUP_ACCESS_KEY}" \
+              "BACKUP_SECRET_KEY=${BACKUP_SECRET_KEY}" \
+              "BACKUP_BUCKET=${BACKUP_BUCKET}" \
+              "BACKUP_ENDPOINT=https://s3.nl-ams.scw.cloud" \
+              "BACKUP_REGION=nl-ams" \
+              > .env
+            chmod 600 .env
+
+            echo "--- Rebuilding images"
+            docker compose -f docker-compose.prod.yml build --pull
+
+            echo "--- Bootstrap TLS cert (if needed)"
+            if [ ! -f /var/lib/docker/volumes/marketplace_letsencrypt/_data/live/${DOMAIN}/fullchain.pem ]; then
+              docker compose -f docker-compose.prod.yml run --rm -p 80:80 --entrypoint "" certbot \
+                certbot certonly \
+                --standalone \
+                -d "${DOMAIN}" -d "www.${DOMAIN}" \
+                --email "info@${DOMAIN}" \
+                --agree-tos --non-interactive
+            fi
+
+            echo "--- Restarting services"
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+
+            echo "--- Installing backup cron (daily at 03:10 UTC)"
+            if ! command -v crontab >/dev/null 2>&1; then
+              sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq cron
+              sudo systemctl enable --now cron
+            fi
+            echo "10 3 * * * deploy /home/deploy/marketplace/scripts/backup-db.sh >> /home/deploy/marketplace-backup.log 2>&1" \
+              | sudo tee /etc/cron.d/marketplace-backup > /dev/null
+            sudo chmod 644 /etc/cron.d/marketplace-backup
+
+            echo "--- Removing dangling images"
+            docker image prune -f
+
+            echo "--- Status"
+            docker compose -f docker-compose.prod.yml ps
