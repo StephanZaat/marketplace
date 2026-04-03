@@ -32,11 +32,6 @@ describe("Footer", () => {
     expect(screen.getByRole("link", { name: /contact us/i })).toBeInTheDocument();
   });
 
-  it("renders Admin link", () => {
-    renderFooter();
-    expect(screen.getByRole("link", { name: /admin/i })).toBeInTheDocument();
-  });
-
   it("renders copyright with current year", () => {
     renderFooter();
     const year = new Date().getFullYear().toString();

@@ -19,7 +19,6 @@ export default function Footer() {
           {/* Links */}
           <div className="flex items-center gap-4 text-xs text-ocean-400">
             <Link to="/contact" className="hover:text-ocean-200 transition-colors">{t.contactUs}</Link>
-            <Link to="/admin/login" className="hover:text-ocean-200 transition-colors">Admin</Link>
             <span className="text-ocean-600">© {new Date().getFullYear()} Marketplace.aw</span>
           </div>
         </div>
