@@ -26,10 +26,6 @@ jobs:
             SMTP_USER,/test/marketplace/smtp-user
             SMTP_PASSWORD,/test/marketplace/smtp-password
             EMAIL_FROM,/test/marketplace/email-from
-            GOOGLE_CLIENT_ID,/test/marketplace/google-client-id
-            GOOGLE_CLIENT_SECRET,/test/marketplace/google-client-secret
-            FACEBOOK_APP_ID,/test/marketplace/facebook-app-id
-            FACEBOOK_APP_SECRET,/test/marketplace/facebook-app-secret
             OBJECTSTORE_ACCESS_KEY,/test/marketplace/objectstore-access-key
             OBJECTSTORE_SECRET_KEY,/test/marketplace/objectstore-secret-key
             OBJECTSTORE_BUCKET,/test/marketplace/objectstore-bucket
@@ -57,10 +53,6 @@ jobs:
           echo "SMTP_USER=$(echo "$SMTP_USER" | base64 -d)"                           >> $GITHUB_ENV
           echo "SMTP_PASSWORD=$(echo "$SMTP_PASSWORD" | base64 -d)"                   >> $GITHUB_ENV
           echo "EMAIL_FROM=$(echo "$EMAIL_FROM" | base64 -d)"                         >> $GITHUB_ENV
-          echo "GOOGLE_CLIENT_ID=$(echo "$GOOGLE_CLIENT_ID" | base64 -d)"             >> $GITHUB_ENV
-          echo "GOOGLE_CLIENT_SECRET=$(echo "$GOOGLE_CLIENT_SECRET" | base64 -d)"     >> $GITHUB_ENV
-          echo "FACEBOOK_APP_ID=$(echo "$FACEBOOK_APP_ID" | base64 -d)"               >> $GITHUB_ENV
-          echo "FACEBOOK_APP_SECRET=$(echo "$FACEBOOK_APP_SECRET" | base64 -d)"       >> $GITHUB_ENV
           echo "OBJECTSTORE_ACCESS_KEY=$(echo "$OBJECTSTORE_ACCESS_KEY" | base64 -d)" >> $GITHUB_ENV
           echo "OBJECTSTORE_SECRET_KEY=$(echo "$OBJECTSTORE_SECRET_KEY" | base64 -d)" >> $GITHUB_ENV
           echo "OBJECTSTORE_BUCKET=$(echo "$OBJECTSTORE_BUCKET" | base64 -d)"         >> $GITHUB_ENV
@@ -78,7 +70,7 @@ jobs:
           username: deploy
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script_stop: true
-          envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,SECRET_KEY,JWT_SECRET_KEY,DOMAIN,LETSENCRYPT_EMAIL,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,EMAIL_FROM,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,FACEBOOK_APP_ID,FACEBOOK_APP_SECRET,OBJECTSTORE_ACCESS_KEY,OBJECTSTORE_SECRET_KEY,OBJECTSTORE_BUCKET,BACKUP_ACCESS_KEY,BACKUP_SECRET_KEY,BACKUP_BUCKET,GH_DEPLOY_TOKEN,GH_REPOSITORY
+          envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,SECRET_KEY,JWT_SECRET_KEY,DOMAIN,LETSENCRYPT_EMAIL,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,EMAIL_FROM,OBJECTSTORE_ACCESS_KEY,OBJECTSTORE_SECRET_KEY,OBJECTSTORE_BUCKET,BACKUP_ACCESS_KEY,BACKUP_SECRET_KEY,BACKUP_BUCKET,GH_DEPLOY_TOKEN,GH_REPOSITORY
           script: |
             set -euo pipefail
 
@@ -111,10 +103,6 @@ jobs:
               "SMTP_USER=${SMTP_USER}" \
               "SMTP_PASSWORD=${SMTP_PASSWORD}" \
               "EMAIL_FROM=${EMAIL_FROM}" \
-              "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" \
-              "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" \
-              "FACEBOOK_APP_ID=${FACEBOOK_APP_ID}" \
-              "FACEBOOK_APP_SECRET=${FACEBOOK_APP_SECRET}" \
               "OBJECTSTORE_ENDPOINT=https://s3.nl-ams.scw.cloud" \
               "OBJECTSTORE_REGION=nl-ams" \
               "OBJECTSTORE_ACCESS_KEY=${OBJECTSTORE_ACCESS_KEY}" \
@@ -174,10 +162,6 @@ jobs:
             SMTP_USER,/prod/marketplace/smtp-user
             SMTP_PASSWORD,/prod/marketplace/smtp-password
             EMAIL_FROM,/prod/marketplace/email-from
-            GOOGLE_CLIENT_ID,/prod/marketplace/google-client-id
-            GOOGLE_CLIENT_SECRET,/prod/marketplace/google-client-secret
-            FACEBOOK_APP_ID,/prod/marketplace/facebook-app-id
-            FACEBOOK_APP_SECRET,/prod/marketplace/facebook-app-secret
             OBJECTSTORE_ACCESS_KEY,/prod/marketplace/objectstore-access-key
             OBJECTSTORE_SECRET_KEY,/prod/marketplace/objectstore-secret-key
             OBJECTSTORE_BUCKET,/prod/marketplace/objectstore-bucket
@@ -205,10 +189,6 @@ jobs:
           echo "SMTP_USER=$(echo "$SMTP_USER" | base64 -d)"                           >> $GITHUB_ENV
           echo "SMTP_PASSWORD=$(echo "$SMTP_PASSWORD" | base64 -d)"                   >> $GITHUB_ENV
           echo "EMAIL_FROM=$(echo "$EMAIL_FROM" | base64 -d)"                         >> $GITHUB_ENV
-          echo "GOOGLE_CLIENT_ID=$(echo "$GOOGLE_CLIENT_ID" | base64 -d)"             >> $GITHUB_ENV
-          echo "GOOGLE_CLIENT_SECRET=$(echo "$GOOGLE_CLIENT_SECRET" | base64 -d)"     >> $GITHUB_ENV
-          echo "FACEBOOK_APP_ID=$(echo "$FACEBOOK_APP_ID" | base64 -d)"               >> $GITHUB_ENV
-          echo "FACEBOOK_APP_SECRET=$(echo "$FACEBOOK_APP_SECRET" | base64 -d)"       >> $GITHUB_ENV
           echo "OBJECTSTORE_ACCESS_KEY=$(echo "$OBJECTSTORE_ACCESS_KEY" | base64 -d)" >> $GITHUB_ENV
           echo "OBJECTSTORE_SECRET_KEY=$(echo "$OBJECTSTORE_SECRET_KEY" | base64 -d)" >> $GITHUB_ENV
           echo "OBJECTSTORE_BUCKET=$(echo "$OBJECTSTORE_BUCKET" | base64 -d)"         >> $GITHUB_ENV
@@ -226,7 +206,7 @@ jobs:
           username: deploy
           key: ${{ secrets.SSH_PRIVATE_KEY_PROD }}
           script_stop: true
-          envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,SECRET_KEY,JWT_SECRET_KEY,DOMAIN,LETSENCRYPT_EMAIL,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,EMAIL_FROM,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,FACEBOOK_APP_ID,FACEBOOK_APP_SECRET,OBJECTSTORE_ACCESS_KEY,OBJECTSTORE_SECRET_KEY,OBJECTSTORE_BUCKET,BACKUP_ACCESS_KEY,BACKUP_SECRET_KEY,BACKUP_BUCKET,GH_DEPLOY_TOKEN,GH_REPOSITORY
+          envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,SECRET_KEY,JWT_SECRET_KEY,DOMAIN,LETSENCRYPT_EMAIL,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,EMAIL_FROM,OBJECTSTORE_ACCESS_KEY,OBJECTSTORE_SECRET_KEY,OBJECTSTORE_BUCKET,BACKUP_ACCESS_KEY,BACKUP_SECRET_KEY,BACKUP_BUCKET,GH_DEPLOY_TOKEN,GH_REPOSITORY
           script: |
             set -euo pipefail
 
@@ -259,10 +239,6 @@ jobs:
               "SMTP_USER=${SMTP_USER}" \
               "SMTP_PASSWORD=${SMTP_PASSWORD}" \
               "EMAIL_FROM=${EMAIL_FROM}" \
-              "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" \
-              "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" \
-              "FACEBOOK_APP_ID=${FACEBOOK_APP_ID}" \
-              "FACEBOOK_APP_SECRET=${FACEBOOK_APP_SECRET}" \
               "OBJECTSTORE_ENDPOINT=https://s3.nl-ams.scw.cloud" \
               "OBJECTSTORE_REGION=nl-ams" \
               "OBJECTSTORE_ACCESS_KEY=${OBJECTSTORE_ACCESS_KEY}" \
