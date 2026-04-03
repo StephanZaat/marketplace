@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export COMPOSE_PROJECT_NAME=marketplace
+
+echo "=== Pre-push: Backend tests ==="
+docker compose --profile test run --rm -T test
+
+echo "=== All checks passed ==="
