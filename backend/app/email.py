@@ -1,10 +1,16 @@
 """
-Email service — Proton SMTP (smtp.protonmail.ch:587, STARTTLS).
+Email service — sends via Scaleway TEM HTTP API or SMTP.
+
+When smtp_host is smtp.tem.scw.cloud, uses the TEM HTTP API (no SMTP port needed).
+Otherwise falls back to SMTP (STARTTLS on port 587).
 
 All send_* helpers are async fire-and-forget: call with asyncio.create_task()
 or await directly.  They silently log errors rather than crashing the request.
 """
+import json
 import logging
+import urllib.request
+import urllib.error
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -23,11 +29,54 @@ def _render(template_str: str, **ctx) -> str:
     return _jinja.from_string(template_str).render(**ctx)
 
 
+def _send_via_tem_api(to: str, subject: str, html: str, text: str | None = None) -> bool:
+    """Send email via Scaleway TEM HTTP API (no SMTP port needed)."""
+    api_key = settings.smtp_password
+    project_id = settings.smtp_user
+    if not api_key or not project_id:
+        logger.warning("TEM API: no API key or project ID available")
+        return False
+
+    payload = {
+        "from": {"email": settings.email_from},
+        "to": [{"email": to}],
+        "subject": subject,
+        "html": html,
+        "project_id": project_id,
+    }
+    if text:
+        payload["text"] = text
+
+    url = "https://api.scaleway.com/transactional-email/v1alpha1/regions/fr-par/emails"
+    data = json.dumps(payload).encode()
+    req = urllib.request.Request(url, data=data, method="POST", headers={
+        "Content-Type": "application/json",
+        "X-Auth-Token": api_key,
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            logger.info("Email sent via TEM API to=%s subject=%r status=%s", to, subject, resp.status)
+            return True
+    except urllib.error.HTTPError as e:
+        body = e.read().decode() if e.fp else ""
+        logger.error("TEM API error to=%s status=%s body=%s", to, e.code, body[:500])
+        return False
+    except Exception:
+        logger.exception("TEM API failed to=%s subject=%r", to, subject)
+        return False
+
+
 async def _send(to: str, subject: str, html: str, text: str | None = None) -> None:
-    """Send an email via Proton SMTP bridge (STARTTLS on port 587)."""
+    """Send an email via TEM API (preferred) or SMTP fallback."""
     if not settings.smtp_user or not settings.smtp_password:
         logger.warning("SMTP credentials not configured — skipping email to %s", to)
         return
+
+    # Use TEM HTTP API when configured for Scaleway TEM (avoids blocked SMTP ports)
+    if settings.smtp_host == "smtp.tem.scw.cloud":
+        if _send_via_tem_api(to, subject, html, text):
+            return
+        logger.warning("TEM API failed, falling back to SMTP for %s", to)
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
