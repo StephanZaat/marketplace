@@ -282,6 +282,7 @@ jobs:
 
             echo "--- Bootstrap TLS cert (if needed)"
             if [ ! -f /var/lib/docker/volumes/marketplace_letsencrypt/_data/live/${DOMAIN}/fullchain.pem ]; then
+              docker compose -f docker-compose.prod.yml down 2>/dev/null || true
               docker compose -f docker-compose.prod.yml run --rm -p 80:80 --entrypoint "" certbot \
                 certbot certonly \
                 --standalone \
