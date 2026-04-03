@@ -32,12 +32,6 @@ class Settings(BaseSettings):
     email_from: str = "noreply@marketplace.aw"
     support_email: str = "support@marketplace.aw"
 
-    # OAuth (social login)
-    google_client_id: str = ""
-    google_client_secret: str = ""
-    facebook_app_id: str = ""
-    facebook_app_secret: str = ""
-
     # Object storage (S3-compatible)
     objectstore_endpoint: str = ""
     objectstore_region: str = "nl-ams"

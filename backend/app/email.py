@@ -454,45 +454,33 @@ The Marketplace.aw Team
 """
 
 
-# ── Password reset ─────────────────────────────────────────────────────────────
+# ── OTP login code ─────────────────────────────────────────────────────────────
 
-_PASSWORD_RESET_HTML = _WRAP_START + _HEADER + """
+_OTP_CODE_HTML = _WRAP_START + _HEADER + """
 <tr>
-  <td style="padding:36px 40px">
-    <p style="margin:0 0 16px;font-size:16px;line-height:1.6">Hi <strong>{{ username }}</strong>,</p>
-    <p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#475569">
-      We received a request to reset your password. Click the button below to set a new one.
-      This link is valid for <strong>1 hour</strong>.
+  <td style="padding:36px 40px;text-align:center">
+    <p style="margin:0 0 20px;font-size:15px;line-height:1.7;color:#475569;text-align:left">
+      Use the code below to sign in to <strong style="color:#2d7ac8">Marketplace.aw</strong>.
+      It is valid for <strong>10 minutes</strong>.
     </p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
-      <tr><td align="center">
-        <a href="{{ reset_url }}"
-           style="display:inline-block;background:#2d7ac8;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px">
-          Reset Password →
-        </a>
-      </td></tr>
-    </table>
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:28px 40px;margin-bottom:24px;display:inline-block;width:100%;box-sizing:border-box">
+      <p style="margin:0;font-size:40px;font-weight:700;letter-spacing:10px;color:#1e293b;font-family:monospace,Courier New,monospace;text-align:center">{{ code }}</p>
+    </div>
 
-    <p style="margin:0 0 16px;font-size:14px;color:#64748b;line-height:1.6">
-      If you didn't request a password reset, you can safely ignore this email.
-      Your password will not change.
-    </p>
-    <p style="margin:0;font-size:14px;color:#64748b">
-      <strong style="color:#2d7ac8">The Marketplace.aw Team</strong>
+    <p style="margin:0;font-size:13px;color:#94a3b8;line-height:1.6;text-align:left">
+      If you didn't request this code, you can safely ignore this email.
     </p>
   </td>
 </tr>
 """ + _FOOTER + _WRAP_END
 
-_PASSWORD_RESET_TEXT = """\
-Hi {{ username }},
+_OTP_CODE_TEXT = """\
+Your Marketplace.aw login code: {{ code }}
 
-We received a request to reset your password. Use the link below (valid for 1 hour):
+Enter this code to sign in. It is valid for 10 minutes.
 
-{{ reset_url }}
-
-If you didn't request this, ignore this email — your password won't change.
+If you didn't request this, ignore this email.
 
 The Marketplace.aw Team
 """
@@ -603,15 +591,14 @@ async def send_listing_expired(user, listing) -> None:
     )
 
 
-async def send_password_reset(to_email: str, username: str, token: str) -> None:
-    """Send a password-reset link."""
-    reset_url = f"{settings.site_url}/reset-password?token={token}"
-    ctx = dict(username=username, reset_url=reset_url)
+async def send_otp_code(to: str, code: str) -> None:
+    """Send a one-time login code."""
+    ctx = dict(code=code)
     await _send(
-        to=to_email,
-        subject="Reset your Marketplace.aw password",
-        html=_render(_PASSWORD_RESET_HTML, heading="Password Reset", **ctx),
-        text=_render(_PASSWORD_RESET_TEXT, **ctx),
+        to=to,
+        subject=f"Your Marketplace.aw login code: {code}",
+        html=_render(_OTP_CODE_HTML, heading="Your Login Code", **ctx),
+        text=_render(_OTP_CODE_TEXT, **ctx),
     )
 
 
