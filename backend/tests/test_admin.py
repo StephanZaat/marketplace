@@ -169,9 +169,17 @@ class TestAdminUsers:
         assert resp.status_code == 401
 
     def test_suspended_user_cannot_login(self, admin_client, client, user):
-        admin_client.patch(f"/api/admin/users/{user.public_id}", json={"is_active": False})
-        resp = client.post("/api/auth/login", json={
-            "email": user.email,
-            "password": "password123",
-        })
-        assert resp.status_code == 403
+        import os
+        os.environ["DEV_OTP_CODE"] = "123456"
+        try:
+            admin_client.patch(f"/api/admin/users/{user.public_id}", json={"is_active": False})
+            from app.routers.auth import _create_otp_token
+            otp_token = _create_otp_token(user.email, "123456")
+            resp = client.post("/api/auth/otp-verify", json={
+                "email": user.email,
+                "code": "123456",
+                "otp_token": otp_token,
+            })
+            assert resp.status_code == 403
+        finally:
+            os.environ.pop("DEV_OTP_CODE", None)
