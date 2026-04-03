@@ -6,8 +6,31 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Run tests
+        env:
+          DATABASE_URL: "sqlite:///./test.db"
+          JWT_SECRET_KEY: "test-jwt-secret"
+          SECRET_KEY: "test-secret"
+          ALLOWED_ORIGINS: "http://localhost"
+          TESTING: "1"
+        run: cd backend && python -m pytest tests/ -v
+
   deploy-test:
     name: Deploy to Test
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Fetch secrets from Scaleway Secret Manager
