@@ -94,13 +94,15 @@ def migrate_db():
                 conn.commit()
             logger.info("Migrated: added public_id to %s", table)
 
-    # Drop legacy password columns
+    # Drop legacy password columns in a single transaction
     user_cols = [c["name"] for c in insp.get_columns("users")]
-    for col in ("hashed_password", "password_reset_token", "password_reset_expires"):
-        if col in user_cols and is_postgres:
-            with engine.connect() as conn:
+    cols_to_drop = [c for c in ("hashed_password", "password_reset_token", "password_reset_expires") if c in user_cols]
+    if cols_to_drop and is_postgres:
+        with engine.connect() as conn:
+            for col in cols_to_drop:
                 conn.execute(text(f"ALTER TABLE users DROP COLUMN {col}"))
-                conn.commit()
+            conn.commit()
+        for col in cols_to_drop:
             logger.info("Migrated: dropped users.%s", col)
 
 

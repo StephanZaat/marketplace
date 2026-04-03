@@ -64,6 +64,9 @@ const translations: Record<Lang, any> = {
     changeEmail: "Change email",
     resendCode: "Resend code",
     codeSending: "Sending...",
+    otpTooManyRequests: "Too many requests. Please wait a moment.",
+    otpErrorGeneric: "Something went wrong. Please try again.",
+    otpInvalidCode: "Invalid or expired code",
 
     // Profile
     listings: "Listings",
@@ -380,6 +383,9 @@ const translations: Record<Lang, any> = {
     changeEmail: "Cambiar correo",
     resendCode: "Reenviar código",
     codeSending: "Enviando...",
+    otpTooManyRequests: "Demasiadas solicitudes. Espera un momento.",
+    otpErrorGeneric: "Algo salió mal. Inténtalo de nuevo.",
+    otpInvalidCode: "Código inválido o expirado",
 
     // Profile
     listings: "Anuncios",

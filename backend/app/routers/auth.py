@@ -32,10 +32,15 @@ _OTP_MAX = 5
 
 
 def _check_email_rate_limit(email: str) -> None:
-    now = time.time()
+    now = time.monotonic()
+    key = email.lower().strip()
     with _otp_rate_lock:
-        timestamps = _otp_rate[email]
-        # Evict entries outside the window
+        # Periodic cleanup: purge stale entries every 100 calls
+        if len(_otp_rate) > 1000:
+            stale = [k for k, ts in _otp_rate.items() if not ts or now - ts[-1] > _OTP_WINDOW]
+            for k in stale:
+                del _otp_rate[k]
+        timestamps = _otp_rate[key]
         timestamps[:] = [t for t in timestamps if now - t < _OTP_WINDOW]
         if len(timestamps) >= _OTP_MAX:
             raise HTTPException(
@@ -138,7 +143,7 @@ async def otp_send(request: Request, data: OtpSendRequest, background_tasks: Bac
 @limiter.limit("10/minute")
 def otp_verify(request: Request, data: OtpVerifyRequest, db: Session = Depends(get_db)):
     email = _verify_otp_token(data.otp_token, data.code)
-    if not email or email != data.email:
+    if not email or email.lower() != data.email.lower():
         raise HTTPException(status_code=401, detail="Invalid or expired OTP")
 
     user = db.query(User).filter(User.email == email).first()

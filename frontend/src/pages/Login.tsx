@@ -38,9 +38,9 @@ export default function Login() {
       if (showToast) toast.success(t.otpSent);
     } catch (err: any) {
       if (err?.response?.status === 429) {
-        toast.error("Too many requests. Please wait a moment.");
+        toast.error(t.otpTooManyRequests);
       } else {
-        toast.error("Something went wrong. Please try again.");
+        toast.error(t.otpErrorGeneric);
       }
     } finally {
       setLoading(false);
@@ -59,6 +59,7 @@ export default function Login() {
   };
 
   const verifyOtp = async (otpCode: string) => {
+    if (loading) return;
     setLoading(true);
     try {
       const res = await api.post<{ access_token: string }>("/auth/otp-verify", {
@@ -70,7 +71,7 @@ export default function Login() {
       const me = await login(res.data.access_token);
       navigate(`/profile/${me.id}`);
     } catch {
-      toast.error("Invalid or expired code");
+      toast.error(t.otpInvalidCode);
       setCode("");
     } finally {
       setLoading(false);
