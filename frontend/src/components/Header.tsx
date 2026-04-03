@@ -99,11 +99,8 @@ export default function Header() {
               </>
             ) : (
               <>
-                <Link to="/login" className="px-4 py-2 text-gray-700 hover:text-ocean-600 text-sm font-medium rounded-full hover:bg-ocean-50 transition-colors">
+                <Link to="/login" className="px-4 py-2 bg-ocean-600 hover:bg-ocean-700 text-white text-sm font-semibold rounded-full transition-colors">
                   {t.logIn}
-                </Link>
-                <Link to="/register" className="px-4 py-2 bg-ocean-600 hover:bg-ocean-700 text-white text-sm font-semibold rounded-full transition-colors">
-                  {t.signUp}
                 </Link>
               </>
             )}
@@ -140,8 +137,7 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Link to="/login" className="block text-center py-2.5 border border-gray-300 text-gray-700 font-medium rounded-xl w-full" onClick={() => setMenuOpen(false)}>{t.logIn}</Link>
-              <Link to="/register" className="block text-center py-2.5 bg-ocean-600 text-white font-semibold rounded-xl w-full" onClick={() => setMenuOpen(false)}>{t.signUp}</Link>
+              <Link to="/login" className="block text-center py-2.5 bg-ocean-600 text-white font-semibold rounded-xl w-full" onClick={() => setMenuOpen(false)}>{t.logIn}</Link>
             </>
           )}
           <div className="flex gap-2">

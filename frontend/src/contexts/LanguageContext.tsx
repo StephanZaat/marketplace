@@ -10,7 +10,6 @@ const translations: Record<Lang, any> = {
     messages: "Messages",
     profile: "Profile",
     logIn: "Log in",
-    signUp: "Sign up",
     logOut: "Log out",
     searchPlaceholder: "Search listings...",
     sellSomething: "Sell something",
@@ -52,29 +51,19 @@ const translations: Record<Lang, any> = {
     arubaMarketplace: "Aruba's local marketplace",
     contactUs: "Contact Us",
 
-    // Login
-    welcomeBack: "Welcome back",
+    // Login (OTP)
     email: "Email",
-    password: "Password",
-    signingIn: "Signing in...",
-    signIn: "Sign in",
-    forgotPassword: "Forgot password?",
-    noAccount: "Don't have an account?",
-
-    // Register
-    createAccount: "Create your account",
     fullName: "Full name",
-    creating: "Creating account...",
-    alreadyHaveAccount: "Already have an account?",
-    passwordHint: "Min 8 chars, upper, lower, number",
-
-    // ForgotPassword
-    forgotPasswordTitle: "Forgot your password?",
-    forgotPasswordSub: "Enter your email address and we'll send you a link to reset your password.",
-    sendResetLink: "Send reset link",
-    sending: "Sending...",
-    backToSignIn: "Back to sign in",
-    resetEmailSent: "If that email address is registered, we've sent a password reset link. Check your inbox.",
+    signInTitle: "Sign in to your account",
+    enterEmail: "Enter your email to continue",
+    continueBtn: "Continue",
+    otpSent: "Check your inbox for the code",
+    codeSentTo: "Code sent to",
+    otpPlaceholder: "000000",
+    verifying: "Verifying...",
+    changeEmail: "Change email",
+    resendCode: "Resend code",
+    codeSending: "Sending...",
 
     // Profile
     listings: "Listings",
@@ -337,7 +326,6 @@ const translations: Record<Lang, any> = {
     messages: "Mensajes",
     profile: "Perfil",
     logIn: "Iniciar sesión",
-    signUp: "Registrarse",
     logOut: "Cerrar sesión",
     searchPlaceholder: "Buscar anuncios...",
     sellSomething: "Vender algo",
@@ -379,29 +367,19 @@ const translations: Record<Lang, any> = {
     arubaMarketplace: "El mercado local de Aruba",
     contactUs: "Contáctanos",
 
-    // Login
-    welcomeBack: "Bienvenido de nuevo",
+    // Login (OTP)
     email: "Correo electrónico",
-    password: "Contraseña",
-    signingIn: "Iniciando sesión...",
-    signIn: "Iniciar sesión",
-    forgotPassword: "¿Olvidaste tu contraseña?",
-    noAccount: "¿No tienes una cuenta?",
-
-    // Register
-    createAccount: "Crea tu cuenta",
     fullName: "Nombre completo",
-    creating: "Creando cuenta...",
-    alreadyHaveAccount: "¿Ya tienes una cuenta?",
-    passwordHint: "Mín. 8 caracteres, mayúscula, minúscula, número",
-
-    // ForgotPassword
-    forgotPasswordTitle: "¿Olvidaste tu contraseña?",
-    forgotPasswordSub: "Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.",
-    sendResetLink: "Enviar enlace",
-    sending: "Enviando...",
-    backToSignIn: "Volver a iniciar sesión",
-    resetEmailSent: "Si ese correo está registrado, te hemos enviado un enlace. Revisa tu bandeja de entrada.",
+    signInTitle: "Inicia sesión",
+    enterEmail: "Ingresa tu correo para continuar",
+    continueBtn: "Continuar",
+    otpSent: "Revisa tu bandeja de entrada",
+    codeSentTo: "Código enviado a",
+    otpPlaceholder: "000000",
+    verifying: "Verificando...",
+    changeEmail: "Cambiar correo",
+    resendCode: "Reenviar código",
+    codeSending: "Enviando...",
 
     // Profile
     listings: "Anuncios",
