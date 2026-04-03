@@ -149,7 +149,7 @@ jobs:
   deploy-prod:
     name: Deploy to Production
     needs: deploy-test
-    if: github.event_name == 'workflow_dispatch'
+    # Waits for manual approval via GitHub environment protection rules
     runs-on: ubuntu-latest
     environment: production
     steps:
