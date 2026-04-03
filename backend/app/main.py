@@ -94,6 +94,15 @@ def migrate_db():
                 conn.commit()
             logger.info("Migrated: added public_id to %s", table)
 
+    # Drop legacy password columns
+    user_cols = [c["name"] for c in insp.get_columns("users")]
+    for col in ("hashed_password", "password_reset_token", "password_reset_expires"):
+        if col in user_cols and is_postgres:
+            with engine.connect() as conn:
+                conn.execute(text(f"ALTER TABLE users DROP COLUMN {col}"))
+                conn.commit()
+            logger.info("Migrated: dropped users.%s", col)
+
 
 def _backfill_categories_name_es():
     from app.models.category import Category
@@ -193,7 +202,7 @@ async def lifespan(app: FastAPI):
         pass
 
 
-from app.routers import auth, users, categories, listings, messages, favorites, reports, social_auth, admin_auth, admin, contact, alerts, ratings
+from app.routers import auth, users, categories, listings, messages, favorites, reports, admin_auth, admin, contact, alerts, ratings
 
 app = FastAPI(
     title="Marketplace.aw",
@@ -221,7 +230,6 @@ app.include_router(listings.router, prefix="/api")
 app.include_router(messages.router, prefix="/api")
 app.include_router(favorites.router, prefix="/api")
 app.include_router(reports.router, prefix="/api")
-app.include_router(social_auth.router, prefix="/api")
 app.include_router(admin_auth.router, prefix="/api")
 app.include_router(admin.router, prefix="/api")
 app.include_router(contact.router, prefix="/api")

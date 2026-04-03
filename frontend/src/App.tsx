@@ -14,9 +14,6 @@ import ListingDetail from "./pages/ListingDetail";
 import CreateListing from "./pages/CreateListing";
 import Messages from "./pages/Messages";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Contact from "./pages/Contact";
@@ -40,9 +37,6 @@ export default function App() {
             <Routes>
               {/* Public user routes */}
               <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/" element={<Layout><Home /></Layout>} />
               <Route path="/listings" element={<Layout><Listings /></Layout>} />
               <Route path="/listings/new" element={<Layout><CreateListing /></Layout>} />

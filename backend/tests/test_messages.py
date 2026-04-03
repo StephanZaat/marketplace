@@ -115,7 +115,7 @@ class TestGetConversation:
 
     def test_non_participant_gets_403(self, client, db, conversation):
         """A third user cannot access the conversation."""
-        from app.routers.auth import create_access_token, hash_password
+        from app.routers.auth import create_access_token
         from app.models.user import User
         from app.utils import generate_public_id
         from fastapi.testclient import TestClient
@@ -123,7 +123,6 @@ class TestGetConversation:
 
         u3 = User(
             email="charlie@example.com",
-            hashed_password=hash_password("password123"),
             full_name="Charlie",
             is_active=True,
             is_verified=True,
@@ -161,7 +160,7 @@ class TestSendMessage:
         assert resp.status_code == 401
 
     def test_non_participant_cannot_send(self, client, db, conversation):
-        from app.routers.auth import create_access_token, hash_password
+        from app.routers.auth import create_access_token
         from app.models.user import User
         from app.utils import generate_public_id
         from fastapi.testclient import TestClient
@@ -169,7 +168,6 @@ class TestSendMessage:
 
         u3 = User(
             email="dave@example.com",
-            hashed_password=hash_password("password123"),
             full_name="Dave",
             is_active=True,
             is_verified=True,

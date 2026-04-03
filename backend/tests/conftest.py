@@ -14,7 +14,7 @@ from sqlalchemy.orm import sessionmaker
 
 from app.main import app
 from app.database import Base, engine, get_db
-from app.routers.auth import create_access_token, hash_password
+from app.routers.auth import create_access_token
 from app.routers.admin_auth import hash_password as admin_hash_password, create_access_token as admin_create_token
 from app.models.user import User
 from app.models.admin import Admin
@@ -71,7 +71,6 @@ def user(db) -> User:
     """A registered user (Alice) in the test DB."""
     u = User(
         email="alice@example.com",
-        hashed_password=hash_password("password123"),
         full_name="Alice Smith",
         is_active=True,
         is_verified=True,
@@ -88,7 +87,6 @@ def user2(db) -> User:
     """A second user (Bob) in the test DB."""
     u = User(
         email="bob@example.com",
-        hashed_password=hash_password("password123"),
         full_name="Bob Jones",
         is_active=True,
         is_verified=True,

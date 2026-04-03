@@ -3,10 +3,20 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
-class UserCreate(BaseModel):
+class OtpSendRequest(BaseModel):
     email: EmailStr
-    password: str
-    full_name: str
+
+
+class OtpSendResponse(BaseModel):
+    otp_token: str
+    is_new_user: bool
+
+
+class OtpVerifyRequest(BaseModel):
+    email: EmailStr
+    code: str
+    otp_token: str
+    full_name: str | None = None
 
 
 class UserUpdate(BaseModel):
@@ -54,8 +64,3 @@ class UserMe(UserPublic):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
-
-
-class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str

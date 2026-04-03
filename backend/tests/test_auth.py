@@ -1,70 +1,102 @@
-"""Tests for /api/auth endpoints: register, login, me, password reset."""
+"""Tests for /api/auth OTP endpoints."""
+import os
 import pytest
+from app.routers.auth import _create_otp_token
 
 
-class TestRegister:
-    def test_register_success(self, client):
-        resp = client.post("/api/auth/register", json={
-            "email": "new@example.com",
-            "password": "password123",
-            "full_name": "New User",
-        })
-        assert resp.status_code == 201
-        assert "access_token" in resp.json()
+@pytest.fixture(autouse=True)
+def dev_otp_code():
+    os.environ["DEV_OTP_CODE"] = "123456"
+    yield
+    os.environ.pop("DEV_OTP_CODE", None)
 
-    def test_register_duplicate_email(self, client, user):
-        resp = client.post("/api/auth/register", json={
-            "email": user.email,
-            "password": "password123",
-            "full_name": "Other User",
-        })
-        assert resp.status_code == 400
-        assert "email" in resp.json()["detail"].lower()
 
-    def test_register_invalid_email_returns_422(self, client):
-        resp = client.post("/api/auth/register", json={
-            "email": "not-an-email",
-            "password": "password123",
-            "full_name": "Someone",
-        })
-        assert resp.status_code == 422
+class TestOtpSend:
+    def test_otp_send_returns_token(self, client):
+        resp = client.post("/api/auth/otp-send", json={"email": "test@example.com"})
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "otp_token" in data
+        assert data["is_new_user"] is True
 
-    def test_register_missing_fields_returns_422(self, client):
-        resp = client.post("/api/auth/register", json={"email": "x@x.com"})
+    def test_otp_send_existing_user(self, client, user):
+        resp = client.post("/api/auth/otp-send", json={"email": user.email})
+        assert resp.status_code == 200
+        assert resp.json()["is_new_user"] is False
+
+    def test_otp_send_invalid_email_returns_422(self, client):
+        resp = client.post("/api/auth/otp-send", json={"email": "not-an-email"})
         assert resp.status_code == 422
 
 
-class TestLogin:
-    def test_login_success(self, client, user):
-        resp = client.post("/api/auth/login", json={
+class TestOtpVerify:
+    def test_verify_existing_user(self, client, user):
+        otp_token = _create_otp_token(user.email, "123456")
+        resp = client.post("/api/auth/otp-verify", json={
             "email": user.email,
-            "password": "password123",
+            "code": "123456",
+            "otp_token": otp_token,
         })
         assert resp.status_code == 200
         assert "access_token" in resp.json()
 
-    def test_login_wrong_password(self, client, user):
-        resp = client.post("/api/auth/login", json={
+    def test_verify_auto_creates_new_user(self, client, db):
+        email = "brand_new@example.com"
+        otp_token = _create_otp_token(email, "123456")
+        resp = client.post("/api/auth/otp-verify", json={
+            "email": email,
+            "code": "123456",
+            "otp_token": otp_token,
+            "full_name": "Brand New",
+        })
+        assert resp.status_code == 200
+        assert "access_token" in resp.json()
+
+        from app.models.user import User
+        u = db.query(User).filter(User.email == email).first()
+        assert u is not None
+        assert u.full_name == "Brand New"
+
+    def test_verify_wrong_code_returns_401(self, client, user):
+        otp_token = _create_otp_token(user.email, "123456")
+        resp = client.post("/api/auth/otp-verify", json={
             "email": user.email,
-            "password": "wrongpassword",
+            "code": "999999",
+            "otp_token": otp_token,
         })
         assert resp.status_code == 401
 
-    def test_login_unknown_email(self, client):
-        resp = client.post("/api/auth/login", json={
-            "email": "nobody@example.com",
-            "password": "password123",
+    def test_verify_expired_token_returns_401(self, client, user):
+        resp = client.post("/api/auth/otp-verify", json={
+            "email": user.email,
+            "code": "123456",
+            "otp_token": "expired.invalid.token",
         })
         assert resp.status_code == 401
 
-    def test_login_suspended_user_returns_403(self, client, db, user):
+    def test_verify_disabled_user_returns_403(self, client, db, user):
         user.is_active = False
         db.commit()
-        resp = client.post("/api/auth/login", json={
+        otp_token = _create_otp_token(user.email, "123456")
+        resp = client.post("/api/auth/otp-verify", json={
             "email": user.email,
-            "password": "password123",
+            "code": "123456",
+            "otp_token": otp_token,
         })
         assert resp.status_code == 403
+
+    def test_verify_new_user_default_name(self, client, db):
+        email = "noname@example.com"
+        otp_token = _create_otp_token(email, "123456")
+        resp = client.post("/api/auth/otp-verify", json={
+            "email": email,
+            "code": "123456",
+            "otp_token": otp_token,
+        })
+        assert resp.status_code == 200
+        from app.models.user import User
+        u = db.query(User).filter(User.email == email).first()
+        assert u.full_name == "noname"
 
 
 class TestMe:
@@ -82,67 +114,6 @@ class TestMe:
     def test_me_with_invalid_token_returns_401(self, client):
         resp = client.get("/api/auth/me", headers={"Authorization": "Bearer badtoken"})
         assert resp.status_code == 401
-
-
-class TestPasswordReset:
-    def test_forgot_password_always_returns_202(self, client):
-        # Returns 202 even for unknown email (avoid enumeration)
-        resp = client.post("/api/auth/forgot-password", json={"email": "nobody@example.com"})
-        assert resp.status_code == 202
-
-    def test_forgot_password_known_email_returns_202(self, client, user):
-        resp = client.post("/api/auth/forgot-password", json={"email": user.email})
-        assert resp.status_code == 202
-
-    def test_reset_password_with_invalid_token_returns_400(self, client):
-        resp = client.post("/api/auth/reset-password", json={
-            "token": "invalid-token",
-            "new_password": "newpassword123",
-        })
-        assert resp.status_code == 400
-
-    def test_reset_password_success(self, client, db, user):
-        import secrets
-        from datetime import datetime, timedelta
-        token = secrets.token_urlsafe(32)
-        user.password_reset_token = token
-        # Use naive datetime so it's compatible with both SQLite (naive) and Postgres (aware)
-        user.password_reset_expires = datetime.utcnow() + timedelta(hours=1)
-        db.commit()
-
-        resp = client.post("/api/auth/reset-password", json={
-            "token": token,
-            "new_password": "newpassword456",
-        })
-        assert resp.status_code == 200
-
-        # Old password should no longer work
-        login_resp = client.post("/api/auth/login", json={
-            "email": user.email,
-            "password": "password123",
-        })
-        assert login_resp.status_code == 401
-
-        # New password should work
-        login_resp2 = client.post("/api/auth/login", json={
-            "email": user.email,
-            "password": "newpassword456",
-        })
-        assert login_resp2.status_code == 200
-
-    def test_reset_password_too_short_returns_400(self, client, db, user):
-        import secrets
-        from datetime import datetime, timedelta
-        token = secrets.token_urlsafe(32)
-        user.password_reset_token = token
-        user.password_reset_expires = datetime.utcnow() + timedelta(hours=1)
-        db.commit()
-
-        resp = client.post("/api/auth/reset-password", json={
-            "token": token,
-            "new_password": "abc",
-        })
-        assert resp.status_code == 400
 
 
 class TestHealth:

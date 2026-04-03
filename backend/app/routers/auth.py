@@ -1,33 +1,83 @@
+import hashlib
+import os
 import secrets
+import time
+from collections import defaultdict
 from datetime import datetime, timedelta, timezone
+from threading import Lock
+
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from passlib.context import CryptContext
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.database import get_db
 from app.limiter import limiter
 from app.models.user import User
-from app.schemas.user import UserCreate, UserMe, Token, LoginRequest
+from app.schemas.user import OtpSendRequest, OtpSendResponse, OtpVerifyRequest, UserMe, Token
 from app.storage import resolve_image_url
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 settings = get_settings()
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 
+# ── Rate limiting state ────────────────────────────────────────────────────────
 
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+_otp_rate_lock = Lock()
+_otp_rate: dict[str, list[float]] = defaultdict(list)
+_OTP_WINDOW = 300  # 5 minutes
+_OTP_MAX = 5
 
 
-def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+def _check_email_rate_limit(email: str) -> None:
+    now = time.time()
+    with _otp_rate_lock:
+        timestamps = _otp_rate[email]
+        # Evict entries outside the window
+        timestamps[:] = [t for t in timestamps if now - t < _OTP_WINDOW]
+        if len(timestamps) >= _OTP_MAX:
+            raise HTTPException(
+                status_code=429,
+                detail="Too many OTP requests. Try again in a few minutes.",
+            )
+        timestamps.append(now)
 
+
+# ── OTP helpers ────────────────────────────────────────────────────────────────
+
+def _create_otp_code() -> str:
+    dev_code = os.environ.get("DEV_OTP_CODE")
+    if dev_code:
+        return dev_code
+    return f"{secrets.randbelow(1000000):06d}"
+
+
+def _create_otp_token(email: str, code: str) -> str:
+    code_hash = hashlib.sha256(code.encode()).hexdigest()
+    expire = datetime.now(timezone.utc) + timedelta(minutes=10)
+    return jwt.encode(
+        {"sub": email, "purpose": "otp", "code_hash": code_hash, "exp": expire},
+        settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+    )
+
+
+def _verify_otp_token(token: str, code: str) -> str | None:
+    try:
+        payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
+    except JWTError:
+        return None
+    if payload.get("purpose") != "otp":
+        return None
+    expected_hash = hashlib.sha256(code.encode()).hexdigest()
+    if payload.get("code_hash") != expected_hash:
+        return None
+    return payload.get("sub")
+
+
+# ── Auth helpers ───────────────────────────────────────────────────────────────
 
 def create_access_token(user_id: int) -> str:
     expire = datetime.now(timezone.utc) + timedelta(minutes=settings.jwt_expire_minutes)
@@ -66,52 +116,49 @@ def get_optional_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="/api/a
         return None
 
 
-@router.post("/register", response_model=Token, status_code=201)
-@limiter.limit("10/hour")
-def register(request: Request, data: UserCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    if db.query(User).filter(User.email == data.email).first():
-        raise HTTPException(status_code=400, detail="Email already registered")
-    user = User(
-        email=data.email,
-        hashed_password=hash_password(data.password),
-        full_name=data.full_name,
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+# ── OTP endpoints ──────────────────────────────────────────────────────────────
+
+@router.post("/otp-send", response_model=OtpSendResponse)
+@limiter.limit("5/minute")
+async def otp_send(request: Request, data: OtpSendRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    _check_email_rate_limit(data.email)
+
+    is_new_user = db.query(User).filter(User.email == data.email).first() is None
+
+    code = _create_otp_code()
+    otp_token = _create_otp_token(data.email, code)
 
     from app import email as mail
-    background_tasks.add_task(mail.send_welcome, user)
+    background_tasks.add_task(mail.send_otp_code, data.email, code)
+
+    return OtpSendResponse(otp_token=otp_token, is_new_user=is_new_user)
+
+
+@router.post("/otp-verify", response_model=Token)
+@limiter.limit("10/minute")
+def otp_verify(request: Request, data: OtpVerifyRequest, db: Session = Depends(get_db)):
+    email = _verify_otp_token(data.otp_token, data.code)
+    if not email or email != data.email:
+        raise HTTPException(status_code=401, detail="Invalid or expired OTP")
+
+    user = db.query(User).filter(User.email == email).first()
+    if user is None:
+        name = data.full_name or email.split("@")[0]
+        user = User(email=email, full_name=name, is_verified=True)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    else:
+        if not user.is_active:
+            raise HTTPException(status_code=403, detail="Account disabled")
+        if not user.is_verified:
+            user.is_verified = True
+            db.commit()
 
     return Token(access_token=create_access_token(user.id))
 
 
-@router.post("/login", response_model=Token)
-@limiter.limit("20/minute")
-def login(request: Request, data: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == data.email).first()
-    # Social-only accounts have no password — reject password login gracefully
-    if not user or not user.hashed_password:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
-    try:
-        valid = verify_password(data.password, user.hashed_password)
-    except Exception:
-        valid = False
-    if not valid:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
-    if not user.is_active:
-        raise HTTPException(status_code=403, detail="Account disabled")
-    return Token(access_token=create_access_token(user.id))
-
-
-@router.post("/token", response_model=Token)
-@limiter.limit("20/minute")
-def token_login(request: Request, form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == form.username).first()
-    if not user or not verify_password(form.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    return Token(access_token=create_access_token(user.id))
-
+# ── Me ─────────────────────────────────────────────────────────────────────────
 
 @router.get("/me", response_model=UserMe)
 def me(current_user: User = Depends(get_current_user)):
@@ -119,56 +166,3 @@ def me(current_user: User = Depends(get_current_user)):
     d["id"] = d.pop("public_id")
     d["avatar_url"] = resolve_image_url(d.get("avatar_url"), settings)
     return UserMe.model_validate(d)
-
-
-# ── Password reset ─────────────────────────────────────────────────────────────
-
-class ForgotPasswordRequest(BaseModel):
-    email: str
-
-
-class ResetPasswordRequest(BaseModel):
-    token: str
-    new_password: str
-
-
-@router.post("/forgot-password", status_code=202)
-@limiter.limit("10/hour")
-def forgot_password(request: Request, data: ForgotPasswordRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    """Request a password-reset link. Always returns 202 to avoid email enumeration."""
-    user = db.query(User).filter(User.email == data.email).first()
-    if user and user.hashed_password:  # only works for non-social accounts
-        token = secrets.token_urlsafe(32)
-        user.password_reset_token = token
-        user.password_reset_expires = datetime.now(timezone.utc) + timedelta(hours=1)
-        db.commit()
-
-        from app import email as mail
-        background_tasks.add_task(mail.send_password_reset, user.email, user.full_name or user.email, token)
-
-    return {"detail": "If that email is registered, a reset link has been sent."}
-
-
-@router.post("/reset-password", status_code=200)
-def reset_password(data: ResetPasswordRequest, db: Session = Depends(get_db)):
-    """Exchange a valid reset token for a new password."""
-    if len(data.new_password) < 8:
-        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
-
-    user = db.query(User).filter(User.password_reset_token == data.token).first()
-    if not user or not user.password_reset_expires:
-        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
-    expires = user.password_reset_expires
-    now = datetime.now(timezone.utc)
-    # SQLite returns naive datetimes; strip tz for comparison in that case
-    if expires.tzinfo is None:
-        now = now.replace(tzinfo=None)
-    if expires < now:
-        raise HTTPException(status_code=400, detail="Reset token has expired")
-
-    user.hashed_password = hash_password(data.new_password)
-    user.password_reset_token = None
-    user.password_reset_expires = None
-    db.commit()
-
-    return {"detail": "Password updated successfully"}
