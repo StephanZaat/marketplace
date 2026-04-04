@@ -5,11 +5,11 @@ Completely separate from regular user auth (separate admins table, separate JWT 
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
+import bcrypt
 import pyotp
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -21,7 +21,6 @@ from app.schemas.admin import AdminOut, AdminToken, TotpSetupOut, TotpVerifyIn
 router = APIRouter(prefix="/admin/auth", tags=["admin-auth"])
 settings = get_settings()
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/admin/auth/token")
 
 ALGORITHM = "HS256"
@@ -30,11 +29,11 @@ PREAUTH_TOKEN_EXPIRE_MINUTES = 5       # 5-minute window for TOTP step
 
 
 def hash_password(plain: str) -> str:
-    return pwd_context.hash(plain)
+    return bcrypt.hashpw(plain.encode(), bcrypt.gensalt()).decode()
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    return bcrypt.checkpw(plain.encode(), hashed.encode())
 
 
 def create_access_token(data: dict, expire_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES) -> str:
