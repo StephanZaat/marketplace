@@ -42,11 +42,14 @@ export default function Home() {
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden min-h-[420px] flex items-center">
         {/* Background photo */}
-        <img
-          src="/aruba-hero.jpg"
-          alt="Aruba beach"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
+        <picture>
+          <source srcSet="/aruba-hero.webp" type="image/webp" />
+          <img
+            src="/aruba-hero.jpg"
+            alt="Aruba beach"
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+        </picture>
         {/* Dark gradient overlay — stronger at top/bottom, lighter in centre */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/65" />
 
