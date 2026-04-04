@@ -57,6 +57,7 @@ services:
   netdata:
     image: netdata/netdata:stable
     container_name: marketplace_netdata
+    hostname: marketplace-prod
     restart: always
     cap_add:
       - SYS_PTRACE
