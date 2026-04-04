@@ -1,12 +1,12 @@
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from app.schemas.user import UserPublic
 from app.schemas.listing import ListingOut
 
 
 class MessageCreate(BaseModel):
-    body: str
+    body: str = Field(..., min_length=1, max_length=5000)
 
 
 class MessageOut(BaseModel):

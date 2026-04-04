@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class OtpSendRequest(BaseModel):
@@ -21,14 +21,14 @@ class OtpVerifyRequest(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    full_name: Optional[str] = None
-    bio: Optional[str] = None
-    location: Optional[str] = None
-    phone: Optional[str] = None
-    whatsapp: Optional[str] = None
-    contact_method: Optional[str] = None
-    languages: Optional[str] = None
-    preferred_language: Optional[str] = None
+    full_name: Optional[str] = Field(None, max_length=100)
+    bio: Optional[str] = Field(None, max_length=1000)
+    location: Optional[str] = Field(None, max_length=200)
+    phone: Optional[str] = Field(None, max_length=30)
+    whatsapp: Optional[str] = Field(None, max_length=30)
+    contact_method: Optional[str] = Field(None, max_length=100)
+    languages: Optional[str] = Field(None, max_length=200)
+    preferred_language: Optional[str] = Field(None, max_length=10)
 
 
 class UserPublic(BaseModel):

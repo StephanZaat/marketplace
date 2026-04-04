@@ -1,34 +1,34 @@
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from app.models.listing import ListingCondition, ListingStatus
 from app.schemas.user import UserPublic, UserContact
 from app.schemas.category import CategoryOut
 
 
 class ListingCreate(BaseModel):
-    title: str
-    description: str
-    price: Decimal
+    title: str = Field(..., min_length=1, max_length=200)
+    description: str = Field(..., min_length=1, max_length=5000)
+    price: Decimal = Field(..., ge=0)
     is_negotiable: bool = False
     condition: ListingCondition = ListingCondition.GOOD
     category_id: str
-    location: Optional[str] = None
-    contact_method: Optional[str] = None
+    location: Optional[str] = Field(None, max_length=200)
+    contact_method: Optional[str] = Field(None, max_length=200)
     attributes: Dict[str, Any] = {}
 
 
 class ListingUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    price: Optional[Decimal] = None
+    title: Optional[str] = Field(None, min_length=1, max_length=200)
+    description: Optional[str] = Field(None, min_length=1, max_length=5000)
+    price: Optional[Decimal] = Field(None, ge=0)
     is_negotiable: Optional[bool] = None
     condition: Optional[ListingCondition] = None
     status: Optional[ListingStatus] = None
     category_id: Optional[str] = None
-    location: Optional[str] = None
-    contact_method: Optional[str] = None
+    location: Optional[str] = Field(None, max_length=200)
+    contact_method: Optional[str] = Field(None, max_length=200)
     attributes: Optional[Dict[str, Any]] = None
     images: Optional[List[str]] = None
     sold_to_conversation_id: Optional[str] = None

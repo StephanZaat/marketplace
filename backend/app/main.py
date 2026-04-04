@@ -243,6 +243,7 @@ app.include_router(ratings.router, prefix="/api")
 def prerender(path: str = Query("/"), db: Session = Depends(get_db)):
     """Serve minimal HTML with correct meta tags for crawlers."""
     import re
+    from html import escape
     from app.models.listing import Listing, ListingStatus
     from app.models.category import Category
     from app.storage import resolve_image_url
@@ -307,6 +308,9 @@ def prerender(path: str = Query("/"), db: Session = Depends(get_db)):
         else:
             title = "Buy & Sell in Aruba — Marketplace.aw"
             desc = "Browse all listings for sale in Aruba. No fees, just great local deals on Marketplace.aw."
+
+    title = escape(title)
+    desc = escape(desc)
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
