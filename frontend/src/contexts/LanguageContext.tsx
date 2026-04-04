@@ -29,6 +29,7 @@ const translations: Record<Lang, any> = {
     // Home – categories
     shopByCategory: "Shop by Category",
     viewAll: "View all",
+    moreIn: "More in",
     showAllCategories: "Show all {n} categories",
     showLess: "Show less",
 
@@ -348,6 +349,7 @@ const translations: Record<Lang, any> = {
     // Home – categories
     shopByCategory: "Comprar por categoría",
     viewAll: "Ver todo",
+    moreIn: "Más en",
     showAllCategories: "Ver las {n} categorías",
     showLess: "Ver menos",
 

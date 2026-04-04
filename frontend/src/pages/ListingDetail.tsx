@@ -4,7 +4,7 @@ import { Eye, Calendar, ChevronLeft, ChevronRight, MessageCircle, Edit, Trash2, 
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import toast from "react-hot-toast";
-import api, { ListingDetail as IListingDetail, PendingRating, ConversationSummary, catName } from "../api";
+import api, { Listing, ListingDetail as IListingDetail, PendingRating, ConversationSummary, catName } from "../api";
 import RatingModal from "../components/RatingModal";
 import StarDisplay from "../components/StarDisplay";
 
@@ -19,6 +19,7 @@ import LocationMap from "../components/LocationMap";
 import { useLang } from "../contexts/LanguageContext";
 import { useCurrency } from "../contexts/CurrencyContext";
 import SEO from "../components/SEO";
+import ListingCard from "../components/ListingCard";
 
 function DeleteModal({ onConfirm, onCancel, t }: { onConfirm: () => void; onCancel: () => void; t: ReturnType<typeof useLang>["t"] }) {
   return (
@@ -205,6 +206,7 @@ export default function ListingDetail() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [pendingRatings, setPendingRatings] = useState<PendingRating[]>([]);
+  const [relatedListings, setRelatedListings] = useState<Listing[]>([]);
   const [showSoldToModal, setShowSoldToModal] = useState(false);
   const [soldToConversations, setSoldToConversations] = useState<ConversationSummary[]>([]);
   const [soldToLoading, setSoldToLoading] = useState(false);
@@ -241,6 +243,14 @@ export default function ListingDetail() {
       .catch(() => navigate("/listings"))
       .finally(() => setLoading(false));
   }, [id, navigate]);
+
+  // Fetch related listings in same category
+  useEffect(() => {
+    if (!listing) return;
+    api.get<Listing[]>(`/listings?category=${listing.category.slug}&limit=5`)
+      .then((r) => setRelatedListings(r.data.filter((l) => l.id !== listing.id).slice(0, 4)))
+      .catch(() => {});
+  }, [listing?.id, listing?.category.slug]);
 
   const isOwner = user?.id === listing?.seller_id;
 
@@ -801,6 +811,26 @@ export default function ListingDetail() {
         </div>
       </div>
     </div>
+
+    {/* More in this category */}
+    {relatedListings.length > 0 && (
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">
+            {t.moreIn} {catName(listing!.category, lang)}
+          </h2>
+          <Link
+            to={`/listings?category=${listing!.category.slug}`}
+            className="text-sm text-ocean-600 hover:text-ocean-700 font-medium"
+          >
+            {t.viewAll} →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {relatedListings.map((l) => <ListingCard key={l.id} listing={l} />)}
+        </div>
+      </div>
+    )}
     </>
   );
 }
