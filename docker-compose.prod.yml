@@ -54,6 +54,27 @@ services:
       - backend
       - frontend
 
+  netdata:
+    image: netdata/netdata:stable
+    container_name: marketplace_netdata
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - netdata_lib:/var/lib/netdata
+      - netdata_cache:/var/cache/netdata
+    environment:
+      - NETDATA_CLAIM_TOKEN=${NETDATA_CLAIM_TOKEN:-}
+      - NETDATA_CLAIM_URL=https://app.netdata.cloud
+    ports:
+      - "127.0.0.1:19999:19999"
+
   certbot:
     image: certbot/certbot:latest
     container_name: marketplace_certbot
@@ -76,3 +97,7 @@ volumes:
     name: marketplace_letsencrypt
   certbot_webroot:
     name: marketplace_certbot_webroot
+  netdata_lib:
+    name: marketplace_netdata_lib
+  netdata_cache:
+    name: marketplace_netdata_cache
