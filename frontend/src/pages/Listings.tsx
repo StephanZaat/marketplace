@@ -210,11 +210,21 @@ export default function Listings() {
   }, []);
   const slugCounts = searchCounts ?? countBySlug(tree);
 
-  const seoTitle = q ? `"${q}" in Aruba` : category ? `${category} — Marketplace Aruba` : "Browse Listings in Aruba";
+  const catLabel = categoryName || category;
+  const seoTitle = q
+    ? `"${q}" for sale in Aruba`
+    : catLabel
+      ? `${catLabel} for Sale in Aruba — Buy & Sell on Marketplace.aw`
+      : "Buy & Sell in Aruba — Marketplace.aw";
+  const seoDesc = q
+    ? `Search results for "${q}" on Marketplace.aw. Find great deals in Aruba.`
+    : catLabel
+      ? `Browse ${catLabel} for sale in Aruba. New and second-hand — no fees, local deals on Marketplace.aw.`
+      : "Browse all listings for sale in Aruba. No fees, just great local deals on Marketplace.aw.";
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5" onClick={() => openFilter && setOpenFilter(null)}>
-      <SEO title={seoTitle} description={`Find ${q || category || "second-hand items"} for sale in Aruba. No fees, local deals.`} />
+      <SEO title={seoTitle} description={seoDesc} />
       {/* Page heading */}
       <div className="mb-4">
         {/* Breadcrumb for subcategories */}

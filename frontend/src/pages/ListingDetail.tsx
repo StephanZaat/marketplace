@@ -348,6 +348,7 @@ export default function ListingDetail() {
   if (!listing) return null;
 
   const imgs = listing.images;
+  const imgAlt = [listing.title, catName(listing.category, lang), listing.location, "Aruba"].filter(Boolean).join(" — ");
   const seoTitle = `${listing.title} — AWG ${listing.price}`;
   const seoDesc = listing.description.slice(0, 160);
   const seoImage = listing.images[0] || undefined;
@@ -435,7 +436,7 @@ export default function ListingDetail() {
           <div className="flex-1 flex items-center justify-center px-2 sm:px-12 min-h-0">
             <img
               src={imgs[imgIndex]}
-              alt={listing?.title}
+              alt={imgAlt}
               className="max-w-full max-h-full object-contain select-none"
               onClick={(e) => e.stopPropagation()}
               draggable={false}
@@ -491,7 +492,7 @@ export default function ListingDetail() {
               <>
                 <img
                   src={imgs[imgIndex]}
-                  alt={listing.title}
+                  alt={imgAlt}
                   className="w-full h-full object-cover cursor-zoom-in"
                   onClick={() => setLightboxOpen(true)}
                   draggable={false}

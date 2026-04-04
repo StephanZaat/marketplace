@@ -32,6 +32,7 @@ export default function ListingCard({ listing }: Props) {
   };
   const thumb = listing.thumbnail ?? listing.images[0];
   const location = listing.seller_location ?? listing.location;
+  const altText = [listing.title, listing.category_name, location, "Aruba"].filter(Boolean).join(" — ");
 
   return (
     <Link
@@ -43,7 +44,7 @@ export default function ListingCard({ listing }: Props) {
         {thumb ? (
           <img
             src={thumb}
-            alt={listing.title}
+            alt={altText}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400"
           />
         ) : (

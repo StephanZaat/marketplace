@@ -302,11 +302,11 @@ def prerender(path: str = Query("/"), db: Session = Depends(get_db)):
         if cat_slug:
             cat = db.query(Category).filter(Category.slug == cat_slug).first()
             if cat:
-                title = f"{cat.name} — Marketplace Aruba"
-                desc = f"Browse {cat.name} for sale in Aruba. No fees, local deals."
+                title = f"{cat.name} for Sale in Aruba — Buy & Sell on Marketplace.aw"
+                desc = f"Browse {cat.name} for sale in Aruba. New and second-hand — no fees, local deals on Marketplace.aw."
         else:
-            title = "Browse Listings — Marketplace Aruba"
-            desc = "Find second-hand items for sale in Aruba. No fees, local deals."
+            title = "Buy & Sell in Aruba — Marketplace.aw"
+            desc = "Browse all listings for sale in Aruba. No fees, just great local deals on Marketplace.aw."
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
