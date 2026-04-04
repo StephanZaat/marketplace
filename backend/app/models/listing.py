@@ -34,7 +34,7 @@ class Listing(Base):
     price = Column(Numeric(10, 2), nullable=False)
     is_negotiable = Column(Boolean, default=False)
     condition = Column(SAEnum(ListingCondition), nullable=False, default=ListingCondition.GOOD)
-    status = Column(SAEnum(ListingStatus), nullable=False, default=ListingStatus.ACTIVE)
+    status = Column(SAEnum(ListingStatus), nullable=False, default=ListingStatus.ACTIVE, index=True)
 
     # Relations
     seller_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)

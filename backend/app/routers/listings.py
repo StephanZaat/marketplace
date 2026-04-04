@@ -22,9 +22,12 @@ settings = get_settings()
 
 @router.get("/stats")
 def get_stats(db: Session = Depends(get_db)):
-    active = db.query(Listing).filter(Listing.status == ListingStatus.ACTIVE).all()
-    listing_count = len(active)
-    seller_count = len({l.seller_id for l in active})
+    listing_count = db.query(func.count(Listing.id)).filter(
+        Listing.status == ListingStatus.ACTIVE
+    ).scalar()
+    seller_count = db.query(func.count(func.distinct(Listing.seller_id))).filter(
+        Listing.status == ListingStatus.ACTIVE
+    ).scalar()
     # Round down to nearest 10, minimum 1 if any exist
     def round10(n: int) -> int:
         if n == 0:

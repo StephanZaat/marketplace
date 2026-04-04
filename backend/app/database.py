@@ -6,7 +6,13 @@ settings = get_settings()
 
 _connect_args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
 
-engine = create_engine(settings.database_url, connect_args=_connect_args)
+_pool_args = (
+    {"pool_size": 10, "max_overflow": 20, "pool_pre_ping": True}
+    if not settings.database_url.startswith("sqlite")
+    else {}
+)
+
+engine = create_engine(settings.database_url, connect_args=_connect_args, **_pool_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
