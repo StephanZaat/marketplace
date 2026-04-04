@@ -58,7 +58,7 @@ def _send_via_tem_api(to: str, subject: str, html: str, text: str | None = None)
         return False
 
     payload = {
-        "from": {"email": settings.email_from},
+        "from": {"email": settings.email_from, "name": "Marketplace.aw"},
         "to": [{"email": to}],
         "subject": subject,
         "html": html,
@@ -100,7 +100,7 @@ async def _send(to: str, subject: str, html: str, text: str | None = None) -> No
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
-    msg["From"] = settings.email_from
+    msg["From"] = f"Marketplace.aw <{settings.email_from}>"
     msg["To"] = to
 
     if text:
