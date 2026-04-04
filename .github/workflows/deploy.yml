@@ -163,6 +163,20 @@ jobs:
               | sudo tee /etc/cron.d/marketplace-backup > /dev/null
             sudo chmod 644 /etc/cron.d/marketplace-backup
 
+            echo "--- Health check (wait up to 30s)"
+            for i in $(seq 1 10); do
+              if docker exec marketplace_backend python -c "import urllib.request; r=urllib.request.urlopen('http://localhost:8000/api/health'); assert b'ok' in r.read()" 2>/dev/null; then
+                echo "Backend healthy"
+                break
+              fi
+              if [ "$i" -eq 10 ]; then
+                echo "ERROR: Backend health check failed after 30s"
+                docker logs marketplace_backend --tail 20
+                exit 1
+              fi
+              sleep 3
+            done
+
             echo "--- Removing dangling images"
             docker image prune -f
 
@@ -314,6 +328,20 @@ jobs:
             echo "10 3 * * * deploy /home/deploy/marketplace/scripts/backup-db.sh >> /home/deploy/marketplace-backup.log 2>&1" \
               | sudo tee /etc/cron.d/marketplace-backup > /dev/null
             sudo chmod 644 /etc/cron.d/marketplace-backup
+
+            echo "--- Health check (wait up to 30s)"
+            for i in $(seq 1 10); do
+              if docker exec marketplace_backend python -c "import urllib.request; r=urllib.request.urlopen('http://localhost:8000/api/health'); assert b'ok' in r.read()" 2>/dev/null; then
+                echo "Backend healthy"
+                break
+              fi
+              if [ "$i" -eq 10 ]; then
+                echo "ERROR: Backend health check failed after 30s"
+                docker logs marketplace_backend --tail 20
+                exit 1
+              fi
+              sleep 3
+            done
 
             echo "--- Removing dangling images"
             docker image prune -f

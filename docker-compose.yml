@@ -43,8 +43,7 @@ services:
       - /app/node_modules
     environment:
       - VITE_API_URL=http://localhost:8080/api
-      - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
-      - VITE_FACEBOOK_APP_ID=${FACEBOOK_APP_ID:-}
+      - VITE_FRIENDLY_CAPTCHA_SITEKEY=${FRIENDLY_CAPTCHA_SITEKEY:-}
 
   nginx:
     image: nginx:1.25-alpine

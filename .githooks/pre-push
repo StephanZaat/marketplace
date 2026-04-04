@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Always use the main project's containers regardless of worktree
 export COMPOSE_PROJECT_NAME=marketplace
+
+echo "=== Pre-push: TypeScript type check ==="
+docker compose exec -T frontend ./node_modules/.bin/tsc --noEmit
 
 echo "=== Pre-push: Backend tests ==="
 docker compose --profile test run --rm -T test
