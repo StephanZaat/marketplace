@@ -140,8 +140,6 @@ jobs:
               "BACKUP_REGION=nl-ams" \
               "FRIENDLY_CAPTCHA_SITEKEY=FCMRARFRUTA89JI8" \
               "FRIENDLY_CAPTCHA_SECRET=${FRIENDLY_CAPTCHA_SECRET}" \
-              "NETDATA_CLAIM_TOKEN=N8qtCb4vl0hpDVuYV906iJb2v0KbFknebRR-_AMiscEa_W0qFeEZ45IEFY8IgKkF55AO1-x_KydGK2olkOdz4KE5v7oBVkekK3DzIYBhW4oLZciyp7LQtNhTQiu7cpCESeV2SEU" \
-              "NETDATA_CLAIM_ROOMS=131cfeb0-9e4c-4173-abe2-d5dcc1ca0064" \
               > .env
             chmod 600 .env
 
@@ -300,8 +298,6 @@ jobs:
               "BACKUP_REGION=nl-ams" \
               "FRIENDLY_CAPTCHA_SITEKEY=FCMRARFRUTA89JI8" \
               "FRIENDLY_CAPTCHA_SECRET=${FRIENDLY_CAPTCHA_SECRET}" \
-              "NETDATA_CLAIM_TOKEN=N8qtCb4vl0hpDVuYV906iJb2v0KbFknebRR-_AMiscEa_W0qFeEZ45IEFY8IgKkF55AO1-x_KydGK2olkOdz4KE5v7oBVkekK3DzIYBhW4oLZciyp7LQtNhTQiu7cpCESeV2SEU" \
-              "NETDATA_CLAIM_ROOMS=131cfeb0-9e4c-4173-abe2-d5dcc1ca0064" \
               > .env
             chmod 600 .env
 
