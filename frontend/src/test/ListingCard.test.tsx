@@ -26,6 +26,7 @@ const baseListing: Listing = {
   seller_location: null,
   contact_method: null,
   images: [],
+  thumbnail: null,
   attributes: {},
   view_count: 42,
   category_icon: null,
