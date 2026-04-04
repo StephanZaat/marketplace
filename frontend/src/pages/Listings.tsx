@@ -6,6 +6,7 @@ import ListingCard from "../components/ListingCard";
 import CategoryTreeNav from "../components/CategoryTree";
 import { ARUBA_AREAS } from "../lib/arubaAreas";
 import { useLang } from "../contexts/LanguageContext";
+import SEO from "../components/SEO";
 
 const CONDITION_VALUES = ["new", "like_new", "good", "fair", "poor"] as const;
 const SORT_KEYS = [
@@ -209,8 +210,11 @@ export default function Listings() {
   }, []);
   const slugCounts = searchCounts ?? countBySlug(tree);
 
+  const seoTitle = q ? `"${q}" in Aruba` : category ? `${category} — Marketplace Aruba` : "Browse Listings in Aruba";
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5" onClick={() => openFilter && setOpenFilter(null)}>
+      <SEO title={seoTitle} description={`Find ${q || category || "second-hand items"} for sale in Aruba. No fees, local deals.`} />
       {/* Page heading */}
       <div className="mb-4">
         {/* Breadcrumb for subcategories */}

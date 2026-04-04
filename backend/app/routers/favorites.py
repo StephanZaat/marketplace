@@ -12,7 +12,7 @@ from app.models.category import Category
 from app.resolve import resolve_public_id, _build_pid_map
 from app.routers.auth import get_current_user
 from app.schemas.listing import ListingOut
-from app.storage import resolve_image_url
+from app.storage import resolve_image_url, resolve_listing_images
 
 router = APIRouter(prefix="/favorites", tags=["favorites"])
 settings = get_settings()
@@ -35,7 +35,7 @@ def list_favorites(db: Session = Depends(get_db), current_user: User = Depends(g
         d["id"] = d.pop("public_id")
         d["seller_id"] = seller_pid_map.get(r.seller_id, "")
         d["category_id"] = cat_pid_map.get(r.category_id, "")
-        d["images"] = [resolve_image_url(img, settings) for img in (d.get("images") or [])]
+        resolve_listing_images(d, settings)
         results.append(d)
     return results
 

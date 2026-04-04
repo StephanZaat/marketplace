@@ -14,7 +14,7 @@ from app.models.rating import Rating
 from app.resolve import resolve_public_id, _build_pid_map, listing_to_public_dict
 from app.routers.auth import get_current_user, get_optional_user
 from app.schemas.listing import ListingCreate, ListingUpdate, ListingOut, ListingDetail
-from app.storage import save_listing_image, delete_listing_image, resolve_image_url, _key_from_url
+from app.storage import save_listing_image, delete_listing_image, resolve_image_url, resolve_listing_images, _key_from_url
 
 router = APIRouter(prefix="/listings", tags=["listings"])
 settings = get_settings()
@@ -211,7 +211,7 @@ def list_listings(
         d["category_icon"]     = c.icon if c else None
         d["category_name"]     = c.name if c else None
         d["category_name_es"]  = c.name_es if c else None
-        d["images"] = [resolve_image_url(img, settings) for img in (d.get("images") or [])]
+        resolve_listing_images(d, settings)
         results.append(d)
     return results
 
@@ -267,7 +267,7 @@ def get_listing(
     data["id"] = data.pop("public_id")
     data["seller_id"] = seller_pid_map.get(listing.seller_id, "")
     data["category_id"] = cat_pid_map.get(listing.category_id, "")
-    data["images"] = [resolve_image_url(img, settings) for img in (data.get("images") or [])]
+    resolve_listing_images(data, settings)
     data["favorite_count"] = favorite_count
     seller_data["avatar_url"] = resolve_image_url(seller_data.get("avatar_url"), settings)
     data["seller"] = seller_data
@@ -400,7 +400,7 @@ def upload_image(
     db.commit()
     db.refresh(listing)
     d = listing_to_public_dict(listing, db)
-    d["images"] = [resolve_image_url(img, settings) for img in (d.get("images") or [])]
+    resolve_listing_images(d, settings)
     return d
 
 
@@ -416,15 +416,17 @@ def delete_image(
         raise HTTPException(status_code=403, detail="Not your listing")
     # Accept either a full URL or a relative key from the client
     key = _key_from_url(image_url, settings)
-    if key not in listing.images:
+    # Find the matching stored entry (may be a full URL or relative key)
+    match = next((img for img in listing.images if _key_from_url(img, settings) == key), None)
+    if match is None:
         raise HTTPException(status_code=404, detail="Image not found")
     updated = list(listing.images)
-    updated.remove(key)
-    if key not in updated:
+    updated.remove(match)
+    if match not in updated:
         delete_listing_image(key, settings)
     listing.images = updated
     db.commit()
     db.refresh(listing)
     d = listing_to_public_dict(listing, db)
-    d["images"] = [resolve_image_url(img, settings) for img in (d.get("images") or [])]
+    resolve_listing_images(d, settings)
     return d

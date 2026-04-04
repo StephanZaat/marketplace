@@ -30,7 +30,7 @@ export default function ListingCard({ listing }: Props) {
   const conditionLabels: Record<string, string> = {
     new: t.condNew, like_new: t.condLikeNew, good: t.condGood, fair: t.condFair, poor: t.condPoor,
   };
-  const thumb = listing.images[0];
+  const thumb = listing.thumbnail ?? listing.images[0];
   const location = listing.seller_location ?? listing.location;
 
   return (

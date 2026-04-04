@@ -3,9 +3,9 @@ import logging
 import pathlib
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -237,6 +237,124 @@ app.include_router(admin.router, prefix="/api")
 app.include_router(contact.router, prefix="/api")
 app.include_router(alerts.router, prefix="/api")
 app.include_router(ratings.router, prefix="/api")
+
+
+@app.get("/api/prerender")
+def prerender(path: str = Query("/"), db: Session = Depends(get_db)):
+    """Serve minimal HTML with correct meta tags for crawlers."""
+    import re
+    from app.models.listing import Listing, ListingStatus
+    from app.models.category import Category
+    from app.storage import resolve_image_url
+
+    base = settings.site_url or "https://marketplace.aw"
+    title = "Marketplace.aw — Buy & Sell Locally in Aruba"
+    desc = "The local marketplace for Aruba. Buy and sell products, services, and more."
+    image = f"{base}/og-image.jpg"
+    og_type = "website"
+    json_ld = ""
+
+    # Homepage
+    if path == "/":
+        json_ld = json.dumps({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Marketplace.aw",
+            "url": base,
+            "description": "Aruba's local marketplace. Buy and sell anything on the island — no fees, no fuss.",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": f"{base}/listings?q={{search_term_string}}",
+                "query-input": "required name=search_term_string",
+            },
+        })
+
+    # Listing detail: /listings/<public_id>
+    listing_match = re.match(r"^/listings/([A-Za-z0-9_-]+)$", path)
+    if listing_match:
+        pid = listing_match.group(1)
+        listing = db.query(Listing).filter(Listing.public_id == pid).first()
+        if listing:
+            title = f"{listing.title} — AWG {listing.price} | Marketplace.aw"
+            desc = (listing.description or "")[:200]
+            if listing.images:
+                image = resolve_image_url(listing.images[0], settings) or image
+            og_type = "product"
+            json_ld = json.dumps({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                "name": listing.title,
+                "description": listing.description,
+                "image": [resolve_image_url(img, settings) for img in listing.images],
+                "offers": {
+                    "@type": "Offer",
+                    "price": str(listing.price),
+                    "priceCurrency": "AWG",
+                    "availability": "https://schema.org/InStock" if listing.status == ListingStatus.ACTIVE else "https://schema.org/SoldOut",
+                },
+            })
+
+    # Category listing: /listings?category=<slug>
+    elif path.startswith("/listings"):
+        from urllib.parse import urlparse, parse_qs
+        qs = parse_qs(urlparse(path).query)
+        cat_slug = qs.get("category", [None])[0]
+        if cat_slug:
+            cat = db.query(Category).filter(Category.slug == cat_slug).first()
+            if cat:
+                title = f"{cat.name} — Marketplace Aruba"
+                desc = f"Browse {cat.name} for sale in Aruba. No fees, local deals."
+        else:
+            title = "Browse Listings — Marketplace Aruba"
+            desc = "Find second-hand items for sale in Aruba. No fees, local deals."
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{title}</title>
+<meta name="description" content="{desc}">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:image" content="{image}">
+<meta property="og:type" content="{og_type}">
+<meta property="og:url" content="{base}{path}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="{image}">
+<link rel="canonical" href="{base}{path}">
+<link rel="alternate" hreflang="en" href="{base}{path}">
+<link rel="alternate" hreflang="es" href="{base}{path}">
+<link rel="alternate" hreflang="x-default" href="{base}{path}">
+{f'<script type="application/ld+json">{json_ld}</script>' if json_ld else ''}
+</head>
+<body>
+<h1>{title}</h1>
+<p>{desc}</p>
+<a href="{base}{path}">View on Marketplace.aw</a>
+</body>
+</html>"""
+    return HTMLResponse(content=html)
+
+
+@app.get("/api/sitemap.xml")
+def sitemap(db: Session = Depends(get_db)):
+    from app.models.listing import Listing, ListingStatus
+    from app.models.category import Category
+    base = settings.site_url or "https://marketplace.aw"
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+             f'  <url><loc>{base}/</loc><priority>1.0</priority></url>',
+             f'  <url><loc>{base}/listings</loc><priority>0.9</priority></url>']
+    # Categories
+    for cat in db.query(Category).all():
+        lines.append(f'  <url><loc>{base}/listings?category={cat.slug}</loc><priority>0.7</priority></url>')
+    # Active listings
+    for listing in db.query(Listing).filter(Listing.status == ListingStatus.ACTIVE).all():
+        lines.append(f'  <url><loc>{base}/listings/{listing.public_id}</loc><priority>0.8</priority></url>')
+    lines.append('</urlset>')
+    return Response(content="\n".join(lines), media_type="application/xml")
 
 
 @app.get("/api/health")

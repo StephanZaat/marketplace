@@ -26,14 +26,18 @@ interface FormData {
 
 export default function Settings() {
   const { user, login } = useAuth();
-  const { t, setLang } = useLang();
+  const { t, lang, setLang } = useLang();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(user?.avatar_url ?? null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const avatarRef = useRef<HTMLInputElement>(null);
   const [languages, setLanguages] = useState<string[]>(
-    () => user?.languages?.split(",").map(s => s.trim()).filter(Boolean) ?? []
+    () => {
+      const saved = user?.languages?.split(",").map(s => s.trim()).filter(Boolean) ?? [];
+      if (saved.length > 0) return saved;
+      return lang === "es" ? ["spanish"] : ["english"];
+    }
   );
   const [showPhone, setShowPhone] = useState(
     () => !!user?.contact_method?.includes("phone")
@@ -42,7 +46,7 @@ export default function Settings() {
     () => !!user?.contact_method?.includes("whatsapp")
   );
   const [preferredLang, setPreferredLang] = useState<string>(
-    () => user?.preferred_language ?? "en"
+    () => user?.preferred_language ?? lang
   );
 
   const { register, handleSubmit, watch, setValue } = useForm<FormData>({
@@ -214,31 +218,36 @@ export default function Settings() {
 
         <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-700">{t.communications}</label>
-          <div className="flex items-center gap-3">
-            <label className="w-8 text-sm font-medium text-gray-700 shrink-0">📞</label>
-            <div className="flex-1">
-              <PhoneInput
-                value={watchPhone}
-                onChange={(v) => { setValue("phone", v, { shouldDirty: true }); if (v) setShowPhone(true); }}
-                placeholder={t.phonePlaceholder}
-              />
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <label className="w-8 text-sm font-medium text-gray-700 shrink-0">📞</label>
+              <div className="flex-1">
+                <PhoneInput
+                  value={watchPhone}
+                  onChange={(v) => { setValue("phone", v, { shouldDirty: true }); if (v) setShowPhone(true); }}
+                  placeholder={t.phonePlaceholder}
+                />
+              </div>
             </div>
-            <label className="flex items-center gap-1.5 text-sm text-gray-500 cursor-pointer select-none shrink-0">
-              <input
-                type="checkbox"
-                checked={showPhone}
-                onChange={(e) => setShowPhone(e.target.checked)}
-                className="rounded"
-                disabled={!watchPhone}
-              />
-              {t.publicLabel}
-              <span className="relative group">
-                <Info className="w-3.5 h-3.5 text-gray-400" />
-                <span className="pointer-events-none absolute right-0 top-5 z-20 w-52 rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-xl opacity-0 group-hover:opacity-100 transition-opacity">
-                  {t.phonePublicTooltip}
+            <div className="flex items-center gap-3">
+              <div className="w-8 shrink-0" />
+              <label className="flex items-center gap-1.5 text-sm text-gray-500 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={showPhone}
+                  onChange={(e) => setShowPhone(e.target.checked)}
+                  className="rounded"
+                  disabled={!watchPhone}
+                />
+                {t.publicLabel}
+                <span className="relative group">
+                  <Info className="w-3.5 h-3.5 text-gray-400" />
+                  <span className="pointer-events-none absolute left-0 top-5 z-20 w-52 rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                    {t.phonePublicTooltip}
+                  </span>
                 </span>
-              </span>
-            </label>
+              </label>
+            </div>
           </div>
           {watchPhone && (
             <div className="flex items-center gap-3">
@@ -254,31 +263,36 @@ export default function Settings() {
               </button>
             </div>
           )}
-          <div className="flex items-center gap-3">
-            <label className="w-8 shrink-0 flex items-center"><WaIcon /></label>
-            <div className="flex-1">
-              <PhoneInput
-                value={watchWhatsapp}
-                onChange={(v) => { setValue("whatsapp", v, { shouldDirty: true }); if (v) setShowWhatsapp(true); }}
-                placeholder={t.whatsappPlaceholder}
-              />
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <label className="w-8 shrink-0 flex items-center"><WaIcon /></label>
+              <div className="flex-1">
+                <PhoneInput
+                  value={watchWhatsapp}
+                  onChange={(v) => { setValue("whatsapp", v, { shouldDirty: true }); if (v) setShowWhatsapp(true); }}
+                  placeholder={t.whatsappPlaceholder}
+                />
+              </div>
             </div>
-            <label className="flex items-center gap-1.5 text-sm text-gray-500 cursor-pointer select-none shrink-0">
-              <input
-                type="checkbox"
-                checked={showWhatsapp}
-                onChange={(e) => setShowWhatsapp(e.target.checked)}
-                className="rounded"
-                disabled={!watchWhatsapp}
-              />
-              {t.publicLabel}
-              <span className="relative group">
-                <Info className="w-3.5 h-3.5 text-gray-400" />
-                <span className="pointer-events-none absolute right-0 top-5 z-20 w-52 rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-xl opacity-0 group-hover:opacity-100 transition-opacity">
-                  {t.whatsappPublicTooltip}
+            <div className="flex items-center gap-3">
+              <div className="w-8 shrink-0" />
+              <label className="flex items-center gap-1.5 text-sm text-gray-500 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={showWhatsapp}
+                  onChange={(e) => setShowWhatsapp(e.target.checked)}
+                  className="rounded"
+                  disabled={!watchWhatsapp}
+                />
+                {t.publicLabel}
+                <span className="relative group">
+                  <Info className="w-3.5 h-3.5 text-gray-400" />
+                  <span className="pointer-events-none absolute left-0 top-5 z-20 w-52 rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                    {t.whatsappPublicTooltip}
+                  </span>
                 </span>
-              </span>
-            </label>
+              </label>
+            </div>
           </div>
         </div>
 

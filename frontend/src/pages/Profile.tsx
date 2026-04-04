@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Calendar, Edit, Heart, CheckCircle, Phone, Clock, Bell, ChevronDown, ChevronRight } from "lucide-react";
+import { Calendar, Edit, Heart, CheckCircle, Phone, Clock, Bell, ChevronDown, ChevronRight, LayoutGrid } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import api, { User, Listing, CategoryTree, PendingRating, UserRatingStats, catName } from "../api";
@@ -228,60 +228,58 @@ export default function Profile() {
       )}
 
       {/* Profile header */}
-      <div className="card p-6 mb-6">
-        <div className="flex items-start gap-5">
+      <div className="card p-4 sm:p-6 mb-6">
+        <div className="flex items-center sm:items-start gap-3 sm:gap-5">
           <div className="shrink-0">
             {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt={profile.full_name ?? "Profile"} className="w-20 h-20 rounded-full object-cover" />
+              <img src={profile.avatar_url} alt={profile.full_name ?? "Profile"} className="w-14 h-14 sm:w-20 sm:h-20 rounded-full object-cover" />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-3xl font-bold">
+              <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-ocean-100 text-ocean-600 flex items-center justify-center text-2xl sm:text-3xl font-bold">
                 {(profile.full_name ?? "?")[0].toUpperCase()}
               </div>
             )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">{profile.full_name ?? "Unknown"}</h1>
-                {/* Seller rating summary */}
-                {ratingStats && ratingStats.as_seller.count > 0 && (
-                  <div className="mt-1">
-                    {ratingStats.as_seller.avg_overall != null && (
-                      <StarDisplay
-                        rating={ratingStats.as_seller.avg_overall}
-                        count={ratingStats.as_seller.count}
-                        size="sm"
-                      />
-                    )}
-                  </div>
-                )}
-                {profile.languages && (
-                  <div className="flex flex-wrap gap-1.5 mt-1.5">
-                    {profile.languages.split(",").map(l => l.trim()).filter(Boolean).map(lang => {
-                      const langMeta: Record<string, { flag: string; label: string }> = {
-                        english:    { flag: "🇬🇧", label: t.langEnglish },
-                        spanish:    { flag: "🇪🇸", label: t.langSpanish },
-                        papiamento: { flag: "🇦🇼", label: t.langPapiamento },
-                        dutch:      { flag: "🇳🇱", label: t.langDutch },
-                      };
-                      const meta = langMeta[lang];
-                      return meta ? (
-                        <span key={lang} title={meta.label} className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-100 rounded-full px-2 py-0.5">
-                          <span>{meta.flag}</span>
-                          <span>{meta.label}</span>
-                        </span>
-                      ) : null;
-                    })}
-                  </div>
-                )}
-              </div>
+              <h1 className="text-lg sm:text-xl font-bold text-gray-900 break-words min-w-0">{profile.full_name ?? "Unknown"}</h1>
               {isMe && (
-                <Link to="/settings" className="btn-secondary text-sm gap-1.5">
+                <Link to="/settings" className="btn-secondary text-sm gap-1.5 shrink-0 whitespace-nowrap hidden sm:inline-flex">
                   <Edit className="w-3.5 h-3.5" /> {t.editProfile}
                 </Link>
               )}
             </div>
-            <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-gray-400">
+            {/* Seller rating summary */}
+            {ratingStats && ratingStats.as_seller.count > 0 && (
+              <div className="mt-1">
+                {ratingStats.as_seller.avg_overall != null && (
+                  <StarDisplay
+                    rating={ratingStats.as_seller.avg_overall}
+                    count={ratingStats.as_seller.count}
+                    size="sm"
+                  />
+                )}
+              </div>
+            )}
+            {profile.languages && (
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                {profile.languages.split(",").map(l => l.trim()).filter(Boolean).map(lang => {
+                  const langMeta: Record<string, { flag: string; label: string }> = {
+                    english:    { flag: "🇬🇧", label: t.langEnglish },
+                    spanish:    { flag: "🇪🇸", label: t.langSpanish },
+                    papiamento: { flag: "🇦🇼", label: t.langPapiamento },
+                    dutch:      { flag: "🇳🇱", label: t.langDutch },
+                  };
+                  const meta = langMeta[lang];
+                  return meta ? (
+                    <span key={lang} title={meta.label} className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-100 rounded-full px-2 py-0.5">
+                      <span>{meta.flag}</span>
+                      <span>{meta.label}</span>
+                    </span>
+                  ) : null;
+                })}
+              </div>
+            )}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2 sm:mt-3 text-xs text-gray-400">
               {profile.location && (
                 <LocationMap location={profile.location} className="text-xs text-gray-400" />
               )}
@@ -315,6 +313,11 @@ export default function Profile() {
             </div>
           </div>
         </div>
+        {isMe && (
+          <Link to="/settings" className="btn-secondary text-sm gap-1.5 w-full justify-center mt-3 sm:hidden">
+            <Edit className="w-3.5 h-3.5" /> {t.editProfile}
+          </Link>
+        )}
       </div>
 
       {/* Rating breakdown — only show on profile page when there are ratings */}
@@ -341,28 +344,31 @@ export default function Profile() {
       <div className="flex border-b border-gray-200 mb-6">
         <button
           onClick={() => setTab("listings")}
-          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${tab === "listings" ? "border-ocean-600 text-ocean-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 sm:flex-none px-3 sm:px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px flex items-center justify-center sm:justify-start gap-1.5 ${tab === "listings" ? "border-ocean-600 text-ocean-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
         >
-          {t.listings} <span className="ml-1.5 text-xs text-gray-400">({listings.length})</span>
+          <LayoutGrid className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+          <span className="hidden sm:inline">{t.listings}</span>
+          <span className="text-xs text-gray-400">({listings.length})</span>
         </button>
         {isMe && (
           <button
             onClick={() => setTab("sold")}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px flex items-center gap-1.5 ${tab === "sold" ? "border-ocean-600 text-ocean-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+            className={`flex-1 sm:flex-none px-3 sm:px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px flex items-center justify-center sm:justify-start gap-1.5 ${tab === "sold" ? "border-ocean-600 text-ocean-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
           >
-            <CheckCircle className="w-3.5 h-3.5" />
-            {t.sold} <span className="ml-1 text-xs text-gray-400">({soldListings.length})</span>
+            <CheckCircle className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+            <span className="hidden sm:inline">{t.sold}</span>
+            <span className="text-xs text-gray-400">({soldListings.length})</span>
           </button>
         )}
         {isMe && (
           <button
             onClick={() => setTab("expired")}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px flex items-center gap-1.5 ${tab === "expired" ? "border-red-500 text-red-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+            className={`flex-1 sm:flex-none px-3 sm:px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px flex items-center justify-center sm:justify-start gap-1.5 ${tab === "expired" ? "border-red-500 text-red-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
           >
-            <Clock className="w-3.5 h-3.5" />
-            {t.statusExpired}
+            <Clock className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+            <span className="hidden sm:inline">{t.statusExpired}</span>
             {expiredListings.length > 0 && (
-              <span className="ml-1 text-xs bg-red-100 text-red-600 rounded-full px-1.5 py-0.5 font-medium">
+              <span className="text-xs bg-red-100 text-red-600 rounded-full px-1.5 py-0.5 font-medium">
                 {expiredListings.length}
               </span>
             )}
@@ -371,21 +377,22 @@ export default function Profile() {
         {isMe && (
           <button
             onClick={() => setTab("favorites")}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px flex items-center gap-1.5 ${tab === "favorites" ? "border-ocean-600 text-ocean-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+            className={`flex-1 sm:flex-none px-3 sm:px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px flex items-center justify-center sm:justify-start gap-1.5 ${tab === "favorites" ? "border-ocean-600 text-ocean-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
           >
-            <Heart className="w-3.5 h-3.5" />
-            {t.favorites} <span className="ml-1 text-xs text-gray-400">({favorites.length})</span>
+            <Heart className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+            <span className="hidden sm:inline">{t.favorites}</span>
+            <span className="text-xs text-gray-400">({favorites.length})</span>
           </button>
         )}
         {isMe && (
           <button
             onClick={() => setTab("alerts")}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px flex items-center gap-1.5 ${tab === "alerts" ? "border-ocean-600 text-ocean-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+            className={`flex-1 sm:flex-none px-3 sm:px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px flex items-center justify-center sm:justify-start gap-1.5 ${tab === "alerts" ? "border-ocean-600 text-ocean-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
           >
-            <Bell className="w-3.5 h-3.5" />
-            {t.alerts}
+            <Bell className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+            <span className="hidden sm:inline">{t.alerts}</span>
             {alertSelected.size > 0 && (
-              <span className="ml-1 text-xs bg-ocean-100 text-ocean-600 rounded-full px-1.5 py-0.5 font-medium">
+              <span className="text-xs bg-ocean-100 text-ocean-600 rounded-full px-1.5 py-0.5 font-medium">
                 {alertSelected.size}
               </span>
             )}

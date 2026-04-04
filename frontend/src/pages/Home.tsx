@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import api, { Listing, CategoryTree, catName } from "../api";
 import ListingCard from "../components/ListingCard";
+import SEO from "../components/SEO";
 import { useLang } from "../contexts/LanguageContext";
 
 const CATS_INITIAL = 14;
@@ -37,8 +38,22 @@ export default function Home() {
     : [...tree].sort((a, b) => a.name.localeCompare(b.name));
   const visibleCats = showAllCats ? sortedTree : sortedTree.slice(0, CATS_INITIAL);
 
+  const localBusinessLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Marketplace.aw",
+    url: "https://marketplace.aw",
+    description: "Aruba's local marketplace. Buy and sell anything on the island — no fees, no fuss.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://marketplace.aw/listings?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <div className="bg-white">
+      <SEO jsonLd={localBusinessLd} />
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden min-h-[420px] flex items-center">
         {/* Background photo */}
@@ -82,8 +97,8 @@ export default function Home() {
       <section className="bg-ocean-800 text-white">
         <div className="max-w-5xl mx-auto px-4 grid grid-cols-3 divide-x divide-ocean-700">
           {[
-            { icon: Tag,   value: stats ? `${stats.active_listings}+` : "…", label: t.activeListings },
-            { icon: Users, value: stats ? `${stats.active_sellers}+` : "…", label: t.registeredSellers },
+            { icon: Tag,   value: stats ? (stats.active_listings > 0 ? `${stats.active_listings}+` : "–") : "…", label: t.activeListings },
+            { icon: Users, value: stats ? (stats.active_sellers > 0 ? `${stats.active_sellers}+` : "–") : "…", label: t.registeredSellers },
             { icon: Zap,   value: t.free,  label: t.zeroFees },
           ].map(({ icon: Icon, value, label }) => (
             <div key={label} className="flex flex-col sm:flex-row items-center justify-center gap-2 py-3 px-4 text-center sm:text-left">

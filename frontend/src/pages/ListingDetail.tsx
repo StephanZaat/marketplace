@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Eye, Calendar, ChevronLeft, ChevronRight, MessageCircle, Edit, Trash2, CheckCircle, AlertTriangle, Clock, Flag, Mail, Phone, RefreshCw, Heart } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -18,6 +18,7 @@ import { useAuth } from "../contexts/AuthContext";
 import LocationMap from "../components/LocationMap";
 import { useLang } from "../contexts/LanguageContext";
 import { useCurrency } from "../contexts/CurrencyContext";
+import SEO from "../components/SEO";
 
 function DeleteModal({ onConfirm, onCancel, t }: { onConfirm: () => void; onCancel: () => void; t: ReturnType<typeof useLang>["t"] }) {
   return (
@@ -207,6 +208,8 @@ export default function ListingDetail() {
   const [showSoldToModal, setShowSoldToModal] = useState(false);
   const [soldToConversations, setSoldToConversations] = useState<ConversationSummary[]>([]);
   const [soldToLoading, setSoldToLoading] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
 
   useEffect(() => {
     if (!lightboxOpen) return;
@@ -345,9 +348,27 @@ export default function ListingDetail() {
   if (!listing) return null;
 
   const imgs = listing.images;
+  const seoTitle = `${listing.title} — AWG ${listing.price}`;
+  const seoDesc = listing.description.slice(0, 160);
+  const seoImage = listing.images[0] || undefined;
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: listing.title,
+    description: listing.description,
+    image: listing.images,
+    offers: {
+      "@type": "Offer",
+      price: listing.price,
+      priceCurrency: "AWG",
+      availability: listing.status === "active" ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
+      itemCondition: listing.condition === "new" ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition",
+    },
+  };
 
   return (
     <>
+    <SEO title={seoTitle} description={seoDesc} image={seoImage} jsonLd={productLd} />
     {pendingRatings.length > 0 && (
       <RatingModal
         pending={pendingRatings[0]}
@@ -378,33 +399,58 @@ export default function ListingDetail() {
 
       {/* Lightbox */}
       {lightboxOpen && imgs.length > 0 && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90" onClick={() => setLightboxOpen(false)}>
-          <button onClick={() => setLightboxOpen(false)} className="absolute top-4 right-4 text-white/70 hover:text-white p-2">
+        <div
+          className="fixed inset-0 z-50 bg-black/90 overflow-hidden flex flex-col"
+          onClick={() => setLightboxOpen(false)}
+          onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+          onTouchMove={(e) => {
+            if (touchStartX.current === null || imgs.length <= 1) return;
+            setDragOffset(e.touches[0].clientX - touchStartX.current);
+          }}
+          onTouchEnd={(e) => {
+            if (touchStartX.current === null || imgs.length <= 1) { setDragOffset(0); return; }
+            const dx = e.changedTouches[0].clientX - touchStartX.current;
+            touchStartX.current = null;
+            setDragOffset(0);
+            if (Math.abs(dx) < 50) return;
+            if (dx < 0) setImgIndex(i => (i + 1) % imgs.length);
+            else setImgIndex(i => (i - 1 + imgs.length) % imgs.length);
+          }}
+        >
+          <button onClick={() => setLightboxOpen(false)} className="absolute top-4 right-4 z-10 text-white/70 hover:text-white p-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
           {imgs.length > 1 && (
             <>
               <button onClick={(e) => { e.stopPropagation(); setImgIndex(i => (i - 1 + imgs.length) % imgs.length); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-2 bg-black/30 rounded-full">
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white/70 hover:text-white p-2 bg-black/30 rounded-full">
                 <ChevronLeft className="w-7 h-7" />
               </button>
               <button onClick={(e) => { e.stopPropagation(); setImgIndex(i => (i + 1) % imgs.length); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-2 bg-black/30 rounded-full">
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white/70 hover:text-white p-2 bg-black/30 rounded-full">
                 <ChevronRight className="w-7 h-7" />
               </button>
             </>
           )}
-          <img
-            src={imgs[imgIndex]}
-            alt={listing?.title}
-            className="max-w-full max-h-full object-contain select-none"
-            onClick={(e) => e.stopPropagation()}
-          />
+          <div className="flex-1 flex items-center justify-center px-2 sm:px-12 min-h-0">
+            <img
+              src={imgs[imgIndex]}
+              alt={listing?.title}
+              className="max-w-full max-h-full object-contain select-none"
+              onClick={(e) => e.stopPropagation()}
+              draggable={false}
+            />
+          </div>
           {imgs.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {imgs.map((_, i) => (
-                <button key={i} onClick={(e) => { e.stopPropagation(); setImgIndex(i); }}
-                  className={`w-2 h-2 rounded-full transition-colors ${i === imgIndex ? "bg-white" : "bg-white/40"}`} />
+            <div className="shrink-0 flex justify-center gap-2 py-3 px-4 overflow-x-auto scrollbar-none">
+              {imgs.map((src, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setImgIndex(i); }}
+                  className={`shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 transition-colors ${i === imgIndex ? "border-white" : "border-transparent opacity-50 hover:opacity-80"}`}
+                >
+                  <img src={src} alt="" className="w-full h-full object-cover" draggable={false} />
+                </button>
               ))}
             </div>
           )}
@@ -429,10 +475,27 @@ export default function ListingDetail() {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
         {/* Images */}
         <div className="md:col-span-3">
-          <div className="relative aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden">
+          <div
+            className="relative aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden"
+            onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              if (touchStartX.current === null || imgs.length <= 1) return;
+              const dx = e.changedTouches[0].clientX - touchStartX.current;
+              touchStartX.current = null;
+              if (Math.abs(dx) < 50) return;
+              if (dx < 0) setImgIndex(i => (i + 1) % imgs.length);
+              else setImgIndex(i => (i - 1 + imgs.length) % imgs.length);
+            }}
+          >
             {imgs.length > 0 ? (
               <>
-                <img src={imgs[imgIndex]} alt={listing.title} className="w-full h-full object-cover cursor-zoom-in" onClick={() => setLightboxOpen(true)} />
+                <img
+                  src={imgs[imgIndex]}
+                  alt={listing.title}
+                  className="w-full h-full object-cover cursor-zoom-in"
+                  onClick={() => setLightboxOpen(true)}
+                  draggable={false}
+                />
                 {imgs.length > 1 && (
                   <>
                     <button onClick={() => setImgIndex((i) => (i - 1 + imgs.length) % imgs.length)}
@@ -453,7 +516,7 @@ export default function ListingDetail() {
                 )}
               </>
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-300">
+              <div className="aspect-[4/3] flex items-center justify-center text-gray-300">
                 <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>

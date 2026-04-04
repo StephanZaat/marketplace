@@ -144,12 +144,6 @@ _HEADER = """
 """
 
 _FOOTER = """
-<tr>
-  <td style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:20px 40px;text-align:center">
-    <p style="margin:0 0 4px;color:#64748b;font-size:12px;font-family:Inter,system-ui,sans-serif">Marketplace.aw &mdash; Aruba's local marketplace</p>
-    <p style="margin:0;color:#94a3b8;font-size:11px;font-family:Inter,system-ui,sans-serif">&copy; 2026 Marketplace.aw &middot; All rights reserved</p>
-  </td>
-</tr>
 """
 
 _WRAP_START = """<!DOCTYPE html>
@@ -180,7 +174,7 @@ _WELCOME_HTML = _WRAP_START + _HEADER + """
     </p>
     """ + _cta_button("{{ site_url }}", "Browse Listings &rarr;") + """
     <p style="margin:0;font-size:14px;color:#64748b;line-height:1.6">Happy selling!<br>
-      <strong style="color:#2d7ac8">The Marketplace.aw Team</strong>
+      The Marketplace.aw Team
     </p>
   </td>
 </tr>
@@ -240,7 +234,7 @@ _NEW_LISTING_HTML = _WRAP_START + _HEADER + """
 _NEW_LISTING_TEXT = """\
 Hi {{ username }},
 
-Your listing "{{ title }}" is now live on Marketplace.aw!
+Your listing "{{ title }}" is now live!
 
 Price    : AWG {{ price }}
 Category : {{ category }}
@@ -314,7 +308,7 @@ _LISTING_REMINDER_HTML = _WRAP_START + _HEADER + """
     """ + _cta_button("{{ listing_url }}", "View Listing &rarr;", "margin:20px 0") + """
 
     <p style="margin:0;font-size:14px;color:#64748b">
-      <strong style="color:#2d7ac8">The Marketplace.aw Team</strong>
+      The Marketplace.aw Team
     </p>
   </td>
 </tr>
@@ -357,7 +351,7 @@ _LISTING_EXPIRY_WARNING_HTML = _WRAP_START + _HEADER + """
     """ + _cta_button("{{ listing_url }}", "Renew Listing &rarr;", "margin:20px 0") + """
 
     <p style="margin:0;font-size:14px;color:#64748b">
-      <strong style="color:#2d7ac8">The Marketplace.aw Team</strong>
+      The Marketplace.aw Team
     </p>
   </td>
 </tr>
@@ -397,7 +391,7 @@ _LISTING_EXPIRED_HTML = _WRAP_START + _HEADER + """
     """ + _cta_button("{{ listing_url }}", "Renew Listing &rarr;", "margin:20px 0") + """
 
     <p style="margin:0;font-size:14px;color:#64748b">
-      <strong style="color:#2d7ac8">The Marketplace.aw Team</strong>
+      The Marketplace.aw Team
     </p>
   </td>
 </tr>

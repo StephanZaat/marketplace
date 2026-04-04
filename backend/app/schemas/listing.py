@@ -47,6 +47,7 @@ class ListingOut(BaseModel):
     location: Optional[str] = None
     contact_method: Optional[str] = None
     images: List[str]
+    thumbnail: Optional[str] = None
     attributes: Dict[str, Any]
     view_count: int
     created_at: datetime

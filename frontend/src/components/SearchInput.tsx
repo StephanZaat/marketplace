@@ -144,8 +144,8 @@ export default function SearchInput({ className = "", inputClassName = "", place
                 onClick={() => handleSelect(l)}
                 className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-ocean-50 text-left transition-colors"
               >
-                {l.images?.[0] ? (
-                  <img src={l.images[0]} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0" />
+                {(l.thumbnail ?? l.images?.[0]) ? (
+                  <img src={(l.thumbnail ?? l.images[0])!} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0" />
                 ) : (
                   <div className="w-9 h-9 rounded-lg bg-gray-100 shrink-0" />
                 )}

@@ -92,7 +92,7 @@ export default function CreateListing() {
   const [attributes, setAttributes] = useState<Record<string, string>>({});
 
   const [images, setImages] = useState<{ id: string; url: string }[]>([]);
-  const [pendingFiles, setPendingFiles] = useState<{ id: string; file: File }[]>([]);
+  const [pendingFiles, setPendingFiles] = useState<{ id: string; file: File; thumb: string }[]>([]);
   // Unified display order: array of {kind, id} — null means use default (saved then pending)
   const [photoOrder, setPhotoOrder] = useState<{ kind: "saved" | "pending"; id: string }[] | null>(null);
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
@@ -299,12 +299,16 @@ export default function CreateListing() {
     if (allowed.length < files.length) toast.error(t.maxPhotos);
     setPendingFiles((prev) => [
       ...prev,
-      ...allowed.map((file) => ({ id: crypto.randomUUID(), file })),
+      ...allowed.map((file) => ({ id: Math.random().toString(36).slice(2) + Date.now().toString(36), file, thumb: URL.createObjectURL(file) })),
     ]);
   };
 
   const removePending = (id: string) => {
-    setPendingFiles((prev) => prev.filter((p) => p.id !== id));
+    setPendingFiles((prev) => {
+      const removed = prev.find((p) => p.id === id);
+      if (removed) URL.revokeObjectURL(removed.thumb);
+      return prev.filter((p) => p.id !== id);
+    });
   };
 
   const removeSaved = async (_imgId: string, url: string) => {
@@ -386,8 +390,8 @@ export default function CreateListing() {
       })
     );
     const pending: PhotoItem[] = pendingFiles.map(
-      (p: { id: string; file: File }): PhotoItem => ({
-        kind: "pending", id: p.id, idx: 0, thumb: URL.createObjectURL(p.file), pId: p.id,
+      (p): PhotoItem => ({
+        kind: "pending", id: p.id, idx: 0, thumb: p.thumb, pId: p.id,
       })
     );
     const byId: Record<string, PhotoItem> = Object.fromEntries(

@@ -5,16 +5,17 @@ interface SEOProps {
   description?: string;
   image?: string;
   url?: string;
+  jsonLd?: Record<string, unknown>;
 }
 
 const defaults = {
   title: "Marketplace.aw — Buy & Sell Locally in Aruba",
   description:
     "The local marketplace for Aruba. Buy and sell products, services, and more.",
-  image: "/og-image.png",
+  image: "/og-image.jpg",
 };
 
-export default function SEO({ title, description, image, url }: SEOProps) {
+export default function SEO({ title, description, image, url, jsonLd }: SEOProps) {
   const t = title ? `${title} | Marketplace.aw` : defaults.title;
   const d = description || defaults.description;
   const img = image || defaults.image;
@@ -32,6 +33,12 @@ export default function SEO({ title, description, image, url }: SEOProps) {
       <meta name="twitter:title" content={t} />
       <meta name="twitter:description" content={d} />
       <meta name="twitter:image" content={img} />
+      <link rel="alternate" hrefLang="en" href={`https://marketplace.aw${typeof window !== "undefined" ? window.location.pathname : "/"}`} />
+      <link rel="alternate" hrefLang="es" href={`https://marketplace.aw${typeof window !== "undefined" ? window.location.pathname : "/"}`} />
+      <link rel="alternate" hrefLang="x-default" href={`https://marketplace.aw${typeof window !== "undefined" ? window.location.pathname : "/"}`} />
+      {jsonLd && (
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      )}
     </Helmet>
   );
 }

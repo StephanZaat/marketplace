@@ -110,6 +110,7 @@ export interface Listing {
   location: string | null;
   contact_method: string | null;
   images: string[];
+  thumbnail: string | null;
   attributes: Record<string, unknown>;
   view_count: number;
   created_at: string;
