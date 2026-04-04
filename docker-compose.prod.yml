@@ -71,6 +71,7 @@ services:
       - netdata_cache:/var/cache/netdata
     environment:
       - NETDATA_CLAIM_TOKEN=${NETDATA_CLAIM_TOKEN:-}
+      - NETDATA_CLAIM_ROOMS=${NETDATA_CLAIM_ROOMS:-}
       - NETDATA_CLAIM_URL=https://app.netdata.cloud
     ports:
       - "127.0.0.1:19999:19999"
