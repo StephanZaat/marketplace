@@ -152,7 +152,7 @@ export default function Login() {
                   onChange={(e) => handleCodeChange(e.target.value)}
                   placeholder={t.otpPlaceholder}
                   maxLength={6}
-                  className="input text-center text-2xl font-mono tracking-[0.3em]"
+                  className="input text-center text-2xl font-mono tracking-[0.3em] caret-transparent"
                   disabled={loading}
                   autoComplete="one-time-code"
                 />
