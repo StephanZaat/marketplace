@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import * as Icons from "lucide-react";
 import {
   ShieldCheck, MessageCircle, TrendingUp,
-  Tag, ChevronRight, ChevronDown, Zap, Users, MoreHorizontal, ArrowUpDown,
+  Tag, ChevronRight, ChevronDown, Zap, Users, ArrowUpDown,
 } from "lucide-react";
 import api, { Listing, CategoryTree, catName } from "../api";
 import ListingCard from "../components/ListingCard";
 import SEO from "../components/SEO";
 import { useLang } from "../contexts/LanguageContext";
+import { getCategoryIcon } from "../lib/categoryIcons";
 
 const CATS_INITIAL = 14;
 
 function CatIcon({ name }: { name: string | null }) {
-  const Icon = (name && (Icons as unknown as Record<string, Icons.LucideIcon>)[name]) || MoreHorizontal;
+  const Icon = getCategoryIcon(name);
   return <Icon className="w-6 h-6" />;
 }
 

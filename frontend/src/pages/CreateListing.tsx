@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Upload, X, ChevronRight, ChevronLeft, HelpCircle, Search, ArrowUpDown, MoreHorizontal } from "lucide-react";
-import * as Icons from "lucide-react";
+import { Upload, X, ChevronRight, ChevronLeft, HelpCircle, Search, ArrowUpDown } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { CategoryTree, ListingDetail, catName } from "../api";
 import { useAuth } from "../contexts/AuthContext";
 import { useLang } from "../contexts/LanguageContext";
 import { useCurrency } from "../contexts/CurrencyContext";
+import { getCategoryIcon } from "../lib/categoryIcons";
 
 type PhotoItem =
   | { kind: "saved"; id: string; idx: number; thumb: string; imgId: string; url: string; pId?: undefined }
@@ -24,7 +24,7 @@ interface FormData {
 }
 
 function CatIcon({ name, className = "w-5 h-5" }: { name: string | null; className?: string }) {
-  const Icon = (name && (Icons as unknown as Record<string, Icons.LucideIcon>)[name]) || MoreHorizontal;
+  const Icon = getCategoryIcon(name);
   return <Icon className={className} />;
 }
 

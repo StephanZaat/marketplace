@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Eye, MoreHorizontal } from "lucide-react";
-import * as Icons from "lucide-react";
+import { MapPin, Eye } from "lucide-react";
 import { Listing } from "../api";
 import FavoriteButton from "./FavoriteButton";
 import { useLang } from "../contexts/LanguageContext";
 import { useCurrency } from "../contexts/CurrencyContext";
+import { getCategoryIcon } from "../lib/categoryIcons";
 
 const CONDITION_COLORS: Record<string, string> = {
   new:      "bg-green-100 text-green-700 border-green-200",
@@ -16,7 +16,7 @@ const CONDITION_COLORS: Record<string, string> = {
 };
 
 function CatIcon({ name, className = "w-3.5 h-3.5" }: { name?: string | null; className?: string }) {
-  const Icon = (name && (Icons as unknown as Record<string, Icons.LucideIcon>)[name]) || MoreHorizontal;
+  const Icon = getCategoryIcon(name);
   return <Icon className={className} />;
 }
 
