@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, useParams, useNavigate, Link } from "react-router-dom";
 import { X, ArrowUp, ArrowDown, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
 import api, { Listing, CategoryTree, CategoryAttrField, catName } from "../api";
 import ListingCard from "../components/ListingCard";
@@ -28,6 +28,8 @@ export default function Listings() {
   ];
   const SORT_BUTTONS = SORT_KEYS.map(s => ({ ...s, label: t[s.labelKey] }));
   const [params, setParams] = useSearchParams();
+  const { slug: routeSlug } = useParams<{ slug?: string }>();
+  const navigate = useNavigate();
   const [listings, setListings] = useState<Listing[]>([]);
   const [tree, setTree] = useState<CategoryTree[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +44,20 @@ export default function Listings() {
   const sidebarScrollRef = useRef<HTMLDivElement>(null);
 
   const q         = params.get("q") ?? "";
-  const category  = params.get("category") ?? "";
+  // Category can come from either the /c/:slug route or the legacy ?category= query param.
+  // The route param takes precedence; the legacy query param gets redirected below.
+  const category  = routeSlug ?? params.get("category") ?? "";
+
+  // Redirect legacy /listings?category=slug → /c/slug (preserves other query params).
+  useEffect(() => {
+    const legacy = params.get("category");
+    if (legacy && !routeSlug) {
+      const p = new URLSearchParams(params);
+      p.delete("category");
+      const qs = p.toString();
+      navigate(`/c/${legacy}${qs ? `?${qs}` : ""}`, { replace: true });
+    }
+  }, [params, routeSlug, navigate]);
   const condition = params.get("condition") ?? "";
   const minPrice  = params.get("min_price") ?? "";
   const maxPrice  = params.get("max_price") ?? "";
@@ -150,6 +165,18 @@ export default function Listings() {
     setParams(p);
   };
 
+  // Category changes navigate to /c/:slug (or /listings for "all"), preserving other filters.
+  // Attribute filters are dropped since they're category-specific.
+  const navigateToCategory = (slug: string) => {
+    const p = new URLSearchParams(params);
+    Array.from(p.keys())
+      .filter((k) => k.startsWith("attr_"))
+      .forEach((k) => p.delete(k));
+    const qs = p.toString();
+    const suffix = qs ? `?${qs}` : "";
+    navigate(slug ? `/c/${slug}${suffix}` : `/listings${suffix}`);
+  };
+
   const handleSortButton = (key: string, defaultDir: string) => {
     const p = new URLSearchParams(params);
     if (sortBy === key) {
@@ -161,11 +188,12 @@ export default function Listings() {
   };
 
   const clearFilters = () => {
+    // Preserve search query and sort; drop condition/price/location/free and all attr_* filters.
+    // Category stays because it lives in the route path, not the query string.
     const p = new URLSearchParams();
-    if (q)        p.set("q", q);
-    if (category) p.set("category", category);
+    if (q) p.set("q", q);
     if (sort && sort !== "date-desc") p.set("sort", sort);
-    setParams(p);  // attr_* params are intentionally omitted — cleared
+    setParams(p);
   };
 
   // Attribute filter values: attr_<key> params
@@ -224,7 +252,11 @@ export default function Listings() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5" onClick={() => openFilter && setOpenFilter(null)}>
-      <SEO title={seoTitle} description={seoDesc} />
+      <SEO
+        title={seoTitle}
+        description={seoDesc}
+        canonical={routeSlug ? `/c/${routeSlug}` : "/listings"}
+      />
       {/* Page heading */}
       <div className="mb-4">
         {/* Breadcrumb for subcategories */}
@@ -232,7 +264,7 @@ export default function Listings() {
           <div className="flex items-center gap-1.5 text-sm text-gray-400 mb-1">
             <button
               type="button"
-              onClick={() => setParam("category", "")}
+              onClick={() => navigateToCategory("")}
               className="hover:text-ocean-600 transition-colors"
             >
               {t.allListings}
@@ -242,7 +274,7 @@ export default function Listings() {
                 <span className="text-gray-300">/</span>
                 <button
                   type="button"
-                  onClick={() => setParam("category", crumb.slug)}
+                  onClick={() => navigateToCategory(crumb.slug)}
                   className="hover:text-ocean-600 transition-colors"
                 >
                   {catName(crumb, lang)}
@@ -663,7 +695,7 @@ export default function Listings() {
             <CategoryTreeNav
               nodes={[...tree].sort((a, b) => catName(a, lang).localeCompare(catName(b, lang)))}
               selected={category}
-              onSelect={(slug) => { setParam("category", slug); setMobileCatOpen(false); }}
+              onSelect={(slug) => { navigateToCategory(slug); setMobileCatOpen(false); }}
               counts={slugCounts}
             />
           </div>
@@ -680,7 +712,7 @@ export default function Listings() {
                 <CategoryTreeNav
                   nodes={[...tree].sort((a, b) => catName(a, lang).localeCompare(catName(b, lang)))}
                   selected={category}
-                  onSelect={(slug) => setParam("category", slug)}
+                  onSelect={(slug) => navigateToCategory(slug)}
                   counts={slugCounts}
                 />
               </div>

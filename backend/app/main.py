@@ -351,9 +351,9 @@ def sitemap(db: Session = Depends(get_db)):
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
              f'  <url><loc>{base}/</loc><priority>1.0</priority></url>',
              f'  <url><loc>{base}/listings</loc><priority>0.9</priority></url>']
-    # Categories
+    # Categories — path-based URLs (see /c/:slug route) so Google treats each as a distinct page.
     for cat in db.query(Category).all():
-        lines.append(f'  <url><loc>{base}/listings?category={cat.slug}</loc><priority>0.7</priority></url>')
+        lines.append(f'  <url><loc>{base}/c/{cat.slug}</loc><priority>0.7</priority></url>')
     # Active listings
     for listing in db.query(Listing).filter(Listing.status == ListingStatus.ACTIVE).all():
         lines.append(f'  <url><loc>{base}/listings/{listing.public_id}</loc><priority>0.8</priority></url>')

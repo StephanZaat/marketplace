@@ -472,12 +472,12 @@ export default function ListingDetail() {
       <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
         {listing.category.parent ? (
           <>
-            <Link to={`/listings?category=${listing.category.parent.slug}`} className="hover:text-ocean-600">{catName(listing.category.parent, lang)}</Link>
+            <Link to={`/c/${listing.category.parent.slug}`} className="hover:text-ocean-600">{catName(listing.category.parent, lang)}</Link>
             <span>/</span>
-            <Link to={`/listings?category=${listing.category.slug}`} className="hover:text-ocean-600">{catName(listing.category, lang)}</Link>
+            <Link to={`/c/${listing.category.slug}`} className="hover:text-ocean-600">{catName(listing.category, lang)}</Link>
           </>
         ) : (
-          <Link to={`/listings?category=${listing.category.slug}`} className="hover:text-ocean-600">{catName(listing.category, lang)}</Link>
+          <Link to={`/c/${listing.category.slug}`} className="hover:text-ocean-600">{catName(listing.category, lang)}</Link>
         )}
         <span>/</span>
         <span className="text-gray-900 truncate">{listing.title}</span>
@@ -820,7 +820,7 @@ export default function ListingDetail() {
             {t.moreIn} {catName(listing!.category, lang)}
           </h2>
           <Link
-            to={`/listings?category=${listing!.category.slug}`}
+            to={`/c/${listing!.category.slug}`}
             className="text-sm text-ocean-600 hover:text-ocean-700 font-medium"
           >
             {t.viewAll} →
