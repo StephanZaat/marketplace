@@ -138,7 +138,7 @@ export default function Home() {
             {visibleCats.map((cat) => (
               <Link
                 key={cat.id}
-                to={`/listings?category=${cat.slug}`}
+                to={`/c/${cat.slug}`}
                 className="group flex flex-col items-center gap-1.5 p-2 rounded-xl bg-white hover:bg-white border border-transparent hover:border-ocean-200 transition-all hover:shadow-sm"
               >
                 <div className="w-10 h-10 rounded-xl bg-ocean-100 text-ocean-600 flex items-center justify-center group-hover:bg-ocean-600 group-hover:text-white transition-all group-hover:scale-110">
