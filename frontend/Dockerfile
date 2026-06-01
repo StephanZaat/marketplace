@@ -1,4 +1,4 @@
-FROM node:25-alpine AS base
+FROM node:26-alpine AS base
 RUN npm install -g npm@11.11.0
 WORKDIR /app
 COPY package*.json ./
