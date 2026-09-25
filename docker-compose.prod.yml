@@ -53,6 +53,12 @@ services:
     depends_on:
       - backend
       - frontend
+    # Reload every 6h so certificates renewed by certbot are actually served;
+    # nginx only reads cert files at start/reload. Without this the renewed
+    # marketplace.aw cert sat unused on disk for 3 weeks.
+    command: >
+      /bin/sh -c "while :; do sleep 6h & wait $${!}; nginx -s reload; done &
+                  exec nginx -g 'daemon off;'"
 
   certbot:
     image: certbot/certbot:latest
