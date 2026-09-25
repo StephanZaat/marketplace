@@ -63,6 +63,9 @@ services:
   certbot:
     image: certbot/certbot:latest
     container_name: marketplace_certbot
+    # Without a restart policy certbot stays down after a host reboot and
+    # renewals silently stop (VMs now auto-reboot for kernel updates).
+    restart: always
     volumes:
       - letsencrypt:/etc/letsencrypt
       - certbot_webroot:/var/www/certbot
