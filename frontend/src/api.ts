@@ -95,7 +95,7 @@ export function catName(cat: { name: string; name_es?: string | null }, lang: st
 }
 
 export type ListingCondition = "new" | "like_new" | "good" | "fair" | "poor";
-export type ListingStatus = "active" | "sold" | "reserved" | "inactive" | "expired";
+export type ListingStatus = "active" | "sold" | "reserved" | "inactive" | "expired" | "pending";
 
 export interface Listing {
   id: string;

@@ -366,10 +366,11 @@ export default function CreateListing() {
         toast.success(t.listingUpdated);
         navigate(`/listings/${id}`);
       } else {
-        const res = await api.post<{ id: string }>("/listings", { ...payload, attributes: attrPayload });
+        const res = await api.post<{ id: string; status: string }>("/listings", { ...payload, attributes: attrPayload });
         const lid = res.data.id;
         if (pendingFiles.length > 0) await uploadFiles(lid, pendingFiles);
-        toast.success(t.listingCreated);
+        if (res.data.status === "pending") toast.success(t.listingPendingReview, { duration: 6000 });
+        else toast.success(t.listingCreated);
         navigate(`/listings/${lid}`);
       }
     } catch (err: unknown) {

@@ -657,3 +657,75 @@ async def send_contact_form(*, name: str, email: str, subject: str, message: str
         html=html,
         text=text,
     )
+
+
+# ── Off-island listing review ───────────────────────────────────────────────────
+
+_LISTING_PENDING_HTML = _WRAP_START + _HEADER + """
+<tr>
+  <td style="padding:36px 40px">
+    <p style="margin:0 0 16px;font-size:16px;line-height:1.6">Hi <strong>{{ username }}</strong>,</p>
+    <p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#475569">
+      Thanks for posting <strong>{{ title }}</strong>. Marketplace.aw is a local marketplace for Aruba,
+      so listings posted from outside the island are briefly reviewed before they go live.
+      We'll email you as soon as it's published &mdash; usually within a day.
+    </p>
+    """ + _cta_button("{{ listing_url }}", "View Your Listing &rarr;") + """
+    <p style="margin:0;font-size:14px;color:#64748b;line-height:1.6">
+      The Marketplace.aw Team
+    </p>
+  </td>
+</tr>
+""" + _FOOTER + _WRAP_END
+
+_LISTING_PENDING_TEXT = """\
+Hi {{ username }},
+
+Thanks for posting "{{ title }}". Marketplace.aw is a local marketplace for Aruba,
+so listings posted from outside the island are briefly reviewed before they go live.
+We'll email you as soon as it's published, usually within a day.
+
+View it here: {{ listing_url }}
+
+The Marketplace.aw Team
+"""
+
+
+async def send_listing_pending(user, listing) -> None:
+    """Tell the seller their listing is held for review."""
+    ctx = dict(
+        username=user.full_name or user.email,
+        title=listing.title,
+        listing_url=f"{settings.site_url}/listings/{listing.public_id}",
+    )
+    await _send(
+        to=user.email,
+        subject=f"Your listing \"{listing.title}\" is being reviewed",
+        html=_render(_LISTING_PENDING_HTML, **ctx),
+        text=_render(_LISTING_PENDING_TEXT, **ctx),
+    )
+
+
+async def send_listing_review_request(user, listing, country: str) -> None:
+    """Ask the support inbox to review a listing posted from outside Aruba."""
+    html_tpl = """
+    <h2>Listing waiting for review</h2>
+    <p><strong>{{ title }}</strong> by {{ seller }} &lt;{{ email }}&gt;, posted from <strong>{{ country }}</strong>.</p>
+    <p style="white-space:pre-wrap">{{ description }}</p>
+    <p><a href="{{ review_url }}">Review pending listings</a></p>
+    """
+    ctx = dict(
+        title=listing.title,
+        seller=user.full_name or "",
+        email=user.email,
+        country=country,
+        description=listing.description[:1000],
+        review_url=f"{settings.site_url}/admin/listings?status=pending",
+    )
+    await _send(
+        to=settings.support_email,
+        subject=f"[Review] {listing.title} ({country})",
+        html=_render(html_tpl, **ctx),
+        text=f"{listing.title} by {user.email}, posted from {country}.\n\n"
+             f"{listing.description[:1000]}\n\nReview: {ctx['review_url']}",
+    )

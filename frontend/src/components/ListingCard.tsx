@@ -72,6 +72,11 @@ export default function ListingCard({ listing }: Props) {
               {t.reserved}
             </span>
           )}
+          {listing.status === "pending" && (
+            <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-sky-100 text-sky-700 border border-sky-200">
+              {t.statusPending}
+            </span>
+          )}
           {listing.status === "expired" && (
             <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-red-100 text-red-700 border border-red-200">
               {t.statusExpired}

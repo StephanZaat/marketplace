@@ -62,18 +62,19 @@ def migrate_db():
 
     is_postgres = settings.database_url.startswith("postgresql")
 
-    # Add EXPIRED to the listingstatus enum if it doesn't exist yet (Postgres only)
+    # Add new labels to the listingstatus enum (Postgres only; SQLite uses VARCHAR)
     if is_postgres:
-        with engine.connect() as conn:
-            existing = conn.execute(text(
-                "SELECT enumlabel FROM pg_enum "
-                "JOIN pg_type ON pg_enum.enumtypid = pg_type.oid "
-                "WHERE pg_type.typname = 'listingstatus' AND enumlabel = 'EXPIRED'"
-            )).fetchone()
-            if not existing:
-                conn.execute(text("ALTER TYPE listingstatus ADD VALUE 'EXPIRED'"))
-                conn.commit()
-                logger.info("Migrated: added EXPIRED to listingstatus enum")
+        for label in ("EXPIRED", "PENDING"):
+            with engine.connect() as conn:
+                existing = conn.execute(text(
+                    "SELECT enumlabel FROM pg_enum "
+                    "JOIN pg_type ON pg_enum.enumtypid = pg_type.oid "
+                    "WHERE pg_type.typname = 'listingstatus' AND enumlabel = :label"
+                ), {"label": label}).fetchone()
+                if not existing:
+                    conn.execute(text(f"ALTER TYPE listingstatus ADD VALUE '{label}'"))
+                    conn.commit()
+                    logger.info("Migrated: added %s to listingstatus enum", label)
 
     # Add public_id columns to listings, users, conversations, categories
     # Skip for SQLite — tests use create_all which creates columns from model definitions
@@ -93,6 +94,19 @@ def migrate_db():
                 conn.execute(text(f"CREATE UNIQUE INDEX IF NOT EXISTS idx_{table}_public_id ON {table}(public_id)"))
                 conn.commit()
             logger.info("Migrated: added public_id to %s", table)
+
+    # Off-island review: existing active users are grandfathered in as trusted
+    if "is_trusted" not in [c["name"] for c in insp.get_columns("users")]:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE users ADD COLUMN is_trusted BOOLEAN NOT NULL DEFAULT FALSE"))
+            conn.execute(text("UPDATE users SET is_trusted = TRUE WHERE is_active = TRUE"))
+            conn.commit()
+        logger.info("Migrated: added users.is_trusted (existing active users trusted)")
+    if "created_country" not in [c["name"] for c in insp.get_columns("listings")]:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE listings ADD COLUMN created_country VARCHAR(2)"))
+            conn.commit()
+        logger.info("Migrated: added listings.created_country")
 
     # Drop legacy password columns in a single transaction
     user_cols = [c["name"] for c in insp.get_columns("users")]

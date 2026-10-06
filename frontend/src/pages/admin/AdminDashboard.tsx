@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Users, List, Flag, ShoppingBag } from "lucide-react";
+import { Users, List, Flag, ShoppingBag, ShieldQuestion } from "lucide-react";
 import AdminHeader from "../../components/AdminHeader";
 import adminApi from "../../adminApi";
 
@@ -12,6 +12,8 @@ interface Stats {
   sold_listings: number;
   inactive_listings: number;
   total_reports: number;
+  pending_listings: number;
+  geoip_enabled: boolean;
 }
 
 export default function AdminDashboard() {
@@ -23,6 +25,14 @@ export default function AdminDashboard() {
 
   const cards = stats
     ? [
+        {
+          label: "Pending review",
+          value: stats.pending_listings,
+          sub: "posted from outside Aruba",
+          icon: ShieldQuestion,
+          to: "/admin/listings?status=pending",
+          color: stats.pending_listings > 0 ? "bg-sky-50 text-sky-600" : "bg-gray-50 text-gray-600",
+        },
         {
           label: "Users",
           value: stats.total_users,
@@ -63,10 +73,16 @@ export default function AdminDashboard() {
       <AdminHeader />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+        {stats && !stats.geoip_enabled && (
+          <p className="mb-4 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+            Country database missing: listings from outside Aruba are <strong>not</strong> being held for review.
+            Redeploy to re-download it.
+          </p>
+        )}
         {!stats ? (
           <p className="text-gray-500">Loading…</p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {cards.map(({ label, value, sub, icon: Icon, to, color }) => (
               <Link
                 key={label}

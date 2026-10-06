@@ -181,7 +181,8 @@ jobs:
             echo "--- Rebuilding images"
             COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
             docker compose -f docker-compose.prod.yml -f docker-compose.test.yml build --pull \
-              --build-arg VITE_FRIENDLY_CAPTCHA_SITEKEY=FCMRARFRUTA89JI8
+              --build-arg VITE_FRIENDLY_CAPTCHA_SITEKEY=FCMRARFRUTA89JI8 \
+              --build-arg GEOIP_MONTH="$(date -u +%Y-%m)"
 
             echo "--- Postgres 16 -> 18 migration (no-op once done)"
             bash scripts/migrate-postgres.sh
@@ -339,7 +340,8 @@ jobs:
             echo "--- Rebuilding images"
             COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
             docker compose -f docker-compose.prod.yml build --pull \
-              --build-arg VITE_FRIENDLY_CAPTCHA_SITEKEY=FCMRARFRUTA89JI8
+              --build-arg VITE_FRIENDLY_CAPTCHA_SITEKEY=FCMRARFRUTA89JI8 \
+              --build-arg GEOIP_MONTH="$(date -u +%Y-%m)"
 
             echo "--- Bootstrap TLS cert (if needed)"
             if [ ! -f /var/lib/docker/volumes/marketplace_letsencrypt/_data/live/${DOMAIN}/fullchain.pem ]; then

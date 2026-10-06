@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import AdminHeader from "../../components/AdminHeader";
@@ -16,15 +16,21 @@ interface AdminListing {
   created_at: string;
   seller_id: string;
   seller_name: string | null;
+  // Review context (description only for pending listings)
+  description: string | null;
+  created_country: string | null;
+  seller_email: string | null;
+  seller_trusted: boolean;
 }
 
-const STATUS_OPTIONS = ["active", "reserved", "sold", "inactive"];
+const STATUS_OPTIONS = ["pending", "active", "reserved", "sold", "inactive"];
 
 const STATUS_BADGE: Record<string, string> = {
   active: "bg-green-100 text-green-700",
   reserved: "bg-amber-100 text-amber-700",
   sold: "bg-blue-100 text-blue-700",
   inactive: "bg-gray-100 text-gray-600",
+  pending: "bg-sky-100 text-sky-700",
 };
 
 export default function AdminListings() {
@@ -71,6 +77,27 @@ export default function AdminListings() {
       toast.success("Status updated");
     } catch {
       toast.error("Failed to update status");
+    }
+  }
+
+  async function approve(id: string) {
+    try {
+      await adminApi.post(`/admin/listings/${id}/approve`);
+      setItems((prev) => prev.map((l) => (l.id === id ? { ...l, status: "active", seller_trusted: true } : l)));
+      toast.success("Approved; seller is now trusted");
+    } catch {
+      toast.error("Failed to approve");
+    }
+  }
+
+  async function rejectAndBan(listing: AdminListing) {
+    if (!confirm(`Deactivate ${listing.seller_email ?? "this seller"} and take down all their listings?`)) return;
+    try {
+      await adminApi.patch(`/admin/users/${listing.seller_id}`, { is_active: false });
+      setItems((prev) => prev.map((l) => (l.seller_id === listing.seller_id && l.status !== "sold" ? { ...l, status: "inactive" } : l)));
+      toast.success("Seller deactivated");
+    } catch {
+      toast.error("Failed to deactivate seller");
     }
   }
 
@@ -138,7 +165,8 @@ export default function AdminListings() {
                 </tr>
               ) : (
                 items.map((listing) => (
-                  <tr key={listing.id} className="hover:bg-gray-50">
+                  <Fragment key={listing.id}>
+                  <tr className="hover:bg-gray-50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {listing.images[0] ? (
@@ -179,15 +207,42 @@ export default function AdminListings() {
                       {new Date(listing.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">
-                      <Link
-                        to={`/listings/${listing.id}`}
-                        target="_blank"
-                        className="text-gray-400 hover:text-gray-700"
-                      >
-                        <ExternalLink size={14} />
-                      </Link>
+                      {/* Pending/inactive listings 404 on the public site */}
+                      {listing.status !== "pending" && listing.status !== "inactive" && (
+                        <Link
+                          to={`/listings/${listing.id}`}
+                          target="_blank"
+                          className="text-gray-400 hover:text-gray-700"
+                        >
+                          <ExternalLink size={14} />
+                        </Link>
+                      )}
                     </td>
                   </tr>
+                  {listing.status === "pending" && (
+                    <tr className="bg-sky-50/50">
+                      <td colSpan={7} className="px-4 pb-4 pt-1">
+                        <p className="text-xs text-gray-500 mb-2">
+                          Posted from <strong>{listing.created_country ?? "unknown"}</strong>
+                          {" · "}{listing.seller_email}
+                          {" · "}<a href="https://db-ip.com" target="_blank" rel="noreferrer" className="underline">IP Geolocation by DB-IP</a>
+                        </p>
+                        <p className="text-sm text-gray-700 whitespace-pre-wrap line-clamp-6 mb-3">{listing.description}</p>
+                        <div className="flex gap-2">
+                          <button onClick={() => approve(listing.id)} className="px-3 py-1 rounded bg-green-600 text-white text-xs font-medium hover:bg-green-700">
+                            Approve &amp; trust seller
+                          </button>
+                          <button onClick={() => updateStatus(listing.id, "inactive")} className="px-3 py-1 rounded border border-gray-300 text-xs font-medium hover:bg-gray-100">
+                            Reject
+                          </button>
+                          <button onClick={() => rejectAndBan(listing)} className="px-3 py-1 rounded border border-red-300 text-red-700 text-xs font-medium hover:bg-red-50">
+                            Reject &amp; ban seller
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
                 ))
               )}
             </tbody>

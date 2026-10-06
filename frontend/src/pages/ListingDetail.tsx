@@ -194,7 +194,7 @@ export default function ListingDetail() {
     new: t.condNew, like_new: t.condLikeNew, good: t.condGood, fair: t.condFair, poor: t.condPoor,
   };
   const statusLabels: Record<string, string> = {
-    active: t.statusAvailable, sold: t.statusSold, reserved: t.statusReserved, inactive: t.statusInactive, expired: t.statusExpired,
+    active: t.statusAvailable, sold: t.statusSold, reserved: t.statusReserved, inactive: t.statusInactive, expired: t.statusExpired, pending: t.statusPending,
   };
   const navigate = useNavigate();
   const [listing, setListing] = useState<IListingDetail | null>(null);
@@ -591,6 +591,8 @@ export default function ListingDetail() {
                     ? "bg-amber-100 text-amber-700"
                     : listing.status === "expired"
                     ? "bg-red-100 text-red-700"
+                    : listing.status === "pending"
+                    ? "bg-sky-100 text-sky-700"
                     : "bg-gray-100 text-gray-600"
                 }`}>
                   {statusLabels[listing.status]}
@@ -663,6 +665,11 @@ export default function ListingDetail() {
                   <button onClick={handleMarkActive} className="btn-secondary w-full gap-2 text-ocean-700 border-ocean-200 hover:bg-ocean-50">
                     <CheckCircle className="w-4 h-4" /> {t.relistActive}
                   </button>
+                )}
+                {listing.status === "pending" && (
+                  <p className="text-xs text-sky-700 bg-sky-50 rounded-lg px-3 py-2">
+                    {t.pendingNote}
+                  </p>
                 )}
                 {listing.status === "expired" && (
                   <div className="space-y-2">
