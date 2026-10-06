@@ -11,6 +11,8 @@
 # Rollback after a successful migration (loses writes made since):
 #   git revert the compose change, `docker compose up -d`.
 set -euo pipefail
+# The dump holds user data (emails, messages): keep it owner-only.
+umask 077
 
 OLD_VOL="${OLD_VOL:-marketplace_postgres_data}"
 NEW_VOL="${NEW_VOL:-marketplace_pg18_data}"
@@ -36,7 +38,8 @@ DB="${POSTGRES_DB:-marketplace}"
 USER_="${POSTGRES_USER:-marketplace_user}"
 PASS="${POSTGRES_PASSWORD:-changeme}"
 
-mkdir -p "$DUMP_DIR"
+mkdir -p -m 700 "$DUMP_DIR"
+chmod 700 "$DUMP_DIR"
 DUMP="$DUMP_DIR/marketplace-pg16-$(date -u +%Y%m%dT%H%M%SZ).dump"
 
 # Containers that were running before we started, restarted on failure.
