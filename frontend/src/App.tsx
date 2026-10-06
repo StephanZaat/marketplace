@@ -27,6 +27,10 @@ const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
 const AdminMessages = lazy(() => import("./pages/admin/AdminMessages"));
 const AdminSecurity = lazy(() => import("./pages/admin/AdminSecurity"));
+const AdminInsights = lazy(() => import("./pages/admin/AdminInsights"));
+const AdminCategories = lazy(() => import("./pages/admin/AdminCategories"));
+const AdminUserDetail = lazy(() => import("./pages/admin/AdminUserDetail"));
+const AdminListingEdit = lazy(() => import("./pages/admin/AdminListingEdit"));
 
 export default function App() {
   return (
@@ -61,6 +65,10 @@ export default function App() {
               <Route path="/admin/reports" element={<AdminProtectedRoute><AdminReports /></AdminProtectedRoute>} />
               <Route path="/admin/messages" element={<AdminProtectedRoute><AdminMessages /></AdminProtectedRoute>} />
               <Route path="/admin/security" element={<AdminProtectedRoute><AdminSecurity /></AdminProtectedRoute>} />
+              <Route path="/admin/insights" element={<AdminProtectedRoute><AdminInsights /></AdminProtectedRoute>} />
+              <Route path="/admin/categories" element={<AdminProtectedRoute><AdminCategories /></AdminProtectedRoute>} />
+              <Route path="/admin/users/:userId" element={<AdminProtectedRoute><AdminUserDetail /></AdminProtectedRoute>} />
+              <Route path="/admin/listings/:listingId" element={<AdminProtectedRoute><AdminListingEdit /></AdminProtectedRoute>} />
             </Routes>
             </Suspense>
           </AdminAuthProvider>

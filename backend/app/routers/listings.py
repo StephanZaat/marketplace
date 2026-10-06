@@ -103,6 +103,7 @@ def list_listings(
     location: Optional[str] = None,
     seller_id: Optional[str] = None,
     status: Optional[str] = None,
+    featured: bool = False,
     sort_by: Optional[str] = Query(None, pattern="^(price|date|views)$"),
     sort_dir: Optional[str] = Query("desc", pattern="^(asc|desc)$"),
     skip: int = Query(0, ge=0),
@@ -132,6 +133,8 @@ def list_listings(
             Listing.status.in_([ListingStatus.ACTIVE, ListingStatus.RESERVED])
         )
 
+    if featured:
+        query = query.filter(Listing.is_featured.is_(True))
     if category:
         cat = db.query(Category).filter(Category.slug == category).first()
         if cat:
@@ -311,6 +314,8 @@ def create_listing(
 ):
     # Resolve category public_id to internal id
     cat = resolve_public_id(db, Category, data.category_id, "Category")
+    if cat.is_hidden:
+        raise HTTPException(status_code=400, detail="This category is not available")
     # Marketplace.aw is for Aruba: an untrusted seller posting from outside the
     # island is held for admin review. Foreign phone numbers or nationality
     # don't matter, and an unknown country (no GeoIP data) is never held.

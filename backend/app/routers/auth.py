@@ -14,6 +14,8 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.database import get_db
+from app.geo import country_for_ip
+from app.models.blocked_email import is_email_blocked
 from app.limiter import limiter
 from app.models.user import User
 from app.schemas.user import OtpSendRequest, OtpSendResponse, OtpVerifyRequest, UserMe, Token
@@ -131,6 +133,8 @@ async def otp_send(request: Request, data: OtpSendRequest, background_tasks: Bac
     if not verify_captcha(data.frc_captcha_response):
         raise HTTPException(status_code=400, detail="Captcha verification failed")
     _check_email_rate_limit(data.email)
+    if is_email_blocked(db, data.email):
+        raise HTTPException(status_code=403, detail="This email address can't be used on Marketplace.aw")
 
     is_new_user = db.query(User).filter(User.email == data.email).first() is None
 
@@ -150,10 +154,14 @@ def otp_verify(request: Request, data: OtpVerifyRequest, db: Session = Depends(g
     if not email or email.lower() != data.email.lower():
         raise HTTPException(status_code=401, detail="Invalid or expired OTP")
 
+    if is_email_blocked(db, email):
+        raise HTTPException(status_code=403, detail="This email address can't be used on Marketplace.aw")
+
     user = db.query(User).filter(User.email == email).first()
     if user is None:
         name = data.full_name or email.split("@")[0]
-        user = User(email=email, full_name=name, is_verified=True)
+        country = country_for_ip(request.client.host if request.client else None)
+        user = User(email=email, full_name=name, is_verified=True, signup_country=country)
         db.add(user)
         db.commit()
         db.refresh(user)

@@ -24,6 +24,10 @@ class User(Base):
     is_verified = Column(Boolean, default=False, nullable=False)
     # Trusted sellers skip the off-island review; set when an admin approves a listing
     is_trusted = Column(Boolean, default=False, nullable=False)
+    # ISO country of the sign-up IP; None if unknown or signed up before tracking
+    signup_country = Column(String(2), nullable=True)
+    # Private note, only visible in admin
+    admin_note = Column(Text, nullable=True)
 
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

@@ -35,6 +35,7 @@ const translations: Record<Lang, any> = {
 
     // Home – sections
     recentlyAdded: "Recently Added",
+    featured: "Featured",
     mostPopular: "Most Popular",
     howItWorks: "How It Works",
     noListingsYet: "No listings yet",
@@ -358,6 +359,7 @@ const translations: Record<Lang, any> = {
 
     // Home – sections
     recentlyAdded: "Recién añadidos",
+    featured: "Destacados",
     mostPopular: "Más populares",
     howItWorks: "Cómo funciona",
     noListingsYet: "Aún no hay anuncios",

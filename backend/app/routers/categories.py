@@ -12,9 +12,24 @@ from app.schemas.category import CategoryOut, CategoryTree
 router = APIRouter(prefix="/categories", tags=["categories"])
 
 
+def _visible(db: Session) -> list[Category]:
+    """Categories shown publicly: not hidden, and no hidden ancestor."""
+    all_cats = db.query(Category).order_by(Category.sort_order, Category.name).all()
+    by_id = {c.id: c for c in all_cats}
+
+    def shown(c: Category) -> bool:
+        while c is not None:
+            if c.is_hidden:
+                return False
+            c = by_id.get(c.parent_id) if c.parent_id else None
+        return True
+
+    return [c for c in all_cats if shown(c)]
+
+
 @router.get("", response_model=List[CategoryOut])
 def list_categories(db: Session = Depends(get_db)):
-    all_cats = db.query(Category).order_by(Category.sort_order, Category.name).all()
+    all_cats = _visible(db)
     # Build parent_id -> public_id map
     parent_ids = {c.parent_id for c in all_cats if c.parent_id}
     parent_pid_map = _build_pid_map(db, Category, parent_ids) if parent_ids else {}
@@ -29,7 +44,7 @@ def list_categories(db: Session = Depends(get_db)):
 
 @router.get("/tree", response_model=List[CategoryTree])
 def category_tree(db: Session = Depends(get_db)):
-    all_cats = db.query(Category).order_by(Category.sort_order, Category.name).all()
+    all_cats = _visible(db)
 
     # Count active listings per category_id
     rows = (

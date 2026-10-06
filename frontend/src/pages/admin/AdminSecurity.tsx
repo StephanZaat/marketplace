@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Shield, ShieldCheck, ShieldOff } from "lucide-react";
-import AdminHeader from "../../components/AdminHeader";
+import AdminLayout from "../../components/AdminLayout";
 import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import adminApi from "../../adminApi";
 import toast from "react-hot-toast";
@@ -67,12 +67,10 @@ export default function AdminSecurity() {
   const totpEnabled = setup?.enabled ?? false;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader />
-      <main className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Security</h1>
+    <AdminLayout width="narrow">
+        <h1 className="text-2xl font-extrabold text-gray-900 mb-6">Security</h1>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="card p-6">
           <div className="flex items-center gap-3 mb-6">
             {totpEnabled ? (
               <ShieldCheck size={24} className="text-green-600" />
@@ -103,7 +101,7 @@ export default function AdminSecurity() {
               {!showSetup ? (
                 <button
                   onClick={() => setShowSetup(true)}
-                  className="bg-gray-900 text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+                  className="btn-primary text-sm"
                 >
                   Enable 2FA
                 </button>
@@ -137,14 +135,14 @@ export default function AdminSecurity() {
                         onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                         placeholder="000000"
                         maxLength={6}
-                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-36 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        className="input text-sm w-36 text-center tracking-widest"
                         required
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={loading || code.length !== 6}
-                      className="bg-gray-900 text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                      className="btn-primary text-sm"
                     >
                       {loading ? "Verifying…" : "Confirm & enable"}
                     </button>
@@ -174,7 +172,7 @@ export default function AdminSecurity() {
                     onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder="000000"
                     maxLength={6}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-36 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-gray-400"
+                    className="input text-sm w-36 text-center tracking-widest"
                     required
                   />
                 </div>
@@ -191,14 +189,13 @@ export default function AdminSecurity() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mt-4">
+        <div className="card p-6 mt-4">
           <h2 className="font-semibold text-gray-900 mb-1">Session info</h2>
           <p className="text-sm text-gray-500">
             Logged in as <span className="font-medium text-gray-700">{admin?.username}</span>.
             Admin sessions expire after 8 hours.
           </p>
         </div>
-      </main>
-    </div>
+      </AdminLayout>
   );
 }

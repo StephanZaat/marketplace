@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Users, List, Flag, ShoppingBag, ShieldQuestion } from "lucide-react";
-import AdminHeader from "../../components/AdminHeader";
+import AdminLayout from "../../components/AdminLayout";
 import adminApi from "../../adminApi";
 
 interface Stats {
@@ -39,7 +39,7 @@ export default function AdminDashboard() {
           sub: `${stats.active_users} active`,
           icon: Users,
           to: "/admin/users",
-          color: "bg-blue-50 text-blue-600",
+          color: "bg-ocean-50 text-ocean-600",
         },
         {
           label: "Listings",
@@ -69,10 +69,8 @@ export default function AdminDashboard() {
     : [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader />
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+    <AdminLayout>
+        <h1 className="text-2xl font-extrabold text-gray-900 mb-6">Dashboard</h1>
         {stats && !stats.geoip_enabled && (
           <p className="mb-4 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
             Country database missing: listings from outside Aruba are <strong>not</strong> being held for review.
@@ -87,7 +85,7 @@ export default function AdminDashboard() {
               <Link
                 key={label}
                 to={to}
-                className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow"
+                className="card p-5 hover:shadow-md transition-shadow"
               >
                 <div className={`inline-flex p-2 rounded-lg ${color} mb-3`}>
                   <Icon size={20} />
@@ -99,7 +97,6 @@ export default function AdminDashboard() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+      </AdminLayout>
   );
 }

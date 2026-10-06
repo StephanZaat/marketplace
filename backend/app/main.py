@@ -102,6 +102,19 @@ def migrate_db():
             conn.execute(text("UPDATE users SET is_trusted = TRUE WHERE is_active = TRUE"))
             conn.commit()
         logger.info("Migrated: added users.is_trusted (existing active users trusted)")
+    for table, col in (("categories", "is_hidden"), ("listings", "is_featured")):
+        if col not in [c["name"] for c in insp.get_columns(table)]:
+            with engine.connect() as conn:
+                conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} BOOLEAN NOT NULL DEFAULT FALSE"))
+                conn.commit()
+            logger.info("Migrated: added %s.%s", table, col)
+    user_cols_now = [c["name"] for c in insp.get_columns("users")]
+    for col, ddl in (("signup_country", "VARCHAR(2)"), ("admin_note", "TEXT")):
+        if col not in user_cols_now:
+            with engine.connect() as conn:
+                conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} {ddl}"))
+                conn.commit()
+            logger.info("Migrated: added users.%s", col)
     if "created_country" not in [c["name"] for c in insp.get_columns("listings")]:
         with engine.connect() as conn:
             conn.execute(text("ALTER TABLE listings ADD COLUMN created_country VARCHAR(2)"))
@@ -220,7 +233,7 @@ async def lifespan(app: FastAPI):
         pass
 
 
-from app.routers import auth, users, categories, listings, messages, favorites, reports, admin_auth, admin, contact, alerts, ratings
+from app.routers import auth, users, categories, listings, messages, favorites, reports, admin_auth, admin, contact, alerts, ratings, admin_users, admin_listings, admin_catalog, admin_insights
 
 app = FastAPI(
     title="Marketplace.aw",
@@ -250,6 +263,10 @@ app.include_router(favorites.router, prefix="/api")
 app.include_router(reports.router, prefix="/api")
 app.include_router(admin_auth.router, prefix="/api")
 app.include_router(admin.router, prefix="/api")
+app.include_router(admin_users.router, prefix="/api")
+app.include_router(admin_listings.router, prefix="/api")
+app.include_router(admin_catalog.router, prefix="/api")
+app.include_router(admin_insights.router, prefix="/api")
 app.include_router(contact.router, prefix="/api")
 app.include_router(alerts.router, prefix="/api")
 app.include_router(ratings.router, prefix="/api")
