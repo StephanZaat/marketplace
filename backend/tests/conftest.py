@@ -2,7 +2,7 @@ import os
 
 # Must be set before any app imports so get_settings() picks up SQLite
 os.environ.setdefault("DATABASE_URL", "sqlite:///./test.db")
-os.environ.setdefault("JWT_SECRET_KEY", "test-jwt-secret")
+os.environ.setdefault("JWT_SECRET_KEY", "test-jwt-secret-key-for-ci-only-0123456789")
 os.environ.setdefault("SECRET_KEY", "test-secret")
 os.environ.setdefault("ALLOWED_ORIGINS", "http://localhost")
 # Disable rate limiting in tests

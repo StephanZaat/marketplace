@@ -46,7 +46,7 @@ services:
       - VITE_FRIENDLY_CAPTCHA_SITEKEY=${FRIENDLY_CAPTCHA_SITEKEY:-}
 
   nginx:
-    image: nginx:1.25-alpine
+    image: nginx:1.31-alpine
     container_name: marketplace_nginx
     restart: unless-stopped
     ports:
@@ -67,7 +67,7 @@ services:
     command: python -m pytest tests/ -v
     environment:
       DATABASE_URL: "sqlite:///./test.db"
-      JWT_SECRET_KEY: "test-jwt-secret"
+      JWT_SECRET_KEY: "test-jwt-secret-key-for-ci-only-0123456789"
       SECRET_KEY: "test-secret"
       ALLOWED_ORIGINS: "http://localhost"
       TESTING: "1"
