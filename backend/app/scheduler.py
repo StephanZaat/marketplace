@@ -16,7 +16,9 @@ import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
 
-from app.database import SessionLocal
+from sqlalchemy import text
+
+from app.database import SessionLocal, try_scheduler_leadership
 from app.models.listing import Listing, ListingStatus
 
 logger = logging.getLogger(__name__)
@@ -192,14 +194,34 @@ async def run_scheduler() -> None:
     """Infinite loop that runs listing checks every hour and digest once a day."""
     logger.info("Listing expiry scheduler started (interval=%ds)", _CHECK_INTERVAL)
     last_digest_day: int | None = None
+    # Every uvicorn worker runs this loop; only the one holding the advisory
+    # lock does the work, so digests and reminders go out once. If the leader
+    # dies its connection closes, the lock frees, and another worker takes over.
+    leader = None
 
     while True:
-        await _run_checks()
+        if leader is not None:
+            try:
+                leader.execute(text("SELECT 1"))
+            except Exception:
+                logger.warning("Scheduler lost its lock connection; re-electing")
+                leader.invalidate()  # don't return a lock-holding connection to the pool
+                leader = None
+        if leader is None:
+            try:
+                leader = try_scheduler_leadership()
+            except Exception:
+                logger.exception("Scheduler leadership check failed")
+            if leader is not None:
+                logger.info("This worker now runs the scheduler")
 
-        now = datetime.now(timezone.utc)
-        if now.hour == _DIGEST_HOUR and now.day != last_digest_day:
-            await _run_digest()
-            last_digest_day = now.day
-            logger.info("Daily digest sent (day=%d)", now.day)
+        if leader is not None:
+            await _run_checks()
+
+            now = datetime.now(timezone.utc)
+            if now.hour == _DIGEST_HOUR and now.day != last_digest_day:
+                await _run_digest()
+                last_digest_day = now.day
+                logger.info("Daily digest sent (day=%d)", now.day)
 
         await asyncio.sleep(_CHECK_INTERVAL)
