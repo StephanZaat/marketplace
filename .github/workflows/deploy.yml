@@ -344,7 +344,11 @@ jobs:
               --build-arg GEOIP_MONTH="$(date -u +%Y-%m)"
 
             echo "--- Bootstrap TLS cert (if needed)"
-            if [ ! -f /var/lib/docker/volumes/marketplace_letsencrypt/_data/live/${DOMAIN}/fullchain.pem ]; then
+            # Check inside a container: the deploy user can't read
+            # /var/lib/docker, so a host-path check always failed and every
+            # deploy took the whole site down to re-run certbot.
+            if ! docker run --rm -v marketplace_letsencrypt:/le:ro --entrypoint test certbot/certbot \
+                -f "/le/live/${DOMAIN}/fullchain.pem"; then
               docker compose -f docker-compose.prod.yml down 2>/dev/null || true
               docker compose -f docker-compose.prod.yml run --rm -p 80:80 --entrypoint "" certbot \
                 certbot certonly \
