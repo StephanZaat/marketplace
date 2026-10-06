@@ -33,8 +33,8 @@ describe("LocationMap", () => {
     render(<LocationMap location="Oranjestad" />);
     clickMapButton("Oranjestad");
     const iframe = screen.getByTitle("Map of Oranjestad") as HTMLIFrameElement;
-    expect(iframe.src).toContain("marker=12.5186");
-    expect(iframe.src).toContain("-70.0358");
+    expect(iframe.src).toContain("marker=12.520102");
+    expect(iframe.src).toContain("-70.037133");
   });
 
   it("renders OSM link pointing to the correct area", () => {

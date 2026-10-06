@@ -15,7 +15,6 @@ from app.database import SessionLocal
 from app.models.user import User
 from app.models.listing import Listing, ListingCondition, ListingStatus
 from app.models.message import Conversation, Message
-from app.routers.auth import hash_password
 from app.models.category import Category
 from decimal import Decimal
 import random
@@ -55,7 +54,6 @@ for email, full_name, location, phone, whatsapp, contact_method, languages, pref
     else:
         db.add(User(
             email=email,
-            hashed_password=hash_password("password123"),
             full_name=full_name,
             location=location,
             phone=phone,

@@ -1,5 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { LanguageProvider } from "../contexts/LanguageContext";
+import { CurrencyProvider } from "../contexts/CurrencyContext";
 import { describe, it, expect, vi } from "vitest";
 import ListingCard from "../components/ListingCard";
 import { Listing } from "../api";
@@ -37,9 +39,13 @@ const baseListing: Listing = {
 
 function renderCard(listing = baseListing) {
   return render(
-    <MemoryRouter>
-      <ListingCard listing={listing} />
-    </MemoryRouter>
+    <LanguageProvider>
+      <CurrencyProvider>
+        <MemoryRouter>
+          <ListingCard listing={listing} />
+        </MemoryRouter>
+      </CurrencyProvider>
+    </LanguageProvider>
   );
 }
 
