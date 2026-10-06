@@ -4,12 +4,14 @@ All endpoints require admin authentication.
 """
 from typing import Annotated, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.geo import geoip_available
+from app.models.category import Category
 from app.models.listing import Listing, ListingStatus
 from app.models.message import Conversation, Message
 from app.models.report import Report
@@ -35,6 +37,9 @@ def get_stats(
         "active_listings": db.query(func.count(Listing.id)).filter(Listing.status == ListingStatus.ACTIVE).scalar(),
         "sold_listings": db.query(func.count(Listing.id)).filter(Listing.status == ListingStatus.SOLD).scalar(),
         "inactive_listings": db.query(func.count(Listing.id)).filter(Listing.status == ListingStatus.INACTIVE).scalar(),
+        "pending_listings": db.query(func.count(Listing.id)).filter(Listing.status == ListingStatus.PENDING).scalar(),
+        # False means the off-island review is silently off (no GeoIP database)
+        "geoip_enabled": geoip_available(),
         "total_reports": db.query(func.count(Report.id)).scalar(),
     }
 
@@ -78,6 +83,11 @@ def list_listings(
             "created_at": l.created_at.isoformat(),
             "seller_id": seller_pid_map.get(l.seller_id, ""),
             "seller_name": (seller.full_name or seller.email) if seller else None,
+            # Review context for pending listings
+            "description": l.description if l.status == ListingStatus.PENDING else None,
+            "created_country": l.created_country,
+            "seller_email": seller.email if seller else None,
+            "seller_trusted": bool(seller and seller.is_trusted),
         })
     return {"total": total, "page": page, "items": result}
 
@@ -99,6 +109,28 @@ def update_listing_status(
     except ValueError:
         raise HTTPException(status_code=400, detail=f"Invalid status: {body.status}")
     db.commit()
+    return {"id": listing.public_id, "status": listing.status.value}
+
+
+@router.post("/listings/{listing_id}/approve")
+def approve_listing(
+    listing_id: str,
+    background_tasks: BackgroundTasks,
+    _admin: Annotated[Admin, Depends(get_current_admin)],
+    db: Session = Depends(get_db),
+):
+    """Publish a pending listing and trust its seller, so later listings skip review."""
+    listing = resolve_public_id(db, Listing, listing_id, "Listing")
+    if listing.status != ListingStatus.PENDING:
+        raise HTTPException(status_code=400, detail="Listing is not pending review")
+    seller = db.query(User).filter(User.id == listing.seller_id).first()
+    listing.status = ListingStatus.ACTIVE
+    seller.is_trusted = True
+    db.commit()
+
+    from app import email as mail
+    category = db.query(Category).filter(Category.id == listing.category_id).first()
+    background_tasks.add_task(mail.send_new_listing, seller, listing, category.name if category else "")
     return {"id": listing.public_id, "status": listing.status.value}
 
 
@@ -153,6 +185,13 @@ def update_user(
 ):
     user = resolve_public_id(db, User, user_id, "User")
     user.is_active = body.is_active
+    if not body.is_active:
+        # Take a banned seller's listings down with them; reactivating the
+        # account deliberately doesn't bring them back.
+        db.query(Listing).filter(
+            Listing.seller_id == user.id,
+            Listing.status.in_([ListingStatus.ACTIVE, ListingStatus.RESERVED, ListingStatus.PENDING]),
+        ).update({Listing.status: ListingStatus.INACTIVE}, synchronize_session=False)
     db.commit()
     return {"id": user.public_id, "is_active": user.is_active}
 

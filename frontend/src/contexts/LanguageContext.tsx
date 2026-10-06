@@ -164,6 +164,7 @@ const translations: Record<Lang, any> = {
     relistActive: "Relist (mark as active)",
     renewListing: "Renew Listing",
     expiredNote: "This listing has expired and is no longer visible to buyers. Renew it to make it active again.",
+    pendingNote: "Listings posted from outside Aruba are briefly reviewed before they go live. We'll email you once it's published.",
     editListing: "Edit Listing",
     priceNegotiable: "Price negotiable",
     noLongerAvailable: "This item is no longer available",
@@ -192,6 +193,7 @@ const translations: Record<Lang, any> = {
     statusReserved: "Reserved",
     statusInactive: "Inactive",
     statusExpired: "Expired",
+    statusPending: "Under review",
 
     // Settings / Edit profile
     settingsTitle: "Edit Profile",
@@ -295,6 +297,7 @@ const translations: Record<Lang, any> = {
     addAtLeastOnePhoto: "Please add at least one photo",
     listingUpdated: "Listing updated!",
     listingCreated: "Listing created!",
+    listingPendingReview: "Listing saved. It will go live after a quick review.",
     failedToSaveListing: "Failed to save listing",
 
     // Category alerts
@@ -484,6 +487,7 @@ const translations: Record<Lang, any> = {
     relistActive: "Volver a publicar (marcar activo)",
     renewListing: "Renovar anuncio",
     expiredNote: "Este anuncio ha caducado y ya no es visible para los compradores. Renuévalo para activarlo de nuevo.",
+    pendingNote: "Los anuncios publicados desde fuera de Aruba se revisan brevemente antes de publicarse. Te enviaremos un correo cuando esté publicado.",
     editListing: "Editar anuncio",
     priceNegotiable: "Precio negociable",
     noLongerAvailable: "Este artículo ya no está disponible",
@@ -512,6 +516,7 @@ const translations: Record<Lang, any> = {
     statusReserved: "Reservado",
     statusInactive: "Inactivo",
     statusExpired: "Caducado",
+    statusPending: "En revisión",
 
     // Settings / Edit profile
     settingsTitle: "Editar perfil",
@@ -615,6 +620,7 @@ const translations: Record<Lang, any> = {
     addAtLeastOnePhoto: "Por favor agrega al menos una foto",
     listingUpdated: "¡Anuncio actualizado!",
     listingCreated: "¡Anuncio creado!",
+    listingPendingReview: "Anuncio guardado. Se publicará tras una breve revisión.",
     failedToSaveListing: "No se pudo guardar el anuncio",
 
     // Category alerts

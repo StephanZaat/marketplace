@@ -14,6 +14,7 @@ class ListingStatus(str, enum.Enum):
     RESERVED = "reserved"
     INACTIVE = "inactive"
     EXPIRED = "expired"
+    PENDING = "pending"  # held for admin review (see create_listing)
 
 
 class ListingCondition(str, enum.Enum):
@@ -42,6 +43,8 @@ class Listing(Base):
 
     # Location
     location = Column(String(200), nullable=True)
+    # ISO country of the IP the listing was created from; None if unknown
+    created_country = Column(String(2), nullable=True)
 
     # Preferred contact method (comma-separated: email, whatsapp, phone)
     contact_method = Column(String(100), nullable=True)

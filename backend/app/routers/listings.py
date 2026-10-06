@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.database import get_db
+from app.geo import country_for_ip
 from app.limiter import limiter
 from app.models.listing import Listing, ListingStatus
 from app.models.message import Conversation
@@ -17,6 +18,11 @@ from app.schemas.listing import ListingCreate, ListingUpdate, ListingOut, Listin
 from app.storage import save_listing_image, delete_listing_image, resolve_image_url, resolve_listing_images, _key_from_url
 
 router = APIRouter(prefix="/listings", tags=["listings"])
+
+# Statuses only the seller (and admins) may see.
+_PRIVATE_STATUSES = (ListingStatus.PENDING, ListingStatus.INACTIVE)
+# Statuses a seller may move between themselves (reserve, mark sold, relist).
+_SELLER_STATUSES = (ListingStatus.ACTIVE, ListingStatus.RESERVED, ListingStatus.SOLD)
 settings = get_settings()
 
 
@@ -102,6 +108,7 @@ def list_listings(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user),
 ):
     # Resolve seller public_id to internal id
     internal_seller_id = None
@@ -116,6 +123,8 @@ def list_listings(
         try:
             status_enum = ListingStatus[status.upper()]
         except KeyError:
+            status_enum = ListingStatus.ACTIVE
+        if status_enum in _PRIVATE_STATUSES and (not current_user or current_user.id != internal_seller_id):
             status_enum = ListingStatus.ACTIVE
         query = db.query(Listing).filter(Listing.status == status_enum)
     else:
@@ -224,6 +233,9 @@ def get_listing(
     current_user: Optional[User] = Depends(get_optional_user),
 ):
     listing = resolve_public_id(db, Listing, listing_id, "Listing")
+    is_owner = current_user is not None and current_user.id == listing.seller_id
+    if listing.status in _PRIVATE_STATUSES and not is_owner:
+        raise HTTPException(status_code=404, detail="Listing not found")
 
     # Increment view count for non-owner views, unless client signals already tracked
     if not no_track and (not current_user or current_user.id != listing.seller_id):
@@ -299,18 +311,29 @@ def create_listing(
 ):
     # Resolve category public_id to internal id
     cat = resolve_public_id(db, Category, data.category_id, "Category")
+    # Marketplace.aw is for Aruba: an untrusted seller posting from outside the
+    # island is held for admin review. Foreign phone numbers or nationality
+    # don't matter, and an unknown country (no GeoIP data) is never held.
+    country = country_for_ip(request.client.host if request.client else None)
+    held = not current_user.is_trusted and country is not None and country != "AW"
     listing = Listing(
         **data.model_dump(exclude={"category_id"}),
         category_id=cat.id,
         seller_id=current_user.id,
         images=[],
+        created_country=country,
+        status=ListingStatus.PENDING if held else ListingStatus.ACTIVE,
     )
     db.add(listing)
     db.commit()
     db.refresh(listing)
 
     from app import email as mail
-    background_tasks.add_task(mail.send_new_listing, current_user, listing, cat.name)
+    if held:
+        background_tasks.add_task(mail.send_listing_pending, current_user, listing)
+        background_tasks.add_task(mail.send_listing_review_request, current_user, listing, country)
+    else:
+        background_tasks.add_task(mail.send_new_listing, current_user, listing, cat.name)
 
     return listing_to_public_dict(listing, db)
 
@@ -325,6 +348,12 @@ def update_listing(
     listing = resolve_public_id(db, Listing, listing_id, "Listing")
     if listing.seller_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not your listing")
+    if data.status is not None and data.status != listing.status and not (
+        listing.status in _SELLER_STATUSES and data.status in _SELLER_STATUSES
+    ):
+        # Pending (review), inactive (removed) and expired (use /renew) are
+        # not the seller's to change.
+        raise HTTPException(status_code=400, detail=f"Cannot change status from {listing.status.value} to {data.status.value}")
 
     update_data = data.model_dump(exclude_none=True, exclude={"sold_to_conversation_id", "category_id"})
     for field, value in update_data.items():

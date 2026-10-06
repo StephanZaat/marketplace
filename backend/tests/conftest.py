@@ -28,6 +28,11 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 def create_tables():
     """Create all tables once for the test session."""
     Base.metadata.create_all(bind=engine)
+    # Run app startup (migrations, seeding) once here, outside any per-test
+    # transaction; otherwise its writes can hit SQLite's lock when a test
+    # writes fixtures before opening its first client.
+    with TestClient(app):
+        pass
     yield
     Base.metadata.drop_all(bind=engine)
     import os as _os

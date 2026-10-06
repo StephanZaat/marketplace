@@ -184,10 +184,14 @@ export default function Profile() {
           isMe
             ? api.get<Listing[]>("/favorites")
             : Promise.resolve({ data: [] as Listing[] }),
+          isMe
+            ? api.get<Listing[]>(`/listings?seller_id=${uid}&status=pending&limit=100`)
+            : Promise.resolve({ data: [] as Listing[] }),
         ]);
       })
-      .then(([listRes, soldRes, expiredRes, favRes]) => {
-        setListings(listRes.data);
+      .then(([listRes, soldRes, expiredRes, favRes, pendingRes]) => {
+        // Owner sees listings awaiting review alongside the live ones
+        setListings([...pendingRes.data, ...listRes.data]);
         setSoldListings(soldRes.data);
         setExpiredListings(expiredRes.data);
         setFavorites(favRes.data);

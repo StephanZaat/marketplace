@@ -22,6 +22,8 @@ class User(Base):
     avatar_url = Column(String, nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     is_verified = Column(Boolean, default=False, nullable=False)
+    # Trusted sellers skip the off-island review; set when an admin approves a listing
+    is_trusted = Column(Boolean, default=False, nullable=False)
 
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
