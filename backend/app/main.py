@@ -15,7 +15,7 @@ from app.config import get_settings
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.database import get_db, init_db, SessionLocal, engine
+from app.database import get_db, init_db, SessionLocal, engine, startup_lock
 from app.limiter import limiter
 
 logger = logging.getLogger(__name__)
@@ -192,14 +192,16 @@ async def lifespan(app: FastAPI):
             logger.info("Waiting for database... (%d/30)", attempt + 1)
             time.sleep(2)
     try:
-        logger.info("Running init_db...")
-        init_db()
-        logger.info("Running migrate_db...")
-        migrate_db()
-        logger.info("Running seed_data...")
-        seed_data()
-        logger.info("Running seed_admin...")
-        seed_admin()
+        # One worker at a time; later ones find the schema already migrated.
+        with startup_lock():
+            logger.info("Running init_db...")
+            init_db()
+            logger.info("Running migrate_db...")
+            migrate_db()
+            logger.info("Running seed_data...")
+            seed_data()
+            logger.info("Running seed_admin...")
+            seed_admin()
         logger.info("Startup complete.")
     except Exception:
         logger.exception("Startup failed — check DB connection and schema")
