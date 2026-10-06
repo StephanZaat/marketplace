@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -8,22 +8,25 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 import Layout from "./components/Layout";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
+// Home stays in the main bundle for first paint; every other route is its own
+// chunk, so visitors never download admin or messaging code they don't use.
 import Home from "./pages/Home";
-import Listings from "./pages/Listings";
-import ListingDetail from "./pages/ListingDetail";
-import CreateListing from "./pages/CreateListing";
-import Messages from "./pages/Messages";
-import Login from "./pages/Login";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
-import Contact from "./pages/Contact";
-import AdminLogin from "./pages/admin/AdminLogin";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminListings from "./pages/admin/AdminListings";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminReports from "./pages/admin/AdminReports";
-import AdminMessages from "./pages/admin/AdminMessages";
-import AdminSecurity from "./pages/admin/AdminSecurity";
+
+const Listings = lazy(() => import("./pages/Listings"));
+const ListingDetail = lazy(() => import("./pages/ListingDetail"));
+const CreateListing = lazy(() => import("./pages/CreateListing"));
+const Messages = lazy(() => import("./pages/Messages"));
+const Login = lazy(() => import("./pages/Login"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Contact = lazy(() => import("./pages/Contact"));
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminListings = lazy(() => import("./pages/admin/AdminListings"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
+const AdminMessages = lazy(() => import("./pages/admin/AdminMessages"));
+const AdminSecurity = lazy(() => import("./pages/admin/AdminSecurity"));
 
 export default function App() {
   return (
@@ -34,6 +37,7 @@ export default function App() {
         <FavoritesProvider>
           <AdminAuthProvider>
             <Toaster position="top-right" />
+            <Suspense fallback={null}>
             <Routes>
               {/* Public user routes */}
               <Route path="/login" element={<Login />} />
@@ -58,6 +62,7 @@ export default function App() {
               <Route path="/admin/messages" element={<AdminProtectedRoute><AdminMessages /></AdminProtectedRoute>} />
               <Route path="/admin/security" element={<AdminProtectedRoute><AdminSecurity /></AdminProtectedRoute>} />
             </Routes>
+            </Suspense>
           </AdminAuthProvider>
         </FavoritesProvider>
       </AuthProvider>
