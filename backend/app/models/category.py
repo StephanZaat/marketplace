@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, Text, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import JSON
 from app.database import Base
@@ -26,4 +26,6 @@ class Category(Base):
     icon = Column(String(100), nullable=True)
     sort_order = Column(Integer, default=0)
     parent_id = Column(Integer, ForeignKey("categories.id"), nullable=True, index=True)
+    # Hidden categories (and their subcategories) disappear from the public site
+    is_hidden = Column(Boolean, default=False, nullable=False, server_default="false")
     attributes = _json_column()

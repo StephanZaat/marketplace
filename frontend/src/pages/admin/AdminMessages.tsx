@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, MessageSquare, ExternalLink, X } from "lucide-react";
-import AdminHeader from "../../components/AdminHeader";
+import AdminLayout from "../../components/AdminLayout";
 import adminApi from "../../adminApi";
 
 interface ConvListing {
@@ -85,11 +85,9 @@ export default function AdminMessages() {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader />
-      <main className="max-w-7xl mx-auto px-4 py-8">
+    <AdminLayout>
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-extrabold text-gray-900">
             Messages
             <span className="ml-2 text-lg font-normal text-gray-400">({total} conversations)</span>
           </h1>
@@ -110,13 +108,13 @@ export default function AdminMessages() {
         {loading ? (
           <p className="text-gray-400">Loading…</p>
         ) : items.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-400">
+          <div className="card p-12 text-center text-gray-400">
             No conversations
           </div>
         ) : (
           <div className="space-y-2">
             {items.map((conv) => (
-              <div key={conv.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div key={conv.id} className="card overflow-hidden">
                 {/* Conversation row */}
                 <div
                   className="flex gap-4 p-4 cursor-pointer hover:bg-gray-50 transition-colors"
@@ -233,7 +231,6 @@ export default function AdminMessages() {
             </div>
           </div>
         )}
-      </main>
-    </div>
+      </AdminLayout>
   );
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ShieldCheck, MessageCircle, TrendingUp,
-  Tag, ChevronRight, ChevronDown, Zap, Users, ArrowUpDown,
+  Tag, ChevronRight, ChevronDown, Zap, Users, ArrowUpDown, Star,
 } from "lucide-react";
 import api, { Listing, CategoryTree, catName } from "../api";
 import ListingCard from "../components/ListingCard";
@@ -21,6 +21,7 @@ export default function Home() {
   const { t, lang } = useLang();
   const [popularListings, setPopularListings] = useState<Listing[]>([]);
   const [recentListings, setRecentListings] = useState<Listing[]>([]);
+  const [featuredListings, setFeaturedListings] = useState<Listing[]>([]);
   const [tree, setTree] = useState<CategoryTree[]>([]);
   const [showAllCats, setShowAllCats] = useState(false);
   const [catSort, setCatSort] = useState<"popular" | "alpha">("popular");
@@ -29,6 +30,7 @@ export default function Home() {
   useEffect(() => {
     api.get<Listing[]>("/listings?limit=8&sort_by=views&sort_dir=desc").then((r) => setPopularListings(r.data)).catch(() => {});
     api.get<Listing[]>("/listings?limit=8&sort_by=date&sort_dir=desc").then((r) => setRecentListings(r.data)).catch(() => {});
+    api.get<Listing[]>("/listings?featured=true&limit=8&sort_by=date&sort_dir=desc").then((r) => setFeaturedListings(r.data)).catch(() => {});
     api.get<CategoryTree[]>("/categories/tree").then((r) => setTree(r.data)).catch(() => {});
     api.get<{ active_listings: number; active_sellers: number }>("/listings/stats").then((r) => setStats(r.data)).catch(() => {});
   }, []);
@@ -169,6 +171,20 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* ── Featured (picked in admin) ───────────────────────────────────────── */}
+      {featuredListings.length > 0 && (
+        <section className="bg-white pt-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Star className="w-5 h-5 text-sand-500 fill-sand-400" /> {t.featured}
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {featuredListings.map((l) => <ListingCard key={l.id} listing={l} />)}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Recently Added ───────────────────────────────────────────────────── */}
       {recentListings.length > 0 && (

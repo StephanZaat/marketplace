@@ -11,7 +11,6 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.geo import geoip_available
-from app.models.category import Category
 from app.models.listing import Listing, ListingStatus
 from app.models.message import Conversation, Message
 from app.models.report import Report
@@ -88,6 +87,7 @@ def list_listings(
             "created_country": l.created_country,
             "seller_email": seller.email if seller else None,
             "seller_trusted": bool(seller and seller.is_trusted),
+            "is_featured": l.is_featured,
         })
     return {"total": total, "page": page, "items": result}
 
@@ -120,17 +120,10 @@ def approve_listing(
     db: Session = Depends(get_db),
 ):
     """Publish a pending listing and trust its seller, so later listings skip review."""
+    from app.routers.admin_listings import approve_pending
     listing = resolve_public_id(db, Listing, listing_id, "Listing")
-    if listing.status != ListingStatus.PENDING:
-        raise HTTPException(status_code=400, detail="Listing is not pending review")
-    seller = db.query(User).filter(User.id == listing.seller_id).first()
-    listing.status = ListingStatus.ACTIVE
-    seller.is_trusted = True
+    approve_pending(db, listing, background_tasks)
     db.commit()
-
-    from app import email as mail
-    category = db.query(Category).filter(Category.id == listing.category_id).first()
-    background_tasks.add_task(mail.send_new_listing, seller, listing, category.name if category else "")
     return {"id": listing.public_id, "status": listing.status.value}
 
 
@@ -141,10 +134,13 @@ def list_users(
     _admin: Annotated[Admin, Depends(get_current_admin)],
     db: Session = Depends(get_db),
     q: Optional[str] = Query(None),
+    status: Optional[str] = Query(None, pattern="^(active|suspended)$"),
     page: int = Query(1, ge=1),
     limit: int = Query(25, le=100),
 ):
     query = db.query(User)
+    if status:
+        query = query.filter(User.is_active == (status == "active"))
     if q:
         query = query.filter(
             User.full_name.ilike(f"%{q}%") | User.email.ilike(f"%{q}%")
@@ -166,6 +162,8 @@ def list_users(
             "avatar_url": u.avatar_url,
             "is_active": u.is_active,
             "is_verified": u.is_verified,
+            "is_trusted": u.is_trusted,
+            "signup_country": u.signup_country,
             "created_at": u.created_at.isoformat(),
             "listing_count": listing_count,
         })

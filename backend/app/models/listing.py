@@ -45,6 +45,8 @@ class Listing(Base):
     location = Column(String(200), nullable=True)
     # ISO country of the IP the listing was created from; None if unknown
     created_country = Column(String(2), nullable=True)
+    # Picked by an admin for the homepage "Featured" row
+    is_featured = Column(Boolean, default=False, nullable=False, server_default="false")
 
     # Preferred contact method (comma-separated: email, whatsapp, phone)
     contact_method = Column(String(100), nullable=True)

@@ -41,11 +41,16 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+    <div className="min-h-screen bg-gradient-to-b from-ocean-50 to-white flex items-center justify-center px-4">
+      <div className="w-full max-w-sm card p-8">
         <div className="mb-6 text-center">
-          <h1 className="text-xl font-bold text-gray-900">Admin Login</h1>
-          <p className="text-sm text-gray-500 mt-1">Marketplace.aw</p>
+          <div className="flex items-center justify-center gap-1.5 mb-3">
+            <span className="text-2xl leading-none">🇦🇼</span>
+            <span className="font-extrabold text-2xl">
+              <span className="text-ocean-700">Marketplace</span><span className="text-sand-500">.aw</span>
+            </span>
+          </div>
+          <h1 className="text-lg font-bold text-gray-900">Admin sign in</h1>
         </div>
 
         {!totpRequired ? (
@@ -56,7 +61,7 @@ export default function AdminLogin() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
+                className="input text-sm"
                 required
                 autoFocus
               />
@@ -67,14 +72,14 @@ export default function AdminLogin() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
+                className="input text-sm"
                 required
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gray-900 text-white rounded-lg py-2 text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
+              className="btn-primary w-full text-sm"
             >
               {loading ? "Signing in…" : "Sign in"}
             </button>
@@ -89,7 +94,7 @@ export default function AdminLogin() {
               value={totpCode}
               onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
               placeholder="000000"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-center tracking-widest text-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
+              className="input text-center tracking-widest text-lg"
               required
               autoFocus
               maxLength={6}
@@ -97,7 +102,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading || totpCode.length !== 6}
-              className="w-full bg-gray-900 text-white rounded-lg py-2 text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
+              className="btn-primary w-full text-sm"
             >
               {loading ? "Verifying…" : "Verify"}
             </button>

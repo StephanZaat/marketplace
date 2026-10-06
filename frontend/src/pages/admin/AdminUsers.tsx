@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import AdminHeader from "../../components/AdminHeader";
+import { ChevronLeft, ChevronRight, ExternalLink, ShieldCheck, Trash2 } from "lucide-react";
+import AdminLayout from "../../components/AdminLayout";
 import adminApi from "../../adminApi";
 import toast from "react-hot-toast";
 
@@ -13,8 +13,17 @@ interface AdminUser {
   avatar_url: string | null;
   is_active: boolean;
   is_verified: boolean;
+  is_trusted: boolean;
+  signup_country: string | null;
   created_at: string;
   listing_count: number;
+}
+
+interface BlockedEmail {
+  id: number;
+  email: string;
+  reason: string | null;
+  created_at: string;
 }
 
 export default function AdminUsers() {
@@ -25,12 +34,16 @@ export default function AdminUsers() {
 
   const page = Number(searchParams.get("page") || 1);
   const q = searchParams.get("q") || "";
+  const status = searchParams.get("status") || "";
   const limit = 25;
+  const [blocked, setBlocked] = useState<BlockedEmail[]>([]);
+  const [showBlocked, setShowBlocked] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
     const params: Record<string, any> = { page, limit };
     if (q) params.q = q;
+    if (status) params.status = status;
     adminApi
       .get("/admin/users", { params })
       .then((res) => {
@@ -38,7 +51,7 @@ export default function AdminUsers() {
         setTotal(res.data.total);
       })
       .finally(() => setLoading(false));
-  }, [page, q]);
+  }, [page, q, status]);
 
   useEffect(() => {
     load();
@@ -64,14 +77,39 @@ export default function AdminUsers() {
     }
   }
 
+  const loadBlocked = useCallback(() => {
+    adminApi.get<BlockedEmail[]>("/admin/blocked-emails").then((r) => setBlocked(r.data)).catch(() => {});
+  }, []);
+  useEffect(() => { loadBlocked(); }, [loadBlocked]);
+
+  async function purgeAllSuspended() {
+    if (!confirm(
+      "Permanently delete ALL suspended users with their listings, photos, messages and ratings?\n\n" +
+      "Their email addresses will be blocked from signing up again. This cannot be undone."
+    )) return;
+    try {
+      const { data } = await adminApi.post("/admin/users/purge-suspended", {});
+      toast.success(`Purged ${data.users} users, ${data.listings} listings, ${data.images} photos`);
+      load();
+      loadBlocked();
+    } catch {
+      toast.error("Purge failed");
+    }
+  }
+
+  async function unblock(b: BlockedEmail) {
+    if (!confirm(`Allow ${b.email} to sign up again?`)) return;
+    await adminApi.delete(`/admin/blocked-emails/${b.id}`);
+    setBlocked((prev) => prev.filter((x) => x.id !== b.id));
+    toast.success("Unblocked");
+  }
+
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader />
-      <main className="max-w-7xl mx-auto px-4 py-8">
+    <AdminLayout>
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-extrabold text-gray-900">
             Users
             {total > 0 && <span className="ml-2 text-lg font-normal text-gray-400">({total})</span>}
           </h1>
@@ -83,11 +121,21 @@ export default function AdminUsers() {
             placeholder="Search name or email…"
             value={q}
             onChange={(e) => setParam("q", e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            className="input text-sm py-1.5 w-64"
           />
+          <select value={status} onChange={(e) => setParam("status", e.target.value)} className="input text-sm py-1.5 w-auto">
+            <option value="">All users</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+          </select>
+          {status === "suspended" && total > 0 && (
+            <button onClick={purgeAllSuspended} className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-300 text-red-700 text-sm font-medium hover:bg-red-50">
+              <Trash2 size={14} /> Purge all {total} suspended
+            </button>
+          )}
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="card overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
@@ -130,14 +178,18 @@ export default function AdminUsers() {
                           </div>
                         )}
                         <div>
-                          <div className="font-medium text-gray-900">
+                          <Link to={`/admin/users/${user.id}`} className="font-medium text-gray-900 hover:text-ocean-700 flex items-center gap-1">
                             {user.full_name || user.email}
-                          </div>
+                            {user.is_trusted && <ShieldCheck size={13} className="text-ocean-600" aria-label="Trusted seller" />}
+                          </Link>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-gray-600">{user.email}</td>
-                    <td className="px-4 py-3 text-gray-500">{user.location ?? "—"}</td>
+                    <td className="px-4 py-3 text-gray-500">
+                      {user.location ?? "—"}
+                      {user.signup_country && <span className="ml-1.5 text-xs text-gray-400">({user.signup_country})</span>}
+                    </td>
                     <td className="px-4 py-3 text-gray-700">{user.listing_count}</td>
                     <td className="px-4 py-3 text-gray-400 whitespace-nowrap">
                       {new Date(user.created_at).toLocaleDateString()}
@@ -170,6 +222,26 @@ export default function AdminUsers() {
           </table>
         </div>
 
+        <div className="mt-6">
+          <button onClick={() => setShowBlocked((v) => !v)} className="text-sm text-gray-500 hover:text-ocean-700">
+            {showBlocked ? "Hide" : "Show"} blocked emails ({blocked.length})
+          </button>
+          {showBlocked && (
+            <div className="card mt-2 divide-y divide-gray-100">
+              {blocked.length === 0 ? (
+                <p className="px-4 py-3 text-sm text-gray-400">No blocked emails.</p>
+              ) : blocked.map((b) => (
+                <div key={b.id} className="px-4 py-2.5 flex items-center gap-3 text-sm">
+                  <span className="font-medium text-gray-800">{b.email}</span>
+                  <span className="text-gray-400 truncate">{b.reason}</span>
+                  <span className="ml-auto text-gray-400 whitespace-nowrap">{new Date(b.created_at).toLocaleDateString()}</span>
+                  <button onClick={() => unblock(b)} className="text-ocean-700 hover:underline">Unblock</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
             <span>
@@ -193,7 +265,6 @@ export default function AdminUsers() {
             </div>
           </div>
         )}
-      </main>
-    </div>
+      </AdminLayout>
   );
 }
