@@ -45,7 +45,7 @@ export default function Home() {
     "@type": "WebSite",
     name: "Marketplace.aw",
     url: "https://marketplace.aw",
-    description: "Aruba's local marketplace. Buy and sell anything on the island — no fees, no fuss.",
+    description: "Aruba's local marketplace. Buy and sell anything on the island.",
     potentialAction: {
       "@type": "SearchAction",
       target: "https://marketplace.aw/listings?q={search_term_string}",
