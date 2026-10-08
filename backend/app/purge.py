@@ -1,7 +1,7 @@
 """Permanently remove a suspended user and everything they created."""
 import logging
 
-from sqlalchemy import or_
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -54,7 +54,9 @@ def purge_user(db: Session, user: User, reason: str | None = None) -> dict:
     db.query(Listing).filter(Listing.id.in_(listing_ids)).delete(synchronize_session=False)
 
     email = user.email.strip().lower()
-    if not db.query(BlockedEmail.id).filter(BlockedEmail.email == email).first():
+    # A case-twin account (legacy data) still uses this address: don't lock it out.
+    shared = db.query(User.id).filter(func.lower(User.email) == email, User.id != user.id).first()
+    if not shared and not db.query(BlockedEmail.id).filter(BlockedEmail.email == email).first():
         db.add(BlockedEmail(email=email, reason=(reason or "purged by admin")[:200]))
     db.delete(user)
     db.commit()

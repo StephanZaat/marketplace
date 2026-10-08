@@ -108,6 +108,7 @@ def migrate_db():
                 conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} BOOLEAN NOT NULL DEFAULT FALSE"))
                 conn.commit()
             logger.info("Migrated: added %s.%s", table, col)
+    _normalize_user_emails(is_postgres)
     user_cols_now = [c["name"] for c in insp.get_columns("users")]
     for col, ddl in (("signup_country", "VARCHAR(2)"), ("admin_note", "TEXT")):
         if col not in user_cols_now:
@@ -131,6 +132,39 @@ def migrate_db():
             conn.commit()
         for col in cols_to_drop:
             logger.info("Migrated: dropped users.%s", col)
+
+
+def normalize_emails_on(conn, is_postgres: bool) -> tuple[int, list[str]]:
+    """Lower-case stored emails; accounts that differ only in case are left for
+    an admin to resolve, and the case-insensitive unique index waits until then.
+    Returns (rows changed, emails still duplicated)."""
+    from sqlalchemy import text
+    changed = 0
+    # Read first: an UPDATE takes a write lock even when it matches nothing.
+    if conn.execute(text("SELECT 1 FROM users WHERE email <> lower(trim(email)) LIMIT 1")).first():
+        changed = conn.execute(text(
+            "UPDATE users SET email = lower(trim(email)) WHERE email <> lower(trim(email)) "
+            "AND NOT EXISTS (SELECT 1 FROM users u2 WHERE lower(trim(u2.email)) = lower(trim(users.email)) AND u2.id <> users.id)"
+        )).rowcount
+    dupes = conn.execute(text(
+        "SELECT lower(trim(email)) FROM users GROUP BY 1 HAVING count(*) > 1"
+    )).scalars().all()
+    # Check first: CREATE INDEX IF NOT EXISTS still locks the table.
+    if is_postgres and not dupes and not conn.execute(text(
+        "SELECT 1 FROM pg_indexes WHERE tablename = 'users' AND indexname = 'ix_users_email_lower'"
+    )).first():
+        conn.execute(text("CREATE UNIQUE INDEX ix_users_email_lower ON users (lower(email))"))
+    return changed, list(dupes)
+
+
+def _normalize_user_emails(is_postgres: bool) -> None:
+    with engine.connect() as conn:
+        changed, dupes = normalize_emails_on(conn, is_postgres)
+        conn.commit()
+    if changed:
+        logger.info("Migrated: lower-cased %d user emails", changed)
+    if dupes:
+        logger.warning("Users differing only in email case need merging: %s", ", ".join(dupes))
 
 
 def _backfill_categories_name_es():

@@ -1,10 +1,13 @@
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, EmailStr, Field
+from typing import Annotated, Optional
+from pydantic import AfterValidator, BaseModel, EmailStr, Field
+
+# Emails are case-insensitive: store and compare them lower-cased.
+NormalizedEmail = Annotated[EmailStr, AfterValidator(lambda v: v.strip().lower())]
 
 
 class OtpSendRequest(BaseModel):
-    email: EmailStr
+    email: NormalizedEmail
     frc_captcha_response: str | None = None
 
 
@@ -14,7 +17,7 @@ class OtpSendResponse(BaseModel):
 
 
 class OtpVerifyRequest(BaseModel):
-    email: EmailStr
+    email: NormalizedEmail
     code: str
     otp_token: str
     full_name: str | None = None
