@@ -160,7 +160,7 @@ async def otp_send(request: Request, data: OtpSendRequest, background_tasks: Bac
 
 @router.post("/otp-verify", response_model=Token)
 @limiter.limit("10/minute")
-def otp_verify(request: Request, data: OtpVerifyRequest, db: Session = Depends(get_db)):
+def otp_verify(request: Request, data: OtpVerifyRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     email = _verify_otp_token(data.otp_token, data.code)
     if not email or email.lower() != data.email.lower():
         raise HTTPException(status_code=401, detail="Invalid or expired OTP")
@@ -176,6 +176,8 @@ def otp_verify(request: Request, data: OtpVerifyRequest, db: Session = Depends(g
         db.add(user)
         db.commit()
         db.refresh(user)
+        from app import email as mail
+        background_tasks.add_task(mail.send_admin_new_user, user)
     else:
         if not user.is_active:
             raise HTTPException(status_code=403, detail="Account disabled")

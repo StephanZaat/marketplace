@@ -339,6 +339,7 @@ def create_listing(
         background_tasks.add_task(mail.send_listing_review_request, current_user, listing, country)
     else:
         background_tasks.add_task(mail.send_new_listing, current_user, listing, cat.name)
+        background_tasks.add_task(mail.send_admin_new_listing, current_user, listing, cat.name)
 
     return listing_to_public_dict(listing, db)
 
