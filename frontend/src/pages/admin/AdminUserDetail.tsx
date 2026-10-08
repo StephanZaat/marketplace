@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import AdminLayout from "../../components/AdminLayout";
 import adminApi from "../../adminApi";
 import { STATUS_BADGE } from "./adminStyles";
+import PurgeDialog from "./PurgeDialog";
 
 interface UserListing {
   id: string;
@@ -52,6 +53,7 @@ export default function AdminUserDetail() {
   const navigate = useNavigate();
   const [user, setUser] = useState<UserDetail | null>(null);
   const [note, setNote] = useState("");
+  const [purging, setPurging] = useState(false);
 
   const load = useCallback(() => {
     adminApi.get<UserDetail>(`/admin/users/${userId}`).then((r) => {
@@ -81,19 +83,17 @@ export default function AdminUserDetail() {
     toast.success("Note saved");
   }
 
-  async function purge() {
-    const reason = prompt(
-      `Permanently delete ${user!.email} and everything they created? Their email will be blocked.\n\nReason (optional):`,
-      "spam",
-    );
-    if (reason === null) return;
-    const { data } = await adminApi.post(`/admin/users/${user!.id}/purge`, { reason });
-    toast.success(`Purged: ${data.listings} listings, ${data.conversations} conversations, ${data.images} photos`);
-    navigate("/admin/users?status=suspended");
-  }
 
   return (
     <AdminLayout>
+      {purging && (
+        <PurgeDialog
+          title={`Purge ${user.full_name || user.email}?`}
+          description={<>Permanently deletes <strong>{user.email}</strong> with all {user.listings.length} listings, their photos, conversations, favorites and ratings, and blocks the email from signing up again. This can't be undone.</>}
+          onRun={async (reason) => (await adminApi.post(`/admin/users/${user.id}/purge`, { reason })).data}
+          onClose={(purged) => { setPurging(false); if (purged) navigate("/admin/users"); }}
+        />
+      )}
       <Link to="/admin/users" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-ocean-700 mb-4">
         <ArrowLeft size={14} /> Users
       </Link>
@@ -169,7 +169,7 @@ export default function AdminUserDetail() {
                 <button onClick={() => setActive(true)} className="btn-secondary w-full text-sm">
                   <UserCheck size={14} /> Reactivate
                 </button>
-                <button onClick={purge} className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700">
+                <button onClick={() => setPurging(true)} className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700">
                   <Trash2 size={14} /> Purge &amp; block email
                 </button>
               </>

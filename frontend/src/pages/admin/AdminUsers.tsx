@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, ExternalLink, ShieldCheck, Trash2 } from "lu
 import AdminLayout from "../../components/AdminLayout";
 import adminApi from "../../adminApi";
 import toast from "react-hot-toast";
+import PurgeDialog from "./PurgeDialog";
 
 interface AdminUser {
   id: string;
@@ -38,6 +39,7 @@ export default function AdminUsers() {
   const limit = 25;
   const [blocked, setBlocked] = useState<BlockedEmail[]>([]);
   const [showBlocked, setShowBlocked] = useState(false);
+  const [purgingAll, setPurgingAll] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -82,20 +84,6 @@ export default function AdminUsers() {
   }, []);
   useEffect(() => { loadBlocked(); }, [loadBlocked]);
 
-  async function purgeAllSuspended() {
-    if (!confirm(
-      "Permanently delete ALL suspended users with their listings, photos, messages and ratings?\n\n" +
-      "Their email addresses will be blocked from signing up again. This cannot be undone."
-    )) return;
-    try {
-      const { data } = await adminApi.post("/admin/users/purge-suspended", {});
-      toast.success(`Purged ${data.users} users, ${data.listings} listings, ${data.images} photos`);
-      load();
-      loadBlocked();
-    } catch {
-      toast.error("Purge failed");
-    }
-  }
 
   async function unblock(b: BlockedEmail) {
     if (!confirm(`Allow ${b.email} to sign up again?`)) return;
@@ -115,6 +103,14 @@ export default function AdminUsers() {
           </h1>
         </div>
 
+        {purgingAll && (
+          <PurgeDialog
+            title={`Purge all ${total} suspended users?`}
+            description={<>Permanently deletes every suspended account with their listings, photos, conversations, favorites and ratings, and blocks their emails from signing up again. This can't be undone.</>}
+            onRun={async (reason) => (await adminApi.post("/admin/users/purge-suspended", { reason })).data}
+            onClose={(purged) => { setPurgingAll(false); if (purged) { load(); loadBlocked(); } }}
+          />
+        )}
         <div className="flex gap-3 mb-4">
           <input
             type="text"
@@ -129,7 +125,7 @@ export default function AdminUsers() {
             <option value="suspended">Suspended</option>
           </select>
           {status === "suspended" && total > 0 && (
-            <button onClick={purgeAllSuspended} className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-300 text-red-700 text-sm font-medium hover:bg-red-50">
+            <button onClick={() => setPurgingAll(true)} className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-300 text-red-700 text-sm font-medium hover:bg-red-50">
               <Trash2 size={14} /> Purge all {total} suspended
             </button>
           )}
@@ -158,7 +154,7 @@ export default function AdminUsers() {
               ) : items.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-8 text-center text-gray-400">
-                    No users found
+                    {status === "suspended" ? "No suspended users." : "No users found"}
                   </td>
                 </tr>
               ) : (
