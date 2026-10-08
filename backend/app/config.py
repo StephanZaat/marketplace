@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     email_from: str = "noreply@marketplace.aw"
     support_email: str = "support@marketplace.aw"
+    # Where admin notifications go (sign-ups, new listings, reviews).
+    # Unset: support_email. Empty string: notifications off.
+    admin_notify_email: str | None = None
 
     # Friendly Captcha (disabled when empty)
     friendly_captcha_sitekey: str = ""

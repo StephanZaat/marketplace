@@ -706,6 +706,68 @@ async def send_listing_pending(user, listing) -> None:
     )
 
 
+def _admin_recipient() -> str | None:
+    if settings.admin_notify_email is None:
+        return settings.support_email
+    return settings.admin_notify_email.strip() or None
+
+
+async def send_admin_new_user(user) -> None:
+    """Tell the admin someone signed up."""
+    to = _admin_recipient()
+    if not to:
+        return
+    ctx = dict(
+        name=user.full_name or "(no name)",
+        email=user.email,
+        country=user.signup_country or "unknown",
+        admin_url=f"{settings.site_url}/admin/users/{user.public_id}",
+    )
+    html_tpl = """
+    <h2>New sign-up</h2>
+    <p><strong>{{ name }}</strong> &lt;{{ email }}&gt; signed up from <strong>{{ country }}</strong>.</p>
+    <p><a href="{{ admin_url }}">View in admin</a></p>
+    """
+    await _send(
+        to=to,
+        subject=f"[Sign-up] {ctx['name']} ({ctx['country']})",
+        html=_render(html_tpl, **ctx),
+        text=f"{ctx['name']} <{ctx['email']}> signed up from {ctx['country']}.\n\n{ctx['admin_url']}",
+    )
+
+
+async def send_admin_new_listing(user, listing, category_name: str) -> None:
+    """Tell the admin a listing went live (held listings get the review email instead)."""
+    to = _admin_recipient()
+    if not to:
+        return
+    ctx = dict(
+        title=listing.title,
+        price=f"{listing.price:,.2f}",
+        category=category_name,
+        seller=user.full_name or user.email,
+        email=user.email,
+        country=listing.created_country or "unknown",
+        description=listing.description[:500],
+        listing_url=f"{settings.site_url}/listings/{listing.public_id}",
+        admin_url=f"{settings.site_url}/admin/listings/{listing.public_id}",
+    )
+    html_tpl = """
+    <h2>New listing</h2>
+    <p><strong>{{ title }}</strong> &middot; AWG {{ price }} &middot; {{ category }}</p>
+    <p>By {{ seller }} &lt;{{ email }}&gt;, posted from {{ country }}.</p>
+    <p style="white-space:pre-wrap;color:#475569">{{ description }}</p>
+    <p><a href="{{ listing_url }}">View on site</a> &middot; <a href="{{ admin_url }}">Edit in admin</a></p>
+    """
+    await _send(
+        to=to,
+        subject=f"[Listing] {listing.title} (AWG {ctx['price']})",
+        html=_render(html_tpl, **ctx),
+        text=f"{listing.title} - AWG {ctx['price']} - {category_name}\nBy {ctx['seller']} <{user.email}>, from {ctx['country']}\n\n"
+             f"{ctx['description']}\n\n{ctx['listing_url']}\n{ctx['admin_url']}",
+    )
+
+
 async def send_listing_review_request(user, listing, country: str) -> None:
     """Ask the support inbox to review a listing posted from outside Aruba."""
     html_tpl = """
@@ -722,8 +784,11 @@ async def send_listing_review_request(user, listing, country: str) -> None:
         description=listing.description[:1000],
         review_url=f"{settings.site_url}/admin/listings?status=pending",
     )
+    to = _admin_recipient()
+    if not to:
+        return
     await _send(
-        to=settings.support_email,
+        to=to,
         subject=f"[Review] {listing.title} ({country})",
         html=_render(html_tpl, **ctx),
         text=f"{listing.title} by {user.email}, posted from {country}.\n\n"
