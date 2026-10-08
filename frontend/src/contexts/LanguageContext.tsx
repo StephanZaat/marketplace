@@ -17,7 +17,7 @@ const translations: Record<Lang, any> = {
     // Home – hero
     heroBadge: "Aruba's local marketplace",
     heroTitle: "Marketplace",
-    heroSubtitle: "Buy and sell anything locally on the island.\nNo fees, no fuss — just great deals.",
+    heroSubtitle: "Buy and sell anything locally on the island.",
     postListing: "Post a listing",
     browseListings: "Browse listings",
 
@@ -341,7 +341,7 @@ const translations: Record<Lang, any> = {
     // Home – hero
     heroBadge: "El mercado local de Aruba",
     heroTitle: "Marketplace",
-    heroSubtitle: "Compra y vende cualquier cosa localmente en la isla.\nSin comisiones, sin complicaciones — solo grandes ofertas.",
+    heroSubtitle: "Compra y vende cualquier cosa localmente en la isla.",
     postListing: "Publicar anuncio",
     browseListings: "Ver anuncios",
 

@@ -329,7 +329,7 @@ def prerender(path: str = Query("/"), db: Session = Depends(get_db)):
             "@type": "WebSite",
             "name": "Marketplace.aw",
             "url": base,
-            "description": "Aruba's local marketplace. Buy and sell anything on the island — no fees, no fuss.",
+            "description": "Aruba's local marketplace. Buy and sell anything on the island.",
             "potentialAction": {
                 "@type": "SearchAction",
                 "target": f"{base}/listings?q={{search_term_string}}",
