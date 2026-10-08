@@ -10,6 +10,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request,
 from fastapi.security import OAuth2PasswordBearer
 import jwt
 from jwt import PyJWTError as JWTError
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -124,6 +125,16 @@ def get_optional_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="/api/a
         return None
 
 
+def _find_user(db: Session, email: str) -> User | None:
+    """Case-insensitive lookup. Legacy rows may differ only in case; prefer the active one."""
+    return (
+        db.query(User)
+        .filter(func.lower(User.email) == email.strip().lower())
+        .order_by(User.is_active.desc(), User.id)
+        .first()
+    )
+
+
 # ── OTP endpoints ──────────────────────────────────────────────────────────────
 
 @router.post("/otp-send", response_model=OtpSendResponse)
@@ -136,7 +147,7 @@ async def otp_send(request: Request, data: OtpSendRequest, background_tasks: Bac
     if is_email_blocked(db, data.email):
         raise HTTPException(status_code=403, detail="This email address can't be used on Marketplace.aw")
 
-    is_new_user = db.query(User).filter(User.email == data.email).first() is None
+    is_new_user = _find_user(db, data.email) is None
 
     code = _create_otp_code()
     otp_token = _create_otp_token(data.email, code)
@@ -157,7 +168,7 @@ def otp_verify(request: Request, data: OtpVerifyRequest, db: Session = Depends(g
     if is_email_blocked(db, email):
         raise HTTPException(status_code=403, detail="This email address can't be used on Marketplace.aw")
 
-    user = db.query(User).filter(User.email == email).first()
+    user = _find_user(db, email)
     if user is None:
         name = data.full_name or email.split("@")[0]
         country = country_for_ip(request.client.host if request.client else None)
