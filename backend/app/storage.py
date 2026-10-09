@@ -18,7 +18,8 @@ _CONTENT_TYPES = {
 
 # Resize limits
 _FULL_MAX = 1200
-_THUMB_MAX = 400
+# Thumbnails match the listing card (4:3, object-cover) at 2x for sharp retina display.
+_THUMB_SIZE = (800, 600)
 _AVATAR_MAX = 256
 _JPEG_QUALITY_FULL = 85
 _JPEG_QUALITY_THUMB = 80
@@ -54,6 +55,17 @@ def _resize_image(file: BinaryIO, max_size: int, quality: int) -> io.BytesIO:
         img.thumbnail((max_size, max_size), Image.LANCZOS)
     buf = io.BytesIO()
     img.save(buf, format="JPEG", quality=quality, optimize=True)
+    buf.seek(0)
+    return buf
+
+
+def make_thumbnail(file: BinaryIO) -> io.BytesIO:
+    """Centre-crop to the card's 4:3 shape at 800x600. A plain longest-side resize
+    left tall phone photos ~185px wide, which the card then blew up and blurred."""
+    img = ImageOps.exif_transpose(Image.open(file)).convert("RGB")
+    img = ImageOps.fit(img, _THUMB_SIZE, Image.LANCZOS)
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=_JPEG_QUALITY_THUMB, optimize=True)
     buf.seek(0)
     return buf
 
@@ -136,7 +148,7 @@ def _save_resized(file: UploadFile, object_key: str, local_rel: Path, settings,
 
     # Thumbnail
     if with_thumb:
-        thumb_buf = _resize_image(io.BytesIO(raw), _THUMB_MAX, _JPEG_QUALITY_THUMB)
+        thumb_buf = make_thumbnail(io.BytesIO(raw))
         tk = _thumb_key(full_key)
         if settings.objectstore_enabled:
             _upload_to_objectstore(thumb_buf, tk, "image/jpeg", settings)
