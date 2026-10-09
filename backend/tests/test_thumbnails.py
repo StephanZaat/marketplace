@@ -28,3 +28,17 @@ def test_phone_rotation_is_applied_before_crop():
     thumb = Image.open(make_thumbnail(_jpeg((4080, 1884), orientation=6)))
     assert thumb.size == (800, 600)
     assert not thumb.getexif()
+
+
+def test_same_filename_gets_distinct_keys(monkeypatch):
+    """Two photos called IMG_0001.jpg on one listing must not overwrite each other."""
+    from types import SimpleNamespace
+    from app import storage
+
+    saved = []
+    monkeypatch.setattr(storage, "_save_resized", lambda file, key, *a, **k: saved.append(key) or key)
+    upload = SimpleNamespace(filename="IMG_0001.jpg")
+    storage.save_listing_image(upload, 7, settings=None)
+    storage.save_listing_image(upload, 7, settings=None)
+    assert len(set(saved)) == 2
+    assert all(k.startswith("listings/7/img-0001-") for k in saved)

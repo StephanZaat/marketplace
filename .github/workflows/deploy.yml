@@ -182,6 +182,7 @@ jobs:
             COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
             docker compose -f docker-compose.prod.yml -f docker-compose.test.yml build --pull \
               --build-arg VITE_FRIENDLY_CAPTCHA_SITEKEY=FCMRARFRUTA89JI8 \
+              --build-arg VITE_IMAGE_ORIGIN="https://${OBJECTSTORE_BUCKET}.s3.nl-ams.scw.cloud" \
               --build-arg GEOIP_MONTH="$(date -u +%Y-%m)"
 
             echo "--- Postgres 16 -> 18 migration (no-op once done)"
@@ -341,6 +342,7 @@ jobs:
             COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
             docker compose -f docker-compose.prod.yml build --pull \
               --build-arg VITE_FRIENDLY_CAPTCHA_SITEKEY=FCMRARFRUTA89JI8 \
+              --build-arg VITE_IMAGE_ORIGIN="https://${OBJECTSTORE_BUCKET}.s3.nl-ams.scw.cloud" \
               --build-arg GEOIP_MONTH="$(date -u +%Y-%m)"
 
             echo "--- Bootstrap TLS cert (if needed)"
