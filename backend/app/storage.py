@@ -1,5 +1,6 @@
 import io
 import re
+import secrets
 import shutil
 from pathlib import Path
 from typing import BinaryIO
@@ -23,6 +24,11 @@ _THUMB_SIZE = (800, 600)
 _AVATAR_MAX = 256
 _JPEG_QUALITY_FULL = 85
 _JPEG_QUALITY_THUMB = 80
+
+# Full-size keys are unique per upload and never rewritten, so browsers may keep
+# them forever. Thumbnails can be regenerated in place, so they get a week.
+_CACHE_FULL = "public, max-age=31536000, immutable"
+_CACHE_THUMB = "public, max-age=604800"
 
 
 def _safe_stem(filename: str) -> str:
@@ -107,11 +113,12 @@ def _key_from_url(url: str, settings) -> str:
     return url
 
 
-def _upload_to_objectstore(file: BinaryIO, object_key: str, content_type: str, settings) -> None:
+def _upload_to_objectstore(file: BinaryIO, object_key: str, content_type: str, settings,
+                           cache_control: str = _CACHE_FULL) -> None:
     s3 = _get_s3_client(settings)
     s3.upload_fileobj(
         file, settings.objectstore_bucket, object_key,
-        ExtraArgs={"ContentType": content_type, "ACL": "public-read"},
+        ExtraArgs={"ContentType": content_type, "ACL": "public-read", "CacheControl": cache_control},
     )
 
 
@@ -151,7 +158,7 @@ def _save_resized(file: UploadFile, object_key: str, local_rel: Path, settings,
         thumb_buf = make_thumbnail(io.BytesIO(raw))
         tk = _thumb_key(full_key)
         if settings.objectstore_enabled:
-            _upload_to_objectstore(thumb_buf, tk, "image/jpeg", settings)
+            _upload_to_objectstore(thumb_buf, tk, "image/jpeg", settings, cache_control=_CACHE_THUMB)
         else:
             thumb_dest = _IMAGES_DIR / tk
             thumb_dest.parent.mkdir(parents=True, exist_ok=True)
@@ -166,7 +173,8 @@ def save_listing_image(file: UploadFile, resource_id: int | str, settings) -> st
     original = file.filename or "image"
     stem = _safe_stem(original)
     ext = _extension(original)
-    object_key = f"listings/{resource_id}/{stem}.{ext}"
+    # Random suffix: two photos with the same filename must not overwrite each other.
+    object_key = f"listings/{resource_id}/{stem}-{secrets.token_hex(3)}.{ext}"
     return _save_resized(file, object_key, Path(object_key), settings,
                          max_size=_FULL_MAX, quality=_JPEG_QUALITY_FULL, with_thumb=True)
 
@@ -176,7 +184,7 @@ def save_avatar_image(file: UploadFile, user_id: int | str, settings) -> str:
     original = file.filename or "avatar"
     stem = _safe_stem(original)
     ext = _extension(original)
-    object_key = f"avatars/{user_id}/{stem}.{ext}"
+    object_key = f"avatars/{user_id}/{stem}-{secrets.token_hex(3)}.{ext}"
     return _save_resized(file, object_key, Path(object_key), settings,
                          max_size=_AVATAR_MAX, quality=_JPEG_QUALITY_FULL, with_thumb=False)
 

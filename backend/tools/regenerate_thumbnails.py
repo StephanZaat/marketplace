@@ -12,7 +12,7 @@ from app.config import get_settings  # noqa: E402
 from app.database import SessionLocal  # noqa: E402
 from app.models.listing import Listing  # noqa: E402
 from app.storage import (  # noqa: E402
-    _IMAGES_DIR, _get_s3_client, _key_from_url, _thumb_key, _upload_to_objectstore, make_thumbnail,
+    _CACHE_THUMB, _IMAGES_DIR, _get_s3_client, _key_from_url, _thumb_key, _upload_to_objectstore, make_thumbnail,
 )
 
 
@@ -35,7 +35,7 @@ def main() -> None:
             thumb = make_thumbnail(io.BytesIO(raw))
             if not dry:
                 if s3:
-                    _upload_to_objectstore(thumb, _thumb_key(key), "image/jpeg", settings)
+                    _upload_to_objectstore(thumb, _thumb_key(key), "image/jpeg", settings, cache_control=_CACHE_THUMB)
                 else:
                     (_IMAGES_DIR / _thumb_key(key)).write_bytes(thumb.getvalue())
             ok += 1

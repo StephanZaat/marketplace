@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/aruba-flag.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Photos live on the object-store host: open that connection while the app loads
+         (~0.5 s saved from Aruba). No crossorigin: <img> loads use non-CORS connections. -->
+    <link rel="preconnect" href="%VITE_IMAGE_ORIGIN%" />
+    <link rel="dns-prefetch" href="%VITE_IMAGE_ORIGIN%" />
     <title>Marketplace.aw — Buy &amp; Sell Locally in Aruba</title>
     <meta name="description" content="The local marketplace for Aruba. Buy and sell products, services, and more." />
     <meta property="og:title" content="Marketplace.aw — Buy & Sell Locally in Aruba" />
