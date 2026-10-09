@@ -12,7 +12,8 @@ jobs:
     # Same engine and driver as prod; SQLite hid the SQLAlchemy 2.1 psycopg switch.
     services:
       postgres:
-        image: postgres:18-alpine
+        # Official image via AWS's public mirror: Docker Hub rate-limits anonymous pulls from runners.
+        image: public.ecr.aws/docker/library/postgres:18-alpine
         env:
           POSTGRES_DB: test
           POSTGRES_PASSWORD: test
