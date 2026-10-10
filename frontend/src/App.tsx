@@ -8,6 +8,7 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 import Layout from "./components/Layout";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
+import PageViewTracker from "./components/PageViewTracker";
 // Home stays in the main bundle for first paint; every other route is its own
 // chunk, so visitors never download admin or messaging code they don't use.
 import Home from "./pages/Home";
@@ -28,6 +29,7 @@ const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
 const AdminMessages = lazy(() => import("./pages/admin/AdminMessages"));
 const AdminSecurity = lazy(() => import("./pages/admin/AdminSecurity"));
 const AdminInsights = lazy(() => import("./pages/admin/AdminInsights"));
+const AdminVisitors = lazy(() => import("./pages/admin/AdminVisitors"));
 const AdminCategories = lazy(() => import("./pages/admin/AdminCategories"));
 const AdminUserDetail = lazy(() => import("./pages/admin/AdminUserDetail"));
 const AdminListingEdit = lazy(() => import("./pages/admin/AdminListingEdit"));
@@ -41,6 +43,7 @@ export default function App() {
         <FavoritesProvider>
           <AdminAuthProvider>
             <Toaster position="top-right" />
+            <PageViewTracker />
             <Suspense fallback={null}>
             <Routes>
               {/* Public user routes */}
@@ -66,6 +69,7 @@ export default function App() {
               <Route path="/admin/messages" element={<AdminProtectedRoute><AdminMessages /></AdminProtectedRoute>} />
               <Route path="/admin/security" element={<AdminProtectedRoute><AdminSecurity /></AdminProtectedRoute>} />
               <Route path="/admin/insights" element={<AdminProtectedRoute><AdminInsights /></AdminProtectedRoute>} />
+              <Route path="/admin/visitors" element={<AdminProtectedRoute><AdminVisitors /></AdminProtectedRoute>} />
               <Route path="/admin/categories" element={<AdminProtectedRoute><AdminCategories /></AdminProtectedRoute>} />
               <Route path="/admin/users/:userId" element={<AdminProtectedRoute><AdminUserDetail /></AdminProtectedRoute>} />
               <Route path="/admin/listings/:listingId" element={<AdminProtectedRoute><AdminListingEdit /></AdminProtectedRoute>} />

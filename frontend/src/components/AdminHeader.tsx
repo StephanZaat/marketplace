@@ -1,12 +1,13 @@
 import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard, List, Users, Flag, MessageSquare, Shield, LogOut, BarChart3, FolderTree, ExternalLink,
+  LayoutDashboard, List, Users, Flag, MessageSquare, Shield, LogOut, BarChart3, FolderTree, ExternalLink, Eye,
 } from "lucide-react";
 import { useAdminAuth } from "../contexts/AdminAuthContext";
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: "/admin/visitors", label: "Visitors", icon: Eye },
   { to: "/admin/insights", label: "Insights", icon: BarChart3 },
   { to: "/admin/listings", label: "Listings", icon: List },
   { to: "/admin/users", label: "Users", icon: Users },

@@ -190,6 +190,23 @@ async def _run_digest() -> None:
         db.close()
 
 
+def _prune_page_views(keep_days: int = 400) -> None:
+    """Visitor stats keep ~13 months of raw page views."""
+    from app.models.page_view import PageView
+    db = SessionLocal()
+    try:
+        cutoff = datetime.now(timezone.utc) - timedelta(days=keep_days)
+        # Read first: a DELETE takes a write lock even when nothing matches.
+        if not db.query(PageView.id).filter(PageView.created_at < cutoff).first():
+            return
+        n = db.query(PageView).filter(PageView.created_at < cutoff).delete(synchronize_session=False)
+        db.commit()
+        if n:
+            logger.info("Pruned %d page views older than %d days", n, keep_days)
+    finally:
+        db.close()
+
+
 async def run_scheduler() -> None:
     """Infinite loop that runs listing checks every hour and digest once a day."""
     logger.info("Listing expiry scheduler started (interval=%ds)", _CHECK_INTERVAL)
@@ -217,6 +234,7 @@ async def run_scheduler() -> None:
 
         if leader is not None:
             await _run_checks()
+            _prune_page_views()
 
             now = datetime.now(timezone.utc)
             if now.hour == _DIGEST_HOUR and now.day != last_digest_day:
