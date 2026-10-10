@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import AdminLayout from "../../components/AdminLayout";
 import adminApi from "../../adminApi";
+import { ColumnChart, Delta, HBars, StatTile, fmtDay } from "./charts";
 
 type Measure = "signups" | "listings" | "conversations" | "messages";
 
@@ -23,95 +23,6 @@ const MEASURES: { key: Measure; label: string }[] = [
   { key: "conversations", label: "Conversations started" },
   { key: "messages", label: "Messages sent" },
 ];
-
-const fmtWeek = (iso: string) => new Date(iso + "T00:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" });
-
-function Delta({ now, prev }: { now: number; prev: number }) {
-  const diff = now - prev;
-  const Icon = diff > 0 ? ArrowUpRight : diff < 0 ? ArrowDownRight : Minus;
-  return (
-    <span className="inline-flex items-center gap-0.5 text-xs text-gray-500">
-      <Icon size={13} /> {diff > 0 ? "+" : ""}{diff} vs previous 30 days
-    </span>
-  );
-}
-
-function StatTile({ label, value, sub }: { label: string; value: number; sub?: React.ReactNode }) {
-  return (
-    <div className="card p-5">
-      <div className="text-sm text-gray-500">{label}</div>
-      <div className="text-3xl font-extrabold text-gray-900 mt-1">{value.toLocaleString()}</div>
-      {sub && <div className="mt-1">{sub}</div>}
-    </div>
-  );
-}
-
-/** One measure per chart (small multiples): different scales never share an axis. */
-function WeeklyBars({ label, data, measure }: { label: string; data: Insights["weeks"]; measure: Measure }) {
-  const [hover, setHover] = useState<number | null>(null);
-  const max = Math.max(1, ...data.map((w) => w[measure]));
-  const total = data.reduce((s, w) => s + w[measure], 0);
-  return (
-    <div className="card p-5">
-      <div className="flex items-baseline justify-between mb-3">
-        <h3 className="font-semibold text-gray-900">{label}</h3>
-        <span className="text-sm text-gray-500">{total} in {data.length} weeks</span>
-      </div>
-      <div className="relative flex">
-        <div className="flex flex-col justify-between text-[11px] text-gray-400 pr-2 h-32 text-right w-6">
-          <span>{max}</span><span>0</span>
-        </div>
-        <div className="relative flex-1 h-32 border-b border-gray-200 flex items-end gap-[2px]" onMouseLeave={() => setHover(null)}>
-          {data.map((w, i) => (
-            <div
-              key={w.week}
-              className="flex-1 h-full flex items-end justify-center cursor-default"
-              onMouseEnter={() => setHover(i)}
-            >
-              <div
-                className={`w-full max-w-6 rounded-t ${hover === i ? "bg-ocean-700" : "bg-ocean-600"}`}
-                style={{ height: `${(w[measure] / max) * 100}%`, minHeight: w[measure] ? 2 : 0 }}
-              />
-            </div>
-          ))}
-          {hover !== null && (
-            <div
-              className="absolute -top-2 -translate-y-full -translate-x-1/2 bg-gray-900 text-white text-xs rounded-md px-2 py-1 whitespace-nowrap pointer-events-none"
-              style={{ left: `${((hover + 0.5) / data.length) * 100}%` }}
-            >
-              Week of {fmtWeek(data[hover].week)}: <strong>{data[hover][measure]}</strong>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="flex justify-between text-[11px] text-gray-400 mt-1 pl-8">
-        <span>{fmtWeek(data[0].week)}</span><span>this week</span>
-      </div>
-    </div>
-  );
-}
-
-function HBars({ title, rows, empty }: { title: string; rows: { label: string; count: number }[]; empty: string }) {
-  const max = Math.max(1, ...rows.map((r) => r.count));
-  return (
-    <div className="card p-5">
-      <h3 className="font-semibold text-gray-900 mb-3">{title}</h3>
-      {rows.length === 0 ? <p className="text-sm text-gray-400">{empty}</p> : (
-        <ul className="space-y-2">
-          {rows.map((r) => (
-            <li key={r.label} className="grid grid-cols-[8rem_1fr] items-center gap-3 text-sm" title={`${r.label}: ${r.count}`}>
-              <span className="truncate text-gray-700">{r.label}</span>
-              <span className="flex items-center gap-2">
-                <span className="h-4 rounded-r bg-ocean-600" style={{ width: `${(r.count / max) * 85}%`, minWidth: 2 }} />
-                <span className="text-gray-600 tabular-nums">{r.count}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
 
 export default function AdminInsights() {
   const [data, setData] = useState<Insights | null>(null);
@@ -159,7 +70,7 @@ export default function AdminInsights() {
                 <tbody className="divide-y divide-gray-100">
                   {data.weeks.map((w) => (
                     <tr key={w.week}>
-                      <td className="px-4 py-2 text-gray-700">{fmtWeek(w.week)}</td>
+                      <td className="px-4 py-2 text-gray-700">{fmtDay(w.week)}</td>
                       {MEASURES.map((m) => <td key={m.key} className="px-4 py-2 text-right tabular-nums text-gray-700">{w[m.key]}</td>)}
                     </tr>
                   ))}
@@ -168,7 +79,15 @@ export default function AdminInsights() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
-              {MEASURES.map((m) => <WeeklyBars key={m.key} label={m.label} data={data.weeks} measure={m.key} />)}
+              {MEASURES.map((m) => (
+                <ColumnChart
+                  key={m.key}
+                  title={m.label}
+                  subtitle={`${data.weeks.reduce((s, w) => s + w[m.key], 0)} in ${data.weeks.length} weeks`}
+                  data={data.weeks.map((w) => ({ key: w.week, label: `Week of ${fmtDay(w.week)}`, value: w[m.key] }))}
+                  lastLabel="this week"
+                />
+              ))}
             </div>
           )}
 
