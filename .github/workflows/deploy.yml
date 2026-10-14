@@ -121,24 +121,25 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.5
         env:
-          GH_DEPLOY_TOKEN: ${{ secrets.GH_DEPLOY_TOKEN }}
           GH_REPOSITORY: ${{ github.repository }}
         with:
           host: ${{ secrets.VM_IP }}
           username: deploy
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script_stop: true
-          envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,SECRET_KEY,JWT_SECRET_KEY,DOMAIN,LETSENCRYPT_EMAIL,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,EMAIL_FROM,OBJECTSTORE_ACCESS_KEY,OBJECTSTORE_SECRET_KEY,OBJECTSTORE_BUCKET,BACKUP_ACCESS_KEY,BACKUP_SECRET_KEY,BACKUP_BUCKET,FRIENDLY_CAPTCHA_SECRET,GH_DEPLOY_TOKEN,GH_REPOSITORY
+          envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,SECRET_KEY,JWT_SECRET_KEY,DOMAIN,LETSENCRYPT_EMAIL,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,EMAIL_FROM,OBJECTSTORE_ACCESS_KEY,OBJECTSTORE_SECRET_KEY,OBJECTSTORE_BUCKET,BACKUP_ACCESS_KEY,BACKUP_SECRET_KEY,BACKUP_BUCKET,FRIENDLY_CAPTCHA_SECRET,GH_REPOSITORY
           script: |
             set -euo pipefail
 
             echo "--- First-time setup (if needed)"
             if [[ ! -d /home/deploy/marketplace/.git ]]; then
-              git clone "https://x-token:${GH_DEPLOY_TOKEN}@github.com/${GH_REPOSITORY}.git" /home/deploy/marketplace
+              git clone "git@github-marketplace:${GH_REPOSITORY}.git" /home/deploy/marketplace
             fi
 
             cd /home/deploy/marketplace
-            git remote set-url origin "https://x-token:${GH_DEPLOY_TOKEN}@github.com/${GH_REPOSITORY}.git"
+            # Read-only deploy key on the VM (infra: scripts/setup-vm-deploy-key.sh marketplace),
+            # replacing a PAT that sat in .git/config and could read every repo.
+            git remote set-url origin "git@github-marketplace:${GH_REPOSITORY}.git"
 
             echo "--- Pulling latest code"
             git checkout -- .env 2>/dev/null || true
@@ -283,24 +284,25 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.5
         env:
-          GH_DEPLOY_TOKEN: ${{ secrets.GH_DEPLOY_TOKEN }}
           GH_REPOSITORY: ${{ github.repository }}
         with:
           host: ${{ secrets.VM_IP_PROD }}
           username: deploy
           key: ${{ secrets.SSH_PRIVATE_KEY_PROD }}
           script_stop: true
-          envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,SECRET_KEY,JWT_SECRET_KEY,DOMAIN,LETSENCRYPT_EMAIL,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,EMAIL_FROM,OBJECTSTORE_ACCESS_KEY,OBJECTSTORE_SECRET_KEY,OBJECTSTORE_BUCKET,BACKUP_ACCESS_KEY,BACKUP_SECRET_KEY,BACKUP_BUCKET,FRIENDLY_CAPTCHA_SECRET,GH_DEPLOY_TOKEN,GH_REPOSITORY
+          envs: POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,SECRET_KEY,JWT_SECRET_KEY,DOMAIN,LETSENCRYPT_EMAIL,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,EMAIL_FROM,OBJECTSTORE_ACCESS_KEY,OBJECTSTORE_SECRET_KEY,OBJECTSTORE_BUCKET,BACKUP_ACCESS_KEY,BACKUP_SECRET_KEY,BACKUP_BUCKET,FRIENDLY_CAPTCHA_SECRET,GH_REPOSITORY
           script: |
             set -euo pipefail
 
             echo "--- First-time setup (if needed)"
             if [[ ! -d /home/deploy/marketplace/.git ]]; then
-              git clone "https://x-token:${GH_DEPLOY_TOKEN}@github.com/${GH_REPOSITORY}.git" /home/deploy/marketplace
+              git clone "git@github-marketplace:${GH_REPOSITORY}.git" /home/deploy/marketplace
             fi
 
             cd /home/deploy/marketplace
-            git remote set-url origin "https://x-token:${GH_DEPLOY_TOKEN}@github.com/${GH_REPOSITORY}.git"
+            # Read-only deploy key on the VM (infra: scripts/setup-vm-deploy-key.sh marketplace),
+            # replacing a PAT that sat in .git/config and could read every repo.
+            git remote set-url origin "git@github-marketplace:${GH_REPOSITORY}.git"
 
             echo "--- Pulling latest code"
             git checkout -- .env 2>/dev/null || true
