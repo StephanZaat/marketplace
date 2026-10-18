@@ -179,6 +179,9 @@ jobs:
 
             echo "--- Ensuring shared_web network exists"
             docker network create shared_web 2>/dev/null || true
+            # Declared (external) by the prod nginx service, which the test
+            # overlay disables; create it anyway so compose never trips on it.
+            docker network create edge_web 2>/dev/null || true
 
             echo "--- Rebuilding images"
             COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
@@ -365,6 +368,12 @@ jobs:
 
             echo "--- Postgres 16 -> 18 migration (no-op once done)"
             bash scripts/migrate-postgres.sh
+
+            echo "--- Co-hosted sites: edge network + server-block dir"
+            # Must exist before nginx starts: a missing bind-mount source would
+            # be created root-owned, and the deploy user couldn't write to it.
+            mkdir -p /home/deploy/edge-sites
+            docker network create edge_web 2>/dev/null || true
 
             echo "--- Restarting services"
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
