@@ -54,6 +54,13 @@ services:
       - ./nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
       - letsencrypt:/etc/letsencrypt:ro
       - certbot_webroot:/var/www/certbot:ro
+      # Other sites co-hosted on this VM drop their server blocks here (e.g.
+      # 12aruba.com, installed by the 12aruba repo's deploy only after its cert
+      # exists and `nginx -t` passes) and run their containers on edge_web.
+      - /home/deploy/edge-sites:/etc/nginx/sites:ro
+    networks:
+      - default
+      - edge_web
     depends_on:
       - backend
       - frontend
@@ -79,6 +86,12 @@ services:
                certbot renew --quiet;
                sleep 12h & wait $${!};
              done"
+
+networks:
+  default:
+  edge_web:
+    external: true
+    name: edge_web
 
 volumes:
   pg18_data:
