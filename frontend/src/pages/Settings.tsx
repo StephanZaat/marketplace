@@ -8,6 +8,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { ARUBA_AREAS } from "../lib/arubaAreas";
 import PhoneInput from "../components/PhoneInput";
 import { useLang } from "../contexts/LanguageContext";
+import { loginUrl } from "../lib/loginRedirect";
 
 const WaIcon = () => (
   <svg className="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="currentColor">
@@ -63,7 +64,7 @@ export default function Settings() {
   const watchWhatsapp = watch("whatsapp");
 
   if (!user) {
-    navigate("/login");
+    navigate(loginUrl());
     return null;
   }
 
