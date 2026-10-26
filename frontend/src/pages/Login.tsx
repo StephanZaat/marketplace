@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import FofotiLogo from "../components/FofotiLogo";
 import toast from "react-hot-toast";
 import api from "../api";
 import { useAuth } from "../contexts/AuthContext";
 import { useLang } from "../contexts/LanguageContext";
 import { useFriendlyCaptcha } from "../hooks/useFriendlyCaptcha";
+import { safeNext } from "../lib/loginRedirect";
 
 type Step = "email" | "otp";
 
@@ -13,6 +14,7 @@ export default function Login() {
   const { login } = useAuth();
   const { t } = useLang();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
@@ -75,7 +77,7 @@ export default function Login() {
         full_name: isNewUser ? fullName || undefined : undefined,
       });
       const me = await login(res.data.access_token);
-      navigate(`/profile/${me.id}`);
+      navigate(safeNext(searchParams.get("next")) ?? `/profile/${me.id}`);
     } catch {
       toast.error(t.otpInvalidCode);
       setCode("");

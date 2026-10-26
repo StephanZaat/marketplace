@@ -8,6 +8,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useLang } from "../contexts/LanguageContext";
 import { useCurrency } from "../contexts/CurrencyContext";
 import { getCategoryIcon } from "../lib/categoryIcons";
+import { loginUrl } from "../lib/loginRedirect";
 
 type PhotoItem =
   | { kind: "saved"; id: string; idx: number; thumb: string; imgId: string; url: string; pId?: undefined }
@@ -121,7 +122,7 @@ export default function CreateListing() {
   const titleValue = watch("title") ?? "";
 
   useEffect(() => {
-    if (!user) navigate("/login");
+    if (!user) navigate(loginUrl());
   }, [user, navigate]);
 
   useEffect(() => {

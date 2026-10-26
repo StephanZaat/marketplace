@@ -8,6 +8,7 @@ import api, { Conversation, Message, PendingRating } from "../api";
 import { useAuth } from "../contexts/AuthContext";
 import { useLang } from "../contexts/LanguageContext";
 import RatingModal from "../components/RatingModal";
+import { loginUrl } from "../lib/loginRedirect";
 
 export default function Messages() {
   const { convId } = useParams<{ convId?: string }>();
@@ -22,7 +23,7 @@ export default function Messages() {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!user) { navigate("/login"); return; }
+    if (!user) { navigate(loginUrl()); return; }
     api.get<Conversation[]>("/messages").then((r) => {
       setConversations(r.data);
       if (convId) {

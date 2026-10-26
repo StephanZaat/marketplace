@@ -3,6 +3,7 @@ import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useFavorites } from "../contexts/FavoritesContext";
+import { loginUrl } from "../lib/loginRedirect";
 
 interface Props {
   listingId: string;
@@ -22,7 +23,7 @@ export default function FavoriteButton({ listingId, sellerId, className = "" }: 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!user) { navigate("/login"); return; }
+    if (!user) { navigate(loginUrl()); return; }
     await toggle(listingId);
   };
 

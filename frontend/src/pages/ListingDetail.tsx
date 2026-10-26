@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import api, { Listing, ListingDetail as IListingDetail, PendingRating, ConversationSummary, catName } from "../api";
 import RatingModal from "../components/RatingModal";
 import StarDisplay from "../components/StarDisplay";
+import { loginUrl } from "../lib/loginRedirect";
 
 const LANG_META: Record<string, { flag: string; label: string; label_es: string }> = {
   english:    { flag: "🇬🇧", label: "English",    label_es: "Inglés" },
@@ -327,7 +328,7 @@ export default function ListingDetail() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) { navigate("/login"); return; }
+    if (!user) { navigate(loginUrl()); return; }
     if (!msgBody.trim()) return;
     setSendingMsg(true);
     try {
@@ -709,14 +710,14 @@ export default function ListingDetail() {
                   />
                   {!user && (
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                      <Link to="/login" className="bg-gray-900 text-white text-xs rounded-lg px-3 py-1.5 shadow-lg underline pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+                      <Link to={loginUrl()} className="bg-gray-900 text-white text-xs rounded-lg px-3 py-1.5 shadow-lg underline pointer-events-auto" onClick={(e) => e.stopPropagation()}>
                         {t.loginToContact}
                       </Link>
                     </div>
                   )}
                 </div>
                 {!user ? (
-                  <Link to="/login" className="btn-primary w-full justify-center gap-2">
+                  <Link to={loginUrl()} className="btn-primary w-full justify-center gap-2">
                     <MessageCircle className="w-4 h-4" />
                     {t.logInToSend}
                   </Link>

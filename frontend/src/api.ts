@@ -1,4 +1,5 @@
 import axios from "axios";
+import { loginUrl } from "./lib/loginRedirect";
 
 const api = axios.create({
   baseURL: "/api",
@@ -22,7 +23,7 @@ api.interceptors.response.use(
     // it's not a background poll (unread count) — those silently fail
     if (status === 401 && hasToken && !url.includes("/messages/unread") && !url.includes("/auth/me")) {
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      window.location.href = loginUrl();
     }
     return Promise.reject(err);
   }

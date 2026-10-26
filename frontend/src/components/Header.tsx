@@ -6,6 +6,7 @@ import { useLang } from "../contexts/LanguageContext";
 import { useCurrency } from "../contexts/CurrencyContext";
 import SearchInput from "./SearchInput";
 import api from "../api";
+import { loginUrl } from "../lib/loginRedirect";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -99,7 +100,7 @@ export default function Header() {
               </>
             ) : (
               <>
-                <Link to="/login" className="px-4 py-2 bg-ocean-600 hover:bg-ocean-700 text-white text-sm font-semibold rounded-full transition-colors">
+                <Link to={loginUrl(location.pathname + location.search)} className="px-4 py-2 bg-ocean-600 hover:bg-ocean-700 text-white text-sm font-semibold rounded-full transition-colors">
                   {t.logIn}
                 </Link>
               </>
@@ -137,7 +138,7 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Link to="/login" className="block text-center py-2.5 bg-ocean-600 text-white font-semibold rounded-xl w-full" onClick={() => setMenuOpen(false)}>{t.logIn}</Link>
+              <Link to={loginUrl(location.pathname + location.search)} className="block text-center py-2.5 bg-ocean-600 text-white font-semibold rounded-xl w-full" onClick={() => setMenuOpen(false)}>{t.logIn}</Link>
             </>
           )}
           <div className="flex gap-2">
