@@ -1,4 +1,4 @@
-FROM python:3.14-slim
+FROM python:3.15-slim
 
 # All dependencies ship binary wheels (psycopg[binary], Pillow, bcrypt), so
 # no compiler or -dev packages are needed.
