@@ -107,3 +107,13 @@ class TestInsights:
         assert d["totals"]["active_listings"] == 1
         assert d["last30"]["listings"] == 1
         assert d["top_listings"][0]["title"] == listing_payload["title"]
+
+
+def test_admin_listing_list_resolves_image_urls(admin_client, auth_client, listing_payload, db):
+    """Stored keys are relative; admin must get absolute thumbnail URLs, not 'listings/..'."""
+    lid = _create(auth_client, listing_payload)
+    db.query(Listing).filter(Listing.public_id == lid).update({Listing.images: ["listings/9/a-1b2c3d.jpg"]})
+    db.commit()
+    [item] = [i for i in admin_client.get("/api/admin/listings").json()["items"] if i["id"] == lid]
+    assert item["images"][0].endswith("listings/9/a-1b2c3d_thumb.jpg")
+    assert item["images"][0].startswith(("http", "/"))

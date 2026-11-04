@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.database import get_db
 from app.geo import geoip_available
 from app.models.listing import Listing, ListingStatus
@@ -17,9 +18,16 @@ from app.models.report import Report
 from app.models.user import User
 from app.resolve import resolve_public_id, _build_pid_map
 from app.routers.admin_auth import get_current_admin
+from app.storage import _thumb_key, resolve_image_url
 from app.models.admin import Admin
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+settings = get_settings()
+
+
+def _thumb_list(images) -> list[str]:
+    """First image as a resolved thumbnail URL (stored keys are relative)."""
+    return [resolve_image_url(_thumb_key(images[0]), settings)] if images else []
 
 
 # -- Stats -------------------------------------------------------------------
@@ -77,7 +85,7 @@ def list_listings(
             "price": str(l.price),
             "status": l.status.value,
             "condition": l.condition.value,
-            "images": l.images[:1],  # only thumbnail
+            "images": _thumb_list(l.images),
             "view_count": l.view_count,
             "created_at": l.created_at.isoformat(),
             "seller_id": seller_pid_map.get(l.seller_id, ""),
@@ -225,7 +233,7 @@ def list_reports(
                 "id": listing.public_id,
                 "title": listing.title,
                 "status": listing.status.value,
-                "images": listing.images[:1],
+                "images": _thumb_list(listing.images),
             } if listing else None,
             "reporter_name": (reporter.full_name or reporter.email) if reporter else None,
         })
@@ -260,7 +268,7 @@ def list_conversations(
         )
         result.append({
             "id": conv.public_id,
-            "listing": {"id": listing.public_id, "title": listing.title, "images": listing.images[:1]} if listing else None,
+            "listing": {"id": listing.public_id, "title": listing.title, "images": _thumb_list(listing.images)} if listing else None,
             "buyer_name": (buyer.full_name or buyer.email) if buyer else None,
             "seller_name": (seller.full_name or seller.email) if seller else None,
             "message_count": message_count,
