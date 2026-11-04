@@ -66,15 +66,35 @@ services:
     container_name: marketplace_test
     profiles: ["test"]
     working_dir: /app
-    command: python -m pytest tests/ -v
+    command: python -m pytest tests/ -q
+    depends_on:
+      marketplace-test-db:
+        condition: service_healthy
     environment:
-      DATABASE_URL: "sqlite:///./test.db"
+      # Same engine as prod; SQLite hid real bugs (psycopg switch, lock issues).
+      DATABASE_URL: "postgresql://postgres:test@marketplace-test-db:5432/test"
       JWT_SECRET_KEY: "test-jwt-secret-key-for-ci-only-0123456789"
       SECRET_KEY: "test-secret"
       ALLOWED_ORIGINS: "http://localhost"
       TESTING: "1"
     volumes:
       - ./backend:/app
+
+  # Throwaway Postgres for the test suite (tmpfs: nothing persists).
+  marketplace-test-db:
+    image: postgres:18-alpine
+    container_name: marketplace_test_db
+    profiles: ["test"]
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_PASSWORD: test
+    tmpfs:
+      - /var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d test"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
 
 volumes:
   pg18_data:
