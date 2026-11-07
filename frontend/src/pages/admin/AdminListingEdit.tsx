@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import AdminLayout from "../../components/AdminLayout";
 import adminApi from "../../adminApi";
 import { STATUS_BADGE } from "./adminStyles";
+import { apiErrorMessage } from "../../lib/apiError";
 
 interface AdminListingDetail {
   id: string;
@@ -86,7 +87,7 @@ export default function AdminListingEdit() {
       setForm(data);
       toast.success("Listing saved");
     } catch (e: any) {
-      toast.error(e?.response?.data?.detail?.[0]?.msg ?? e?.response?.data?.detail ?? "Save failed");
+      toast.error(apiErrorMessage(e, "Save failed"));
     } finally {
       setSaving(false);
     }

@@ -11,6 +11,7 @@ import { getCategoryIcon } from "../lib/categoryIcons";
 import { loginUrl } from "../lib/loginRedirect";
 import { usePhotoUploads } from "../hooks/usePhotoUploads";
 import PhotoUploader from "../components/PhotoUploader";
+import { apiErrorMessage } from "../lib/apiError";
 
 interface FormData {
   title: string;
@@ -312,14 +313,18 @@ export default function CreateListing() {
         navigate(`/listings/${res.data.id}`);
       }
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? t.failedToSaveListing;
-      toast.error(msg);
+      toast.error(apiErrorMessage(err, t.failedToSaveListing));
     } finally {
       setSubmitting(false);
     }
   };
 
   const hideConditionAndPrice = ["jobs", "services"].includes(selectedParent?.slug ?? "");
+  const descriptionField = register("description", {
+    validate: (v) => (v ?? "").trim() !== "" || t.descriptionRequired,
+    maxLength: { value: 500, message: t.descriptionMaxLength },
+    onChange: (e) => { setDescLen(e.target.value.length); autoResize(); },
+  });
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
@@ -631,13 +636,11 @@ export default function CreateListing() {
             </span>
           </div>
           <textarea
-            {...register("description", {
-              required: t.descriptionRequired,
-              maxLength: { value: 500, message: t.descriptionMaxLength },
-              onChange: (e) => { setDescLen(e.target.value.length); autoResize(); },
-            })}
+            {...descriptionField}
             ref={(el) => {
-              register("description").ref(el);
+              // Reuse the registration above: calling register() again here (without
+              // rules) replaced them, so an empty description reached the server.
+              descriptionField.ref(el);
               descRef.current = el;
             }}
             rows={4}

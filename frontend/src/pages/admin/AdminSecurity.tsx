@@ -5,6 +5,7 @@ import AdminLayout from "../../components/AdminLayout";
 import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import adminApi from "../../adminApi";
 import toast from "react-hot-toast";
+import { apiErrorMessage } from "../../lib/apiError";
 
 interface TotpSetup {
   qr_uri: string;
@@ -43,7 +44,7 @@ export default function AdminSecurity() {
       setShowSetup(false);
       await loadSetup();
     } catch (err: any) {
-      toast.error(err.response?.data?.detail || "Invalid code");
+      toast.error(apiErrorMessage(err, "Invalid code"));
     } finally {
       setLoading(false);
     }
@@ -58,7 +59,7 @@ export default function AdminSecurity() {
       setCode("");
       await loadSetup();
     } catch (err: any) {
-      toast.error(err.response?.data?.detail || "Invalid code");
+      toast.error(apiErrorMessage(err, "Invalid code"));
     } finally {
       setLoading(false);
     }

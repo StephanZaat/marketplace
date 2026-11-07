@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import toast from "react-hot-toast";
+import { apiErrorMessage } from "../../lib/apiError";
 
 export default function AdminLogin() {
   const { login, verifyTotp, totpRequired } = useAdminAuth();
@@ -21,7 +22,7 @@ export default function AdminLogin() {
         navigate("/admin");
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.detail || "Login failed");
+      toast.error(apiErrorMessage(err, "Login failed"));
     } finally {
       setLoading(false);
     }
@@ -34,7 +35,7 @@ export default function AdminLogin() {
       await verifyTotp(totpCode);
       navigate("/admin");
     } catch (err: any) {
-      toast.error(err.response?.data?.detail || "Invalid code");
+      toast.error(apiErrorMessage(err, "Invalid code"));
     } finally {
       setLoading(false);
     }
