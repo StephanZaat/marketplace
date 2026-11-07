@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Upload, X, ChevronRight, ChevronLeft, HelpCircle, Search, ArrowUpDown } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, HelpCircle, Search, ArrowUpDown } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { CategoryTree, ListingDetail, catName } from "../api";
 import { useAuth } from "../contexts/AuthContext";
@@ -9,10 +9,8 @@ import { useLang } from "../contexts/LanguageContext";
 import { useCurrency } from "../contexts/CurrencyContext";
 import { getCategoryIcon } from "../lib/categoryIcons";
 import { loginUrl } from "../lib/loginRedirect";
-
-type PhotoItem =
-  | { kind: "saved"; id: string; idx: number; thumb: string; imgId: string; url: string; pId?: undefined }
-  | { kind: "pending"; id: string; idx: number; thumb: string; pId: string; imgId?: undefined; url?: undefined };
+import { usePhotoUploads } from "../hooks/usePhotoUploads";
+import PhotoUploader from "../components/PhotoUploader";
 
 interface FormData {
   title: string;
@@ -92,15 +90,10 @@ export default function CreateListing() {
 
   const [attributes, setAttributes] = useState<Record<string, string>>({});
 
-  const [images, setImages] = useState<{ id: string; url: string }[]>([]);
-  const [pendingFiles, setPendingFiles] = useState<{ id: string; file: File; thumb: string }[]>([]);
-  // Unified display order: array of {kind, id} — null means use default (saved then pending)
-  const [photoOrder, setPhotoOrder] = useState<{ kind: "saved" | "pending"; id: string }[] | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+  const uploads = usePhotoUploads(id);
+  const { setSaved } = uploads;
   const [submitting, setSubmitting] = useState(false);
-  const dragIdx = useRef<number | null>(null);
   const [descLen, setDescLen] = useState(0);
-  const fileRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement | null>(null);
 
   const autoResize = useCallback(() => {
@@ -194,12 +187,12 @@ export default function CreateListing() {
           category_id: l.category_id,
         });
         setDescLen(l.description.length);
-        setImages(l.images.map((url, i) => ({ id: `${i}:${url}`, url })));
+        setSaved(l.images);
         setSelectedCategory({ ...l.category, children: [], listing_count: 0 } as CategoryTree);
         setAttributes((l.attributes as Record<string, string>) ?? {});
       });
     }
-  }, [id, isEdit, reset]);
+  }, [id, isEdit, reset, setSaved]);
 
   // When tree loads in edit mode, find and set parent + mid levels
   useEffect(() => {
@@ -293,61 +286,12 @@ export default function CreateListing() {
     setValue("category_id", "");
   };
 
-  const addFiles = (files: FileList | null) => {
-    if (!files) return;
-    const total = images.length + pendingFiles.length;
-    const allowed = Array.from(files).slice(0, 10 - total);
-    if (allowed.length < files.length) toast.error(t.maxPhotos);
-    setPendingFiles((prev) => [
-      ...prev,
-      ...allowed.map((file) => ({ id: Math.random().toString(36).slice(2) + Date.now().toString(36), file, thumb: URL.createObjectURL(file) })),
-    ]);
-  };
-
-  const removePending = (id: string) => {
-    setPendingFiles((prev) => {
-      const removed = prev.find((p) => p.id === id);
-      if (removed) URL.revokeObjectURL(removed.thumb);
-      return prev.filter((p) => p.id !== id);
-    });
-  };
-
-  const removeSaved = async (_imgId: string, url: string) => {
-    if (!isEdit || !id) return;
-    try {
-      const res = await api.delete<{ images: string[] }>(`/listings/${id}/images`, { params: { image_url: url } });
-      setImages(res.data.images.map((u, i) => ({ id: `${i}:${u}`, url: u })));
-    } catch {
-      toast.error(t.failedToRemoveImage);
-    }
-  };
-
-  const uploadFiles = async (lid: string, files: { id: string; file: File }[]) => {
-    for (const { id: fileId, file } of files) {
-      const form = new FormData();
-      form.append("file", file);
-      setUploadProgress((prev) => ({ ...prev, [fileId]: 0 }));
-      try {
-        await api.post(`/listings/${lid}/images`, form, {
-          onUploadProgress: (e) => {
-            if (e.total) {
-              setUploadProgress((prev) => ({ ...prev, [fileId]: Math.round((e.loaded / e.total!) * 100) }));
-            }
-          },
-        });
-      } catch {
-        toast.error(t.failedToUpload.replace("{name}", file.name));
-      } finally {
-        setUploadProgress((prev) => { const n = { ...prev }; delete n[fileId]; return n; });
-      }
-    }
-  };
-
   const onSubmit = async (data: FormData) => {
     const { is_free, ...payload } = data;
     if (is_free) payload.price = 0;
-    const totalImgs = images.length + pendingFiles.length;
-    if (totalImgs === 0) {
+    if (uploads.uploading) return;
+    const imageRefs = uploads.refs;
+    if (imageRefs.length === 0) {
       toast.error(t.addAtLeastOnePhoto);
       return;
     }
@@ -356,23 +300,16 @@ export default function CreateListing() {
     );
     setSubmitting(true);
     try {
+      const body = { ...payload, attributes: attrPayload, images: imageRefs };
       if (isEdit && id) {
-        // Build ordered image URLs from photoOrder (saved images only; pending are appended after upload)
-        const savedById: Record<string, string> = Object.fromEntries(images.map((img: { id: string; url: string }) => [img.id, img.url]));
-        const orderedSavedUrls = (photoOrder ?? images.map((img: { id: string; url: string }) => ({ kind: "saved" as const, id: img.id })))
-          .filter((ref: { kind: string; id: string }) => ref.kind === "saved" && savedById[ref.id])
-          .map((ref: { kind: string; id: string }) => savedById[ref.id]);
-        await api.patch(`/listings/${id}`, { ...payload, attributes: attrPayload, images: orderedSavedUrls });
-        if (pendingFiles.length > 0) await uploadFiles(id, pendingFiles);
+        await api.patch(`/listings/${id}`, body);
         toast.success(t.listingUpdated);
         navigate(`/listings/${id}`);
       } else {
-        const res = await api.post<{ id: string; status: string }>("/listings", { ...payload, attributes: attrPayload });
-        const lid = res.data.id;
-        if (pendingFiles.length > 0) await uploadFiles(lid, pendingFiles);
+        const res = await api.post<{ id: string; status: string }>("/listings", body);
         if (res.data.status === "pending") toast.success(t.listingPendingReview, { duration: 6000 });
         else toast.success(t.listingCreated);
-        navigate(`/listings/${lid}`);
+        navigate(`/listings/${res.data.id}`);
       }
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? t.failedToSaveListing;
@@ -382,35 +319,7 @@ export default function CreateListing() {
     }
   };
 
-  const totalImages = images.length + pendingFiles.length;
   const hideConditionAndPrice = ["jobs", "services"].includes(selectedParent?.slug ?? "");
-
-  const photoItems = useMemo((): PhotoItem[] => {
-    const saved: PhotoItem[] = images.map(
-      (img: { id: string; url: string }): PhotoItem => ({
-        kind: "saved", id: img.id, idx: 0, thumb: img.url, imgId: img.id, url: img.url,
-      })
-    );
-    const pending: PhotoItem[] = pendingFiles.map(
-      (p): PhotoItem => ({
-        kind: "pending", id: p.id, idx: 0, thumb: p.thumb, pId: p.id,
-      })
-    );
-    const byId: Record<string, PhotoItem> = Object.fromEntries(
-      [...saved, ...pending].map((x: PhotoItem): [string, PhotoItem] => [x.id, x])
-    );
-    type OrderRef = { kind: "saved" | "pending"; id: string };
-    const order: OrderRef[] = photoOrder ?? [
-      ...saved.map((x: PhotoItem): OrderRef => ({ kind: "saved", id: x.id })),
-      ...pending.map((x: PhotoItem): OrderRef => ({ kind: "pending", id: x.id })),
-    ];
-    return order
-      .map((ref: OrderRef, idx: number): PhotoItem | null => {
-        const item = byId[ref.id];
-        return item ? { ...item, idx } : null;
-      })
-      .filter((x: PhotoItem | null): x is PhotoItem => x !== null);
-  }, [images, pendingFiles, photoOrder]);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
@@ -740,93 +649,7 @@ export default function CreateListing() {
 
         {/* Photos */}
         <div>
-          <div className="flex items-center gap-1.5 mb-2">
-            <label className="block text-sm font-medium text-gray-700">
-              {t.fieldPhotos} * <span className="text-gray-400 font-normal">({totalImages}/10)</span>
-            </label>
-            <div className="relative group">
-              <HelpCircle className="w-3.5 h-3.5 text-gray-400 cursor-help" />
-              <div className="absolute left-5 top-0 z-10 hidden group-hover:block w-60 bg-gray-900 text-white text-xs rounded-lg p-3 shadow-xl">
-                <p className="font-semibold mb-1.5">{t.photoTips}</p>
-                <ul className="space-y-1 text-gray-300">
-                  <li>• {t.photoTip1}</li>
-                  <li>• {t.photoTip2}</li>
-                  <li>• {t.photoTip3}</li>
-                  <li>• {t.photoTip4}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <p className="text-xs text-gray-400 mb-2">{t.dragToReorder}</p>
-          <div className="grid grid-cols-4 gap-2 mb-2">
-            {photoItems.map((item) => (
-              <div
-                key={item.id}
-                draggable
-                onDragStart={() => { dragIdx.current = item.idx; }}
-                onDragOver={(e) => { e.preventDefault(); }}
-                onDrop={() => {
-                  const from = dragIdx.current;
-                  const to = item.idx;
-                  if (from === null || from === to) return;
-                  dragIdx.current = null;
-                  const current = photoOrder ?? [
-                    ...images.map((img): { kind: "saved" | "pending"; id: string } => ({ kind: "saved", id: img.id })),
-                    ...pendingFiles.map((p): { kind: "saved" | "pending"; id: string } => ({ kind: "pending", id: p.id })),
-                  ];
-                  const reordered = [...current];
-                  const [moved] = reordered.splice(from, 1);
-                  reordered.splice(to, 0, moved);
-                  setPhotoOrder(reordered);
-                }}
-                className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 cursor-grab active:cursor-grabbing select-none"
-              >
-                <img src={item.thumb} alt="" className="w-full h-full object-cover pointer-events-none" />
-                {/* Upload progress bar */}
-                {item.kind === "pending" && item.pId && uploadProgress[item.pId] !== undefined && (
-                  <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center">
-                    <div className="w-3/4 bg-gray-600 rounded-full h-1.5 overflow-hidden">
-                      <div
-                        className="bg-white h-full rounded-full transition-all duration-200"
-                        style={{ width: `${uploadProgress[item.pId!]}%` }}
-                      />
-                    </div>
-                    <span className="text-white text-[10px] mt-1 font-medium">{uploadProgress[item.pId!]}%</span>
-                  </div>
-                )}
-                {item.idx === 0 && !(item.kind === "pending" && item.pId && uploadProgress[item.pId!] !== undefined) && (
-                  <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-[10px] text-center py-0.5 font-medium">
-                    {t.thumbnail}
-                  </div>
-                )}
-                <button
-                  type="button"
-                  onClick={() => item.kind === "saved" ? removeSaved(item.imgId!, item.url!) : removePending(item.pId!)}
-                  className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-0.5 hover:bg-black/70"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ))}
-            {totalImages < 10 && (
-              <button
-                type="button"
-                onClick={() => fileRef.current?.click()}
-                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 hover:border-ocean-400 hover:text-ocean-500 transition-colors"
-              >
-                <Upload className="w-5 h-5 mb-1" />
-                <span className="text-xs">{t.addPhoto}</span>
-              </button>
-            )}
-          </div>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={(e) => { addFiles(e.target.files); if (fileRef.current) fileRef.current.value = ""; }}
-          />
+          <PhotoUploader uploads={uploads} />
           <div className="mt-2 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-xs text-amber-800">
             <span className="shrink-0 mt-0.5">⏳</span>
             <span><span className="font-semibold">{t.listingExpiry}</span> {t.listingExpiryHint}</span>
@@ -834,10 +657,8 @@ export default function CreateListing() {
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button type="submit" disabled={submitting} className="btn-primary flex-1">
-            {submitting
-              ? (pendingFiles.length > 0 ? t.uploading : t.saving)
-              : isEdit ? t.saveChanges : t.createListing}
+          <button type="submit" disabled={submitting || uploads.uploading} className="btn-primary flex-1">
+            {uploads.uploading ? t.uploading : submitting ? t.saving : isEdit ? t.saveChanges : t.createListing}
           </button>
           <button type="button" onClick={() => navigate(-1)} className="btn-secondary px-6">
             {t.cancel}
