@@ -17,6 +17,8 @@ class ListingCreate(BaseModel):
     location: Optional[str] = Field(None, max_length=200)
     contact_method: Optional[str] = Field(None, max_length=200)
     attributes: Dict[str, Any] = {}
+    # Ordered keys from POST /api/uploads (length checked in the router: 400, not 422)
+    images: List[str] = []
 
 
 class ListingUpdate(BaseModel):

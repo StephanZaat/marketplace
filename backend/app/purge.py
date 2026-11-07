@@ -13,6 +13,7 @@ from app.models.message import Conversation, Message
 from app.models.rating import Rating
 from app.models.report import Report
 from app.models.user import User
+from app.pending_uploads import take_user_uploads
 from app.storage import delete_listing_image
 
 logger = logging.getLogger(__name__)
@@ -52,6 +53,7 @@ def purge_user(db: Session, user: User, reason: str | None = None) -> dict:
     db.query(Report).filter(Report.reporter_id == user.id).update({Report.reporter_id: None}, synchronize_session=False)
     db.query(CategoryAlert).filter(CategoryAlert.user_id == user.id).delete(synchronize_session=False)
     db.query(Listing).filter(Listing.id.in_(listing_ids)).delete(synchronize_session=False)
+    uploads = take_user_uploads(db, user.id)  # unattached photos: FK to the user
 
     email = user.email.strip().lower()
     # A case-twin account (legacy data) still uses this address: don't lock it out.
@@ -64,7 +66,7 @@ def purge_user(db: Session, user: User, reason: str | None = None) -> dict:
     # Never delete a file another listing still points at (seed data shares
     # catalog images). Small site, so a full scan is fine.
     still_used = {img for (imgs,) in db.query(Listing.images) for img in (imgs or [])}
-    images = [k for k in images if k not in still_used]
+    images = [k for k in images if k not in still_used] + uploads
     counts["images"] = len(images)
 
     settings = get_settings()

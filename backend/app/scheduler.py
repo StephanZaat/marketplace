@@ -207,6 +207,13 @@ def _prune_page_views(keep_days: int = 400) -> None:
         db.close()
 
 
+def _prune_uploads() -> None:
+    """Unattached instant uploads older than a day (see app.pending_uploads)."""
+    from app.config import get_settings
+    from app.pending_uploads import prune_stale_uploads
+    prune_stale_uploads(get_settings())
+
+
 async def run_scheduler() -> None:
     """Infinite loop that runs listing checks every hour and digest once a day."""
     logger.info("Listing expiry scheduler started (interval=%ds)", _CHECK_INTERVAL)
@@ -235,6 +242,7 @@ async def run_scheduler() -> None:
         if leader is not None:
             await _run_checks()
             _prune_page_views()
+            _prune_uploads()
 
             now = datetime.now(timezone.utc)
             if now.hour == _DIGEST_HOUR and now.day != last_digest_day:
