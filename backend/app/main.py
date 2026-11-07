@@ -267,7 +267,7 @@ async def lifespan(app: FastAPI):
         pass
 
 
-from app.routers import auth, users, categories, listings, messages, favorites, reports, admin_auth, admin, contact, alerts, ratings, admin_users, admin_listings, admin_catalog, admin_insights, admin_traffic, stats
+from app.routers import auth, users, categories, listings, messages, favorites, reports, admin_auth, admin, contact, alerts, ratings, admin_users, admin_listings, admin_catalog, admin_insights, admin_traffic, stats, uploads
 
 app = FastAPI(
     title="Marketplace.aw",
@@ -292,6 +292,7 @@ app.include_router(auth.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 app.include_router(categories.router, prefix="/api")
 app.include_router(listings.router, prefix="/api")
+app.include_router(uploads.router, prefix="/api")
 app.include_router(messages.router, prefix="/api")
 app.include_router(favorites.router, prefix="/api")
 app.include_router(reports.router, prefix="/api")

@@ -106,7 +106,8 @@ def resolve_listing_images(d: dict, settings) -> None:
 def _key_from_url(url: str, settings) -> str:
     """Strip the public URL base to get the relative object key."""
     if not url.startswith("http"):
-        return url.lstrip("/")
+        # Without an object store, resolve_image_url serves keys under /images/.
+        return url.removeprefix("/images/").lstrip("/")
     base = settings.resolved_objectstore_public_url
     if url.startswith(base):
         return url[len(base):].lstrip("/")
@@ -175,6 +176,14 @@ def save_listing_image(file: UploadFile, resource_id: int | str, settings) -> st
     ext = _extension(original)
     # Random suffix: two photos with the same filename must not overwrite each other.
     object_key = f"listings/{resource_id}/{stem}-{secrets.token_hex(3)}.{ext}"
+    return _save_resized(file, object_key, Path(object_key), settings,
+                         max_size=_FULL_MAX, quality=_JPEG_QUALITY_FULL, with_thumb=True)
+
+
+def save_upload_image(file: UploadFile, user_public_id: str, settings) -> str:
+    """Store a photo uploaded before it belongs to a listing (full + thumbnail)."""
+    original = file.filename or "image"
+    object_key = f"uploads/{user_public_id}/{_safe_stem(original)}-{secrets.token_hex(3)}.{_extension(original)}"
     return _save_resized(file, object_key, Path(object_key), settings,
                          max_size=_FULL_MAX, quality=_JPEG_QUALITY_FULL, with_thumb=True)
 

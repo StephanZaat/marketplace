@@ -10,6 +10,7 @@ from app.limiter import limiter
 from app.models.listing import Listing, ListingStatus
 from app.models.message import Conversation
 from app.models.user import User
+from app.pending_uploads import build_image_list
 from app.models.category import Category
 from app.models.rating import Rating
 from app.resolve import resolve_public_id, _build_pid_map, listing_to_public_dict
@@ -321,11 +322,12 @@ def create_listing(
     # don't matter, and an unknown country (no GeoIP data) is never held.
     country = country_for_ip(request.client.host if request.client else None)
     held = not current_user.is_trusted and country is not None and country != "AW"
+    images = build_image_list(db, current_user.id, data.images, [], settings)
     listing = Listing(
-        **data.model_dump(exclude={"category_id"}),
+        **data.model_dump(exclude={"category_id", "images"}),
         category_id=cat.id,
         seller_id=current_user.id,
-        images=[],
+        images=images,
         created_country=country,
         status=ListingStatus.PENDING if held else ListingStatus.ACTIVE,
     )
@@ -361,9 +363,12 @@ def update_listing(
         # not the seller's to change.
         raise HTTPException(status_code=400, detail=f"Cannot change status from {listing.status.value} to {data.status.value}")
 
-    update_data = data.model_dump(exclude_none=True, exclude={"sold_to_conversation_id", "category_id"})
+    update_data = data.model_dump(exclude_none=True, exclude={"sold_to_conversation_id", "category_id", "images"})
     for field, value in update_data.items():
         setattr(listing, field, value)
+
+    if data.images is not None:
+        listing.images = build_image_list(db, current_user.id, data.images, listing.images or [], settings)
 
     # Resolve category_id if provided
     if data.category_id is not None:
