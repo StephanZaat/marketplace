@@ -1,34 +1,68 @@
+# Standard config (all StephanZaat repos): daily check, minor+patch grouped into one PR per
+# ecosystem, majors as separate PRs, 3-day cooldown so brand-new releases settle first.
 version: 2
 updates:
   - package-ecosystem: "pip"
     directory: "/backend"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "daily"
+      time: "06:00"
+      timezone: "America/Aruba"
+    cooldown:
+      default-days: 3
+    open-pull-requests-limit: 10
     groups:
-      python-deps:
-        patterns: ["*"]
+      pip-minor-patch:
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "daily"
+      time: "06:00"
+      timezone: "America/Aruba"
+    cooldown:
+      default-days: 3
+    open-pull-requests-limit: 10
     groups:
-      npm-deps:
-        patterns: ["*"]
+      npm-minor-patch:
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: "docker"
-    directory: "/backend"
+    directories: ["/backend", "/frontend"]
     schedule:
-      interval: "monthly"
+      interval: "daily"
+      time: "06:00"
+      timezone: "America/Aruba"
+    cooldown:
+      default-days: 3
+    open-pull-requests-limit: 10
+    groups:
+      docker-minor-patch:
+        update-types: ["minor", "patch"]
 
-  - package-ecosystem: "docker"
-    directory: "/frontend"
+  - package-ecosystem: "docker-compose"
+    directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "daily"
+      time: "06:00"
+      timezone: "America/Aruba"
+    cooldown:
+      default-days: 3
+    open-pull-requests-limit: 10
+    groups:
+      dockercompose-minor-patch:
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "daily"
+      time: "06:00"
+      timezone: "America/Aruba"
+    cooldown:
+      default-days: 3
+    open-pull-requests-limit: 10
+    groups:
+      githubactions-minor-patch:
+        update-types: ["minor", "patch"]
