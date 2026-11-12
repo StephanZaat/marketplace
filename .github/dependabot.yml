@@ -40,6 +40,10 @@ updates:
     groups:
       docker-minor-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      # odd Node majors never become LTS
+      - dependency-name: "node"
+        versions: [">= 25, < 26", ">= 27, < 28", ">= 29, < 30"]
 
   - package-ecosystem: "docker-compose"
     directory: "/"
@@ -53,6 +57,10 @@ updates:
     groups:
       dockercompose-minor-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      # odd Node majors never become LTS
+      - dependency-name: "node"
+        versions: [">= 25, < 26", ">= 27, < 28", ">= 29, < 30"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
