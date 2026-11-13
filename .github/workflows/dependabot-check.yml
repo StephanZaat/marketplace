@@ -38,6 +38,9 @@ jobs:
       - name: Backend tests
         run: |
           touch .env
+          # The test container runs as uid 1000 with ./backend bind-mounted; the runner owns the
+          # checkout as uid 1001, so the app cannot create app/uploads itself.
+          mkdir -p backend/app/uploads/images && chmod -R a+rwX backend/app/uploads
           docker compose --profile test run --rm -T test
 
       - name: Frontend type check
