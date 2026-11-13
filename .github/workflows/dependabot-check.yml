@@ -1,0 +1,74 @@
+# The only test run on GitHub: Dependabot PRs get a check, and passing
+# patch/minor library updates merge themselves. Everything else is tested
+# locally by .githooks/pre-push, which this mirrors. Never runs on pushes to
+# main, never gates a deploy.
+name: Dependabot check
+
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: dependabot-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      # Every Dockerfile the repo ships, with the targets the compose files use
+      - name: Build backend image
+        run: docker build -t marketplace-backend backend
+      - name: Build frontend images (development + production)
+        run: |
+          docker build --target development -t marketplace-frontend-dev frontend
+          docker build --target production -t marketplace-frontend frontend
+      - name: Build certbot image
+        run: docker build -f nginx/certbot-dns.Dockerfile -t marketplace-certbot nginx
+
+      # Same compose service as the pre-push hook (postgres:18 on tmpfs). No
+      # secrets: the empty .env only satisfies the backend service's env_file.
+      - name: Backend tests
+        run: |
+          touch .env
+          docker compose --profile test run --rm -T test
+
+      - name: Frontend type check
+        run: docker run --rm marketplace-frontend-dev ./node_modules/.bin/tsc --noEmit
+      - name: Frontend tests
+        run: docker run --rm marketplace-frontend-dev ./node_modules/.bin/vitest run
+      - name: Frontend nginx config
+        run: docker run --rm marketplace-frontend nginx -t
+      - name: Dev nginx config (docker-compose.yml image)
+        run: |
+          image=$(sed -n 's/^ *image: \(nginx:[^ ]*\).*/\1/p' docker-compose.yml)
+          docker run --rm --add-host backend:127.0.0.1 --add-host frontend:127.0.0.1 \
+            -v "$PWD/nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro" "$image" nginx -t
+
+  merge:
+    needs: check
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - id: meta
+        uses: dependabot/fetch-metadata@v3.1.0
+      - name: Merge patch/minor library updates
+        if: >-
+          steps.meta.outputs.update-type != 'version-update:semver-major' &&
+          contains(fromJSON('["pip","npm_and_yarn","github_actions"]'), steps.meta.outputs.package-ecosystem)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr merge --squash --delete-branch "$PR"
+          # A GITHUB_TOKEN merge triggers no push workflow: deploy explicitly.
+          # This runs deploy-test; deploy-prod still waits for manual approval.
+          gh workflow run deploy.yml --ref main
