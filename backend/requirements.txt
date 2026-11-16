@@ -1,7 +1,7 @@
-fastapi==0.162.2
+fastapi==0.162.5
 uvicorn[standard]==0.54.0
 sqlalchemy==2.1.8
-psycopg[binary]==3.3.8
+psycopg[binary]==3.3.9
 pydantic[email]==2.14.3
 pydantic-settings==2.16.2
 python-dotenv==1.2.4
@@ -26,9 +26,9 @@ jinja2==3.1.6
 Pillow==13.0.0
 
 # Object storage (S3-compatible)
-boto3==1.43.127
+boto3==1.44.2
 
 # Testing
 pytest==9.2.0
-pytest-asyncio==1.4.1.post1
+pytest-asyncio==1.5.0
 httpx==0.28.1
