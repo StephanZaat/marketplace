@@ -63,3 +63,28 @@ class TestAdminTraffic:
 
     def test_requires_admin(self, auth_client):
         assert auth_client.get("/api/admin/traffic").status_code == 401
+
+    def test_clicks_inside_the_site_are_not_a_source(self, client, admin_client):
+        # one visit: landed from Google, then two more routes (the tracker sends no referrer)
+        _pv(client, "/", referrer="https://www.google.com/")
+        _pv(client, "/listings")
+        _pv(client, "/about")
+        d = admin_client.get("/api/admin/traffic?days=7").json()
+        assert d["sources"] == [{"name": "google.com", "count": 1}]
+
+    def test_breakdowns_count_visitors_not_page_views(self, client, admin_client):
+        for path in ("/", "/listings", "/about"):
+            _pv(client, path)
+        _pv(client, "/", ua=DESKTOP)
+        d = admin_client.get("/api/admin/traffic?days=7").json()
+        assert sorted(x["count"] for x in d["devices"]) == [1, 1]
+
+    def test_previous_period_is_the_same_span_one_period_back(self, db, admin_client):
+        from datetime import datetime, timedelta, timezone
+        # later in the day than "now", one week back: past the comparable span, not in it
+        db.add(PageView(created_at=datetime.now(timezone.utc) - timedelta(days=7) + timedelta(minutes=30),
+                        path="/", source=None, country=None, device="mobile", os=None,
+                        visitor_hash="0123456789abcdef"))
+        db.commit()
+        d = admin_client.get("/api/admin/traffic?days=7").json()
+        assert d["previous"]["pageviews"] == 0

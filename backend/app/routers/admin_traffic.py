@@ -33,6 +33,19 @@ def _top(counter: Counter, n: int, label=lambda k: k) -> list[dict]:
     return [{"name": label(k), "count": c} for k, c in counter.most_common(n)]
 
 
+def _visits(rows) -> list[dict]:
+    """One entry per visit (visitor hash per day): the first view's country/device/OS and the
+    first source seen. The tracker sends a referrer only for the landing page, so counting
+    sources per page view would bury them under "Direct / unknown"."""
+    visits: dict[tuple, dict] = {}
+    for r in sorted(rows, key=lambda r: _as_utc(r.created_at)):
+        key = (site_day(_as_utc(r.created_at)), r.visitor_hash)
+        v = visits.setdefault(key, {"source": None, "country": r.country, "device": r.device, "os": r.os})
+        if v["source"] is None and r.source is not None:
+            v["source"] = r.source
+    return list(visits.values())
+
+
 @router.get("/traffic")
 def traffic(
     _admin: Annotated[Admin, Depends(get_current_admin)],
@@ -48,7 +61,9 @@ def traffic(
     cols = (PageView.created_at, PageView.path, PageView.source, PageView.country,
             PageView.device, PageView.os, PageView.visitor_hash)
     rows = db.query(*cols).filter(PageView.created_at >= start).all()
-    prev = db.query(*cols).filter(PageView.created_at >= prev_start, PageView.created_at < start).all()
+    # The same span one period back: the current period is only partly over (today so far)
+    prev = db.query(*cols).filter(PageView.created_at >= prev_start,
+                                  PageView.created_at < now - timedelta(days=days)).all()
 
     daily_views, daily_visitors = Counter(), defaultdict(set)
     for r in rows:
@@ -72,6 +87,7 @@ def traffic(
 
     live_since = now - timedelta(minutes=30)
     live = len({r.visitor_hash for r in rows if _as_utc(r.created_at) >= live_since})
+    visits = _visits(rows)
 
     return {
         "days": days,
@@ -80,8 +96,8 @@ def traffic(
         "live": live,
         "series": series,
         "top_pages": top_pages,
-        "sources": _top(Counter(r.source for r in rows), 10, lambda k: k or "Direct / unknown"),
-        "countries": _top(Counter(r.country for r in rows), 10, lambda k: k or "Unknown"),
-        "devices": _top(Counter(r.device for r in rows), 3),
-        "os": _top(Counter(r.os for r in rows), 6, lambda k: k or "Other"),
+        "sources": _top(Counter(v["source"] for v in visits), 10, lambda k: k or "Direct / unknown"),
+        "countries": _top(Counter(v["country"] for v in visits), 10, lambda k: k or "Unknown"),
+        "devices": _top(Counter(v["device"] for v in visits), 3),
+        "os": _top(Counter(v["os"] for v in visits), 6, lambda k: k or "Other"),
     }
