@@ -252,6 +252,7 @@ jobs:
 
             echo "--- Pulling latest code"
             git checkout -- .env 2>/dev/null || true
+            PREV_HEAD=$(git rev-parse HEAD)
             git pull --ff-only
 
             echo "--- Writing .env"
@@ -320,6 +321,12 @@ jobs:
 
             echo "--- Restarting services"
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            # nginx/prod.conf is bind-mounted as a single file: git pull replaces it with a
+            # new inode the running container never sees (a reload re-reads the old one).
+            if ! git diff --quiet "$PREV_HEAD" HEAD -- nginx/prod.conf; then
+              echo "--- nginx/prod.conf changed: recreating nginx"
+              docker compose -f docker-compose.prod.yml up -d --force-recreate --no-deps nginx
+            fi
 
             echo "--- Installing backup cron (daily at 03:10 UTC)"
             if ! command -v crontab >/dev/null 2>&1; then
