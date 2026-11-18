@@ -10,6 +10,9 @@ jobs:
   deploy-test:
     name: Deploy to Test
     runs-on: ubuntu-latest
+    concurrency:  # a second test deploy waits: two at once collide on the test VM's container names
+      group: deploy-test
+      cancel-in-progress: false
     steps:
       - name: Fetch secrets from Scaleway Secret Manager
         uses: scaleway/action-scw-secret@v0.0.12
