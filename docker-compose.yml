@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:18-alpine
+    image: postgres:19-alpine
     container_name: marketplace_db
     restart: unless-stopped
     environment:
@@ -82,7 +82,7 @@ services:
 
   # Throwaway Postgres for the test suite (tmpfs: nothing persists).
   marketplace-test-db:
-    image: postgres:18-alpine
+    image: postgres:19-alpine
     container_name: marketplace_test_db
     profiles: ["test"]
     environment:
