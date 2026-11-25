@@ -136,6 +136,8 @@ jobs:
               --build-arg VITE_FRIENDLY_CAPTCHA_SITEKEY=FCMRARFRUTA89JI8 \
               --build-arg VITE_IMAGE_ORIGIN="https://${OBJECTSTORE_BUCKET}.s3.nl-ams.scw.cloud" \
               --build-arg GEOIP_MONTH="$(date -u +%Y-%m)"
+            # Image-only services (postgres, nginx, certbot): `up` alone keeps a stale copy of the tag (security audit)
+            docker compose -f docker-compose.prod.yml -f docker-compose.test.yml pull --ignore-buildable --quiet
 
             echo "--- Postgres 16 -> 18 migration (no-op once done)"
             bash scripts/migrate-postgres.sh
@@ -297,6 +299,8 @@ jobs:
               --build-arg VITE_FRIENDLY_CAPTCHA_SITEKEY=FCMRARFRUTA89JI8 \
               --build-arg VITE_IMAGE_ORIGIN="https://${OBJECTSTORE_BUCKET}.s3.nl-ams.scw.cloud" \
               --build-arg GEOIP_MONTH="$(date -u +%Y-%m)"
+            # Image-only services (postgres, nginx, certbot): `up` alone keeps a stale copy of the tag (security audit)
+            docker compose -f docker-compose.prod.yml pull --ignore-buildable --quiet
 
             echo "--- Bootstrap TLS cert (if needed)"
             # Check inside a container: the deploy user can't read
