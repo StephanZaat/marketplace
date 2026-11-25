@@ -8,7 +8,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --disable-pip-version-check --root-user-action=ignore -r requirements.txt
+# security audit 2026-11-25: pip vendors setuptools 70.3.0 (CVE-2025-47273), and up
+# to 26.2.2 also urllib3 2.7.0 + msgpack 1.1.2; nothing installs packages at runtime.
+RUN pip install --no-cache-dir --disable-pip-version-check --root-user-action=ignore -r requirements.txt && \
+    pip uninstall -y --root-user-action=ignore pip
 
 # Country database for the off-island listing review. Lives outside /app so
 # the dev bind mount doesn't hide it; GEOIP_MONTH busts the cache monthly.
